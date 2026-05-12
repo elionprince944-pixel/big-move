@@ -71,7 +71,8 @@ function MovieDetailsPage() {
   const m = q.data;
   const title = m.title ?? m.name;
   const year = (m.release_date ?? m.first_air_date ?? "").slice(0, 4);
-  const trailer = m.videos?.results?.find((v: any) => v.type === "Trailer" && v.site === "YouTube") ?? m.videos?.results?.[0];
+  const videos = (m.videos?.results ?? []) as any[];
+  const trailer = pickBestVideo(videos);
 
   return (
     <div className="-mt-16">
