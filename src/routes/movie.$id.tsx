@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { getMovieDetails } from "@/lib/tmdb.functions";
 import { TMDB_IMG } from "@/lib/tmdb-image";
 import { MovieRow } from "@/components/site/Movie";
+import { TrailerPlayer, pickBestVideo } from "@/components/site/TrailerPlayer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
