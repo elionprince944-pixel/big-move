@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { getMovieDetails } from "@/lib/tmdb.functions";
 import { TMDB_IMG } from "@/lib/tmdb-image";
 import { MovieRow } from "@/components/site/Movie";
+import { TrailerPlayer, pickBestVideo } from "@/components/site/TrailerPlayer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
@@ -70,7 +71,8 @@ function MovieDetailsPage() {
   const m = q.data;
   const title = m.title ?? m.name;
   const year = (m.release_date ?? m.first_air_date ?? "").slice(0, 4);
-  const trailer = m.videos?.results?.find((v: any) => v.type === "Trailer" && v.site === "YouTube") ?? m.videos?.results?.[0];
+  const videos = (m.videos?.results ?? []) as any[];
+  const trailer = pickBestVideo(videos);
 
   return (
     <div className="-mt-16">
@@ -131,18 +133,12 @@ function MovieDetailsPage() {
         </div>
       ) : null}
 
-      {trailerOpen && trailer && (
-        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4" onClick={() => setTrailerOpen(false)}>
-          <div className="w-full max-w-4xl aspect-video" onClick={(e) => e.stopPropagation()}>
-            <iframe
-              src={`https://www.youtube.com/embed/${trailer.key}?autoplay=1`}
-              className="w-full h-full rounded-lg"
-              allow="autoplay; encrypted-media; fullscreen"
-              allowFullScreen
-            />
-          </div>
-        </div>
-      )}
+      <TrailerPlayer
+        videos={videos}
+        open={trailerOpen}
+        onClose={() => setTrailerOpen(false)}
+        title={title}
+      />
     </div>
   );
 }
