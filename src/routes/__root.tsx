@@ -101,7 +101,7 @@ function RootComponent() {
             </main>
             <Footer />
           </div>
-          <Toaster theme="dark" />
+          <Toaster />
         </AuthProvider>
       </PreferencesProvider>
     </QueryClientProvider>
