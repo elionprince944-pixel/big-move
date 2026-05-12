@@ -11,6 +11,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth-context";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
+import { PreferencesProvider } from "@/lib/preferences";
 
 import appCss from "../styles.css?url";
 
@@ -91,16 +92,18 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <div className="min-h-screen flex flex-col bg-background">
-          <Header />
-          <main className="flex-1 pt-16">
-            <Outlet />
-          </main>
-          <Footer />
-        </div>
-        <Toaster theme="dark" />
-      </AuthProvider>
+      <PreferencesProvider>
+        <AuthProvider>
+          <div className="min-h-screen flex flex-col bg-background">
+            <Header />
+            <main className="flex-1 pt-16">
+              <Outlet />
+            </main>
+            <Footer />
+          </div>
+          <Toaster theme="dark" />
+        </AuthProvider>
+      </PreferencesProvider>
     </QueryClientProvider>
   );
 }
