@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WatchlistRouteImport } from './routes/watchlist'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as BrowseRouteImport } from './routes/browse'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MovieIdRouteImport } from './routes/movie.$id'
 
+const WatchlistRoute = WatchlistRouteImport.update({
+  id: '/watchlist',
+  path: '/watchlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/browse': typeof BrowseRoute
   '/search': typeof SearchRoute
+  '/watchlist': typeof WatchlistRoute
   '/movie/$id': typeof MovieIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/browse': typeof BrowseRoute
   '/search': typeof SearchRoute
+  '/watchlist': typeof WatchlistRoute
   '/movie/$id': typeof MovieIdRoute
 }
 export interface FileRoutesById {
@@ -52,25 +60,34 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/browse': typeof BrowseRoute
   '/search': typeof SearchRoute
+  '/watchlist': typeof WatchlistRoute
   '/movie/$id': typeof MovieIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/browse' | '/search' | '/movie/$id'
+  fullPaths: '/' | '/browse' | '/search' | '/watchlist' | '/movie/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/browse' | '/search' | '/movie/$id'
-  id: '__root__' | '/' | '/browse' | '/search' | '/movie/$id'
+  to: '/' | '/browse' | '/search' | '/watchlist' | '/movie/$id'
+  id: '__root__' | '/' | '/browse' | '/search' | '/watchlist' | '/movie/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BrowseRoute: typeof BrowseRoute
   SearchRoute: typeof SearchRoute
+  WatchlistRoute: typeof WatchlistRoute
   MovieIdRoute: typeof MovieIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/watchlist': {
+      id: '/watchlist'
+      path: '/watchlist'
+      fullPath: '/watchlist'
+      preLoaderRoute: typeof WatchlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/search': {
       id: '/search'
       path: '/search'
@@ -106,6 +123,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BrowseRoute: BrowseRoute,
   SearchRoute: SearchRoute,
+  WatchlistRoute: WatchlistRoute,
   MovieIdRoute: MovieIdRoute,
 }
 export const routeTree = rootRouteImport
