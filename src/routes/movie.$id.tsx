@@ -133,18 +133,12 @@ function MovieDetailsPage() {
         </div>
       ) : null}
 
-      {trailerOpen && trailer && (
-        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4" onClick={() => setTrailerOpen(false)}>
-          <div className="w-full max-w-4xl aspect-video" onClick={(e) => e.stopPropagation()}>
-            <iframe
-              src={`https://www.youtube.com/embed/${trailer.key}?autoplay=1`}
-              className="w-full h-full rounded-lg"
-              allow="autoplay; encrypted-media; fullscreen"
-              allowFullScreen
-            />
-          </div>
-        </div>
-      )}
+      <TrailerPlayer
+        videos={videos}
+        open={trailerOpen}
+        onClose={() => setTrailerOpen(false)}
+        title={title}
+      />
     </div>
   );
 }
