@@ -20,6 +20,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as MovieIdRouteImport } from './routes/movie.$id'
+import { Route as GenreIdRouteImport } from './routes/genre.$id'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 
 const WatchlistRoute = WatchlistRouteImport.update({
@@ -77,6 +78,11 @@ const MovieIdRoute = MovieIdRouteImport.update({
   path: '/movie/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GenreIdRoute = GenreIdRouteImport.update({
+  id: '/genre/$id',
+  path: '/genre/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/admin/login',
   path: '/admin/login',
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/watchlist': typeof WatchlistRoute
   '/admin/login': typeof AdminLoginRoute
+  '/genre/$id': typeof GenreIdRoute
   '/movie/$id': typeof MovieIdRoute
   '/admin/': typeof AdminIndexRoute
 }
@@ -108,6 +115,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/watchlist': typeof WatchlistRoute
   '/admin/login': typeof AdminLoginRoute
+  '/genre/$id': typeof GenreIdRoute
   '/movie/$id': typeof MovieIdRoute
   '/admin': typeof AdminIndexRoute
 }
@@ -123,6 +131,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/watchlist': typeof WatchlistRoute
   '/admin/login': typeof AdminLoginRoute
+  '/genre/$id': typeof GenreIdRoute
   '/movie/$id': typeof MovieIdRoute
   '/admin/': typeof AdminIndexRoute
 }
@@ -139,6 +148,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/watchlist'
     | '/admin/login'
+    | '/genre/$id'
     | '/movie/$id'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
@@ -153,6 +163,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/watchlist'
     | '/admin/login'
+    | '/genre/$id'
     | '/movie/$id'
     | '/admin'
   id:
@@ -167,6 +178,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/watchlist'
     | '/admin/login'
+    | '/genre/$id'
     | '/movie/$id'
     | '/admin/'
   fileRoutesById: FileRoutesById
@@ -182,6 +194,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   WatchlistRoute: typeof WatchlistRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  GenreIdRoute: typeof GenreIdRoute
   MovieIdRoute: typeof MovieIdRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
@@ -265,6 +278,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MovieIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/genre/$id': {
+      id: '/genre/$id'
+      path: '/genre/$id'
+      fullPath: '/genre/$id'
+      preLoaderRoute: typeof GenreIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/login': {
       id: '/admin/login'
       path: '/admin/login'
@@ -286,19 +306,10 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   WatchlistRoute: WatchlistRoute,
   AdminLoginRoute: AdminLoginRoute,
+  GenreIdRoute: GenreIdRoute,
   MovieIdRoute: MovieIdRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

@@ -1,24 +1,25 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Search, User, LogOut, Shield, Settings as SettingsIcon, Bookmark } from "lucide-react";
+import { Search, User, LogOut, Shield, Settings as SettingsIcon, Bookmark, Sun, Moon, ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/lib/auth-context";
+import { usePreferences } from "@/lib/preferences";
+import { getGenres } from "@/lib/tmdb.functions";
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator,
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
-
-const navItems = [
-  { to: "/", label: "Home" },
-  { to: "/browse", label: "Browse" },
-  { to: "/watchlist", label: "Watchlist" },
-];
 
 export function Header() {
   const { user, isAdmin, signOut } = useAuth();
+  const { theme, toggleTheme, t } = usePreferences();
   const navigate = useNavigate();
   const path = useRouterState({ select: (s) => s.location.pathname });
   const [scrolled, setScrolled] = useState(false);
   const [q, setQ] = useState("");
+  const genresFn = useServerFn(getGenres);
+  const genres = useQuery({ queryKey: ["genres"], queryFn: () => genresFn() });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -31,6 +32,12 @@ export function Header() {
     e.preventDefault();
     if (q.trim()) navigate({ to: "/search", search: { q: q.trim() } });
   };
+
+  const navItems = [
+    { to: "/", label: t("home") },
+    { to: "/browse", label: t("browse") },
+    { to: "/watchlist", label: t("watchlist") },
+  ];
 
   return (
     <header
@@ -56,6 +63,27 @@ export function Header() {
               {n.label}
             </Link>
           ))}
+
+          <DropdownMenu>
+            <DropdownMenuTrigger className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors">
+              {t("genres")} <ChevronDown className="size-3.5" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-64 max-h-96 overflow-y-auto bg-surface-elevated">
+              <DropdownMenuLabel className="text-xs uppercase tracking-wider text-muted-foreground">Movies</DropdownMenuLabel>
+              {(genres.data?.movie ?? []).map((g: any) => (
+                <DropdownMenuItem key={`m-${g.id}`} asChild>
+                  <Link to="/genre/$id" params={{ id: String(g.id) }} search={{ type: "movie" }}>{g.name}</Link>
+                </DropdownMenuItem>
+              ))}
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel className="text-xs uppercase tracking-wider text-muted-foreground">TV</DropdownMenuLabel>
+              {(genres.data?.tv ?? []).map((g: any) => (
+                <DropdownMenuItem key={`t-${g.id}`} asChild>
+                  <Link to="/genre/$id" params={{ id: String(g.id) }} search={{ type: "tv" }}>{g.name}</Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </nav>
 
         <form onSubmit={onSearch} className="ml-auto flex items-center">
@@ -64,11 +92,15 @@ export function Header() {
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Search…"
+              placeholder={t("search")}
               className="h-9 w-32 sm:w-56 rounded-md bg-surface/80 border border-border pl-8 pr-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
             />
           </div>
         </form>
+
+        <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle theme">
+          {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
+        </Button>
 
         {user ? (
           <DropdownMenu>
@@ -78,18 +110,18 @@ export function Header() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48 bg-surface-elevated">
-              <DropdownMenuItem asChild><Link to="/watchlist"><Bookmark className="size-4 mr-2" />Watchlist</Link></DropdownMenuItem>
-              <DropdownMenuItem asChild><Link to="/settings"><SettingsIcon className="size-4 mr-2" />Settings</Link></DropdownMenuItem>
+              <DropdownMenuItem asChild><Link to="/watchlist"><Bookmark className="size-4 mr-2" />{t("watchlist")}</Link></DropdownMenuItem>
+              <DropdownMenuItem asChild><Link to="/settings"><SettingsIcon className="size-4 mr-2" />{t("settings")}</Link></DropdownMenuItem>
               {isAdmin && (
                 <DropdownMenuItem asChild><Link to="/admin"><Shield className="size-4 mr-2" />Admin</Link></DropdownMenuItem>
               )}
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={signOut}><LogOut className="size-4 mr-2" />Sign out</DropdownMenuItem>
+              <DropdownMenuItem onClick={signOut}><LogOut className="size-4 mr-2" />{t("signOut")}</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
           <Button asChild size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
-            <Link to="/login">Sign in</Link>
+            <Link to="/login">{t("signIn")}</Link>
           </Button>
         )}
       </div>

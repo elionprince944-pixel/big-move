@@ -53,3 +53,14 @@ export const getGenres = createServerFn({ method: "GET" }).handler(async () => {
   ]);
   return { movie: movie.genres, tv: tv.genres };
 });
+
+export const discoverByGenre = createServerFn({ method: "GET" })
+  .inputValidator((data: { genreId: number; type?: "movie" | "tv" }) => data)
+  .handler(async ({ data }) => {
+    const type = data.type === "tv" ? "tv" : "movie";
+    return tmdb<{ results: any[] }>(`/discover/${type}`, {
+      with_genres: String(data.genreId),
+      sort_by: "popularity.desc",
+    });
+  });
+
