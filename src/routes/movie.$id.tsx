@@ -114,6 +114,8 @@ function MovieDetailsPage() {
           </div>
         </div>
 
+        <WhereToWatch data={wp.data} link={m["watch/providers"]?.link ?? wp.data?.providers?.link} />
+
         {m.credits?.cast?.length ? (
           <section className="mt-12">
             <h2 className="font-display text-2xl mb-4">Cast</h2>
