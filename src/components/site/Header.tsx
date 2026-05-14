@@ -129,6 +129,22 @@ export function Header() {
           </Button>
         )}
       </div>
+      <div className="border-t border-border/40 bg-background/70 backdrop-blur-md">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 h-10 flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar text-xs sm:text-sm">
+          <span className="text-muted-foreground shrink-0 mr-2 uppercase tracking-wider text-[10px]">Genres</span>
+          {QUICK_GENRES.map((g) => (
+            <Link
+              key={g.id}
+              to="/genre/$id"
+              params={{ id: String(g.id) }}
+              search={{ type: "movie" }}
+              className="shrink-0 px-3 py-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-surface transition-colors"
+            >
+              {g.name}
+            </Link>
+          ))}
+        </div>
+      </div>
     </header>
   );
 }
