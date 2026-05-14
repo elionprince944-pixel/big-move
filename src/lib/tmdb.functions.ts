@@ -54,6 +54,15 @@ export const getGenres = createServerFn({ method: "GET" }).handler(async () => {
   return { movie: movie.genres, tv: tv.genres };
 });
 
+export const getWatchProviders = createServerFn({ method: "GET" })
+  .inputValidator((data: { id: number; type?: "movie" | "tv"; region?: string }) => data)
+  .handler(async ({ data }) => {
+    const type = data.type === "tv" ? "tv" : "movie";
+    const res = await tmdb<{ results: Record<string, any> }>(`/${type}/${data.id}/watch/providers`);
+    const region = (data.region ?? "US").toUpperCase();
+    return { region, providers: res.results?.[region] ?? null, all: res.results ?? {} };
+  });
+
 export const discoverByGenre = createServerFn({ method: "GET" })
   .inputValidator((data: { genreId: number; type?: "movie" | "tv" }) => data)
   .handler(async ({ data }) => {

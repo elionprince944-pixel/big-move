@@ -33,9 +33,12 @@ export function Header() {
     if (q.trim()) navigate({ to: "/search", search: { q: q.trim() } });
   };
 
-  const navItems = [
+  const navItems: { to: string; label: string; search?: any }[] = [
     { to: "/", label: t("home") },
-    { to: "/browse", label: t("browse") },
+    { to: "/browse", label: "Movies", search: { cat: "popular" } },
+    { to: "/browse", label: "Top Rated", search: { cat: "top_rated" } },
+    { to: "/browse", label: "Upcoming", search: { cat: "upcoming" } },
+    { to: "/browse", label: "TV Shows", search: { cat: "tv_popular" } },
     { to: "/watchlist", label: t("watchlist") },
   ];
 
@@ -54,8 +57,9 @@ export function Header() {
         <nav className="hidden md:flex items-center gap-5 text-sm">
           {navItems.map((n) => (
             <Link
-              key={n.to}
+              key={`${n.to}-${n.label}`}
               to={n.to}
+              search={n.search as any}
               className={`transition-colors hover:text-foreground ${
                 path === n.to ? "text-foreground font-medium" : "text-muted-foreground"
               }`}

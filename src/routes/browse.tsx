@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { z } from "zod";
 import { getCategory } from "@/lib/tmdb.functions";
 import { MovieGrid } from "@/components/site/Movie";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -13,16 +13,22 @@ const CATS = [
   { id: "now_playing", label: "Now Playing" },
   { id: "tv_popular", label: "TV: Popular" },
   { id: "tv_top_rated", label: "TV: Top Rated" },
-];
+] as const;
+
+const CAT_IDS = CATS.map((c) => c.id) as unknown as [string, ...string[]];
 
 export const Route = createFileRoute("/browse")({
+  validateSearch: z.object({ cat: z.enum(CAT_IDS).optional() }),
   head: () => ({ meta: [{ title: "Browse — BIG MOV" }, { name: "description", content: "Browse popular, top-rated, and upcoming movies and shows." }] }),
   component: BrowsePage,
 });
 
 function BrowsePage() {
-  const [cat, setCat] = useState("popular");
+  const { cat: catParam } = Route.useSearch();
+  const navigate = Route.useNavigate();
+  const cat = catParam ?? "popular";
   const categoryFn = useServerFn(getCategory);
+  const setCat = (id: string) => navigate({ search: { cat: id === "popular" ? undefined : (id as any) } });
   const q = useQuery({
     queryKey: ["browse", cat],
     queryFn: () => categoryFn({ data: { category: cat } }),
