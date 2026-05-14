@@ -5,7 +5,7 @@ import { z } from "zod";
 import { Play, Plus, Check, Star, Calendar, Clock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { getMovieDetails } from "@/lib/tmdb.functions";
+import { getMovieDetails, getWatchProviders } from "@/lib/tmdb.functions";
 import { TMDB_IMG } from "@/lib/tmdb-image";
 import { MovieRow } from "@/components/site/Movie";
 import { TrailerPlayer, pickBestVideo } from "@/components/site/TrailerPlayer";
