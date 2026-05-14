@@ -33,9 +33,12 @@ export function Header() {
     if (q.trim()) navigate({ to: "/search", search: { q: q.trim() } });
   };
 
-  const navItems = [
+  const navItems: { to: string; label: string; search?: any }[] = [
     { to: "/", label: t("home") },
-    { to: "/browse", label: t("browse") },
+    { to: "/browse", label: "Movies", search: { cat: "popular" } },
+    { to: "/browse", label: "Top Rated", search: { cat: "top_rated" } },
+    { to: "/browse", label: "Upcoming", search: { cat: "upcoming" } },
+    { to: "/browse", label: "TV Shows", search: { cat: "tv_popular" } },
     { to: "/watchlist", label: t("watchlist") },
   ];
 
