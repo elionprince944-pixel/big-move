@@ -24,12 +24,17 @@ function MovieDetailsPage() {
   const { type } = Route.useSearch();
   const { user } = useAuth();
   const detailsFn = useServerFn(getMovieDetails);
+  const providersFn = useServerFn(getWatchProviders);
   const [trailerOpen, setTrailerOpen] = useState(false);
   const [inWatchlist, setInWatchlist] = useState(false);
 
   const q = useQuery({
     queryKey: ["details", type, id],
     queryFn: () => detailsFn({ data: { id: Number(id), type } }),
+  });
+  const wp = useQuery({
+    queryKey: ["providers", type, id],
+    queryFn: () => providersFn({ data: { id: Number(id), type } }),
   });
 
   useEffect(() => {
