@@ -57,8 +57,9 @@ export function Header() {
         <nav className="hidden md:flex items-center gap-5 text-sm">
           {navItems.map((n) => (
             <Link
-              key={n.to}
+              key={`${n.to}-${n.label}`}
               to={n.to}
+              search={n.search as any}
               className={`transition-colors hover:text-foreground ${
                 path === n.to ? "text-foreground font-medium" : "text-muted-foreground"
               }`}
