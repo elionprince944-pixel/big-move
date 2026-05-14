@@ -11,6 +11,19 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 
+const QUICK_GENRES: { id: number; name: string }[] = [
+  { id: 28, name: "Action" },
+  { id: 35, name: "Comedy" },
+  { id: 18, name: "Drama" },
+  { id: 27, name: "Horror" },
+  { id: 10749, name: "Romance" },
+  { id: 878, name: "Science Fiction" },
+  { id: 53, name: "Thriller" },
+  { id: 16, name: "Animation" },
+  { id: 12, name: "Adventure" },
+  { id: 14, name: "Fantasy" },
+];
+
 export function Header() {
   const { user, isAdmin, signOut } = useAuth();
   const { theme, toggleTheme, t } = usePreferences();
@@ -128,6 +141,22 @@ export function Header() {
             <Link to="/login">{t("signIn")}</Link>
           </Button>
         )}
+      </div>
+      <div className="border-t border-border/40 bg-background/70 backdrop-blur-md">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 h-10 flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar text-xs sm:text-sm">
+          <span className="text-muted-foreground shrink-0 mr-2 uppercase tracking-wider text-[10px]">Genres</span>
+          {QUICK_GENRES.map((g) => (
+            <Link
+              key={g.id}
+              to="/genre/$id"
+              params={{ id: String(g.id) }}
+              search={{ type: "movie" }}
+              className="shrink-0 px-3 py-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-surface transition-colors"
+            >
+              {g.name}
+            </Link>
+          ))}
+        </div>
       </div>
     </header>
   );
