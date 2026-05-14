@@ -149,3 +149,51 @@ function MovieDetailsPage() {
     </div>
   );
 }
+
+function WhereToWatch({ data, link }: { data: any; link?: string }) {
+  const p = data?.providers;
+  if (!p) return null;
+  const groups: { label: string; items: any[] }[] = [
+    { label: "Stream", items: p.flatrate ?? [] },
+    { label: "Rent", items: p.rent ?? [] },
+    { label: "Buy", items: p.buy ?? [] },
+    { label: "Free", items: p.free ?? [] },
+  ].filter((g) => g.items.length);
+  if (!groups.length) return null;
+  return (
+    <section className="mt-12">
+      <div className="flex items-baseline justify-between mb-4 gap-4 flex-wrap">
+        <h2 className="font-display text-2xl">Where to Watch <span className="text-muted-foreground text-sm font-sans">· {data.region}</span></h2>
+        {link && (
+          <a href={link} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline">
+            View all options →
+          </a>
+        )}
+      </div>
+      <div className="space-y-4">
+        {groups.map((g) => (
+          <div key={g.label}>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">{g.label}</p>
+            <div className="flex flex-wrap gap-3">
+              {g.items.map((prov: any) => (
+                <a
+                  key={prov.provider_id}
+                  href={link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={prov.provider_name}
+                  className="group flex items-center gap-2 bg-surface hover:bg-surface-elevated border border-border rounded-md px-3 py-2 transition-colors"
+                >
+                  {prov.logo_path && (
+                    <img src={TMDB_IMG(prov.logo_path, "w200")} alt={prov.provider_name} className="size-8 rounded" />
+                  )}
+                  <span className="text-sm font-medium pr-1">{prov.provider_name}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
