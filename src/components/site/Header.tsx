@@ -11,6 +11,19 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 
+const QUICK_GENRES: { id: number; name: string }[] = [
+  { id: 28, name: "Action" },
+  { id: 35, name: "Comedy" },
+  { id: 18, name: "Drama" },
+  { id: 27, name: "Horror" },
+  { id: 10749, name: "Romance" },
+  { id: 878, name: "Science Fiction" },
+  { id: 53, name: "Thriller" },
+  { id: 16, name: "Animation" },
+  { id: 12, name: "Adventure" },
+  { id: 14, name: "Fantasy" },
+];
+
 export function Header() {
   const { user, isAdmin, signOut } = useAuth();
   const { theme, toggleTheme, t } = usePreferences();
