@@ -27,6 +27,7 @@ function MovieDetailsPage() {
   const detailsFn = useServerFn(getMovieDetails);
   const providersFn = useServerFn(getWatchProviders);
   const [trailerOpen, setTrailerOpen] = useState(false);
+  const [streamOpen, setStreamOpen] = useState(false);
   const [inWatchlist, setInWatchlist] = useState(false);
 
   const q = useQuery({
