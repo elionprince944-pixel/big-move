@@ -151,6 +151,13 @@ function MovieDetailsPage() {
         onClose={() => setTrailerOpen(false)}
         title={title}
       />
+      <VidSrcPlayer
+        tmdbId={id}
+        type={type}
+        open={streamOpen}
+        onClose={() => setStreamOpen(false)}
+        title={title}
+      />
     </div>
   );
 }
