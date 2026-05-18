@@ -2,13 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { Play, Plus, Check, Star, Calendar, Clock } from "lucide-react";
+import { Play, Plus, Check, Star, Calendar, Clock, Film } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { getMovieDetails, getWatchProviders } from "@/lib/tmdb.functions";
 import { TMDB_IMG } from "@/lib/tmdb-image";
 import { MovieRow } from "@/components/site/Movie";
 import { TrailerPlayer, pickBestVideo } from "@/components/site/TrailerPlayer";
+import { VidSrcPlayer } from "@/components/site/VidSrcPlayer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
@@ -26,6 +27,7 @@ function MovieDetailsPage() {
   const detailsFn = useServerFn(getMovieDetails);
   const providersFn = useServerFn(getWatchProviders);
   const [trailerOpen, setTrailerOpen] = useState(false);
+  const [streamOpen, setStreamOpen] = useState(false);
   const [inWatchlist, setInWatchlist] = useState(false);
 
   const q = useQuery({
@@ -101,10 +103,13 @@ function MovieDetailsPage() {
               {m.genres?.length ? <span>{m.genres.map((g: any) => g.name).join(" · ")}</span> : null}
             </div>
             <p className="text-foreground/80 leading-relaxed mb-6 max-w-3xl">{m.overview}</p>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
+              <Button onClick={() => setStreamOpen(true)} className="bg-primary hover:bg-primary/90">
+                <Film className="size-4 mr-2" /> Watch Now
+              </Button>
               {trailer && (
-                <Button onClick={() => setTrailerOpen(true)} className="bg-primary hover:bg-primary/90">
-                  <Play className="size-4 fill-current mr-2" /> Watch Trailer
+                <Button onClick={() => setTrailerOpen(true)} variant="secondary">
+                  <Play className="size-4 fill-current mr-2" /> Trailer
                 </Button>
               )}
               <Button onClick={toggleWatchlist} variant="outline">
@@ -144,6 +149,13 @@ function MovieDetailsPage() {
         videos={videos}
         open={trailerOpen}
         onClose={() => setTrailerOpen(false)}
+        title={title}
+      />
+      <VidSrcPlayer
+        tmdbId={id}
+        type={type}
+        open={streamOpen}
+        onClose={() => setStreamOpen(false)}
         title={title}
       />
     </div>
