@@ -103,10 +103,13 @@ function MovieDetailsPage() {
               {m.genres?.length ? <span>{m.genres.map((g: any) => g.name).join(" · ")}</span> : null}
             </div>
             <p className="text-foreground/80 leading-relaxed mb-6 max-w-3xl">{m.overview}</p>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
+              <Button onClick={() => setStreamOpen(true)} className="bg-primary hover:bg-primary/90">
+                <Film className="size-4 mr-2" /> Watch Now
+              </Button>
               {trailer && (
-                <Button onClick={() => setTrailerOpen(true)} className="bg-primary hover:bg-primary/90">
-                  <Play className="size-4 fill-current mr-2" /> Watch Trailer
+                <Button onClick={() => setTrailerOpen(true)} variant="secondary">
+                  <Play className="size-4 fill-current mr-2" /> Trailer
                 </Button>
               )}
               <Button onClick={toggleWatchlist} variant="outline">
