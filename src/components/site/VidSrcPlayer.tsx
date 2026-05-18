@@ -1,5 +1,8 @@
 import { useEffect } from "react";
-import { X } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { getEmbedUrl } from "@/lib/tmdb.functions";
 
 export function VidSrcPlayer({
   tmdbId,
@@ -18,6 +21,14 @@ export function VidSrcPlayer({
   season?: number;
   episode?: number;
 }) {
+  const embedFn = useServerFn(getEmbedUrl);
+  const q = useQuery({
+    queryKey: ["embed", type, tmdbId, season, episode],
+    queryFn: () => embedFn({ data: { id: tmdbId, type, season, episode } }),
+    enabled: open,
+    staleTime: 5 * 60 * 1000,
+  });
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -31,11 +42,6 @@ export function VidSrcPlayer({
   }, [open, onClose]);
 
   if (!open) return null;
-
-  const src =
-    type === "movie"
-      ? `https://vidsrc.xyz/embed/movie?tmdb=${tmdbId}`
-      : `https://vidsrc.xyz/embed/tv?tmdb=${tmdbId}${season ? `&season=${season}` : ""}${episode ? `&episode=${episode}` : ""}`;
 
   return (
     <div
@@ -59,15 +65,21 @@ export function VidSrcPlayer({
         </button>
       </div>
 
-      <div className="w-full max-w-6xl aspect-video rounded-lg overflow-hidden shadow-2xl ring-1 ring-white/5 bg-black" onClick={(e) => e.stopPropagation()}>
-        <iframe
-          src={src}
-          title={title}
-          className="w-full h-full"
-          allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-          allowFullScreen
-          referrerPolicy="no-referrer"
-        />
+      <div className="w-full max-w-6xl aspect-video rounded-lg overflow-hidden shadow-2xl ring-1 ring-white/5 bg-black flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+        {q.isLoading ? (
+          <Loader2 className="size-8 text-primary animate-spin" />
+        ) : q.error || !q.data?.url ? (
+          <p className="text-sm text-muted-foreground p-4 text-center">Couldn't load stream source.</p>
+        ) : (
+          <iframe
+            src={q.data.url}
+            title={title}
+            className="w-full h-full"
+            allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+            allowFullScreen
+            referrerPolicy="no-referrer"
+          />
+        )}
       </div>
 
       <p className="mt-3 text-xs text-muted-foreground text-center max-w-2xl">

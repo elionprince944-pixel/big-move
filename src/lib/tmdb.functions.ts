@@ -63,6 +63,21 @@ export const getWatchProviders = createServerFn({ method: "GET" })
     return { region, providers: res.results?.[region] ?? null, all: res.results ?? {} };
   });
 
+export const getEmbedUrl = createServerFn({ method: "GET" })
+  .inputValidator((data: { id: number | string; type?: "movie" | "tv"; season?: number; episode?: number }) => data)
+  .handler(async ({ data }) => {
+    const type = data.type === "tv" ? "tv" : "movie";
+    const base = process.env.VIDSRC_BASE ?? "https://vidsrc.xyz/embed";
+    const token = process.env.VIDSRC_TOKEN;
+    const tmdbId = encodeURIComponent(String(data.id));
+    let url =
+      type === "movie"
+        ? `${base}/movie?tmdb=${tmdbId}`
+        : `${base}/tv?tmdb=${tmdbId}${data.season ? `&season=${data.season}` : ""}${data.episode ? `&episode=${data.episode}` : ""}`;
+    if (token) url += `&token=${encodeURIComponent(token)}`;
+    return { url, type, id: String(data.id) };
+  });
+
 export const discoverByGenre = createServerFn({ method: "GET" })
   .inputValidator((data: { genreId: number; type?: "movie" | "tv" }) => data)
   .handler(async ({ data }) => {
