@@ -42,12 +42,14 @@ export function Header() {
     if (q.trim()) navigate({ to: "/search", search: { q: q.trim() } });
   };
 
-  const navItems: { to: string; label: string; search?: any }[] = [
+  const navItems: { to: string; label: string; params?: any; search?: any }[] = [
     { to: "/", label: t("home") },
-    { to: "/browse", label: "Movies", search: { cat: "popular" } },
-    { to: "/browse", label: "Top Rated", search: { cat: "top_rated" } },
-    { to: "/browse", label: "Upcoming", search: { cat: "upcoming" } },
-    { to: "/browse", label: "TV Shows", search: { cat: "tv_popular" } },
+    ...QUICK_GENRES.map((g) => ({
+      to: "/genre/$id",
+      label: g.name,
+      params: { id: String(g.id) },
+      search: { type: "movie" as const },
+    })),
     { to: "/watchlist", label: t("watchlist") },
   ];
 
