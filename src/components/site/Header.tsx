@@ -70,6 +70,7 @@ export function Header() {
             <Link
               key={`${n.to}-${n.label}`}
               to={n.to}
+              params={n.params as any}
               search={n.search as any}
               className={`transition-colors hover:text-foreground ${
                 path === n.to ? "text-foreground font-medium" : "text-muted-foreground"
