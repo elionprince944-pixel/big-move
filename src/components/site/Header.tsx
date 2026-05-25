@@ -17,7 +17,7 @@ const QUICK_GENRES: { id: number; name: string }[] = [
   { id: 18, name: "Drama" },
   { id: 27, name: "Horror" },
   { id: 10749, name: "Romance" },
-  { id: 878, name: "Sci-Fi / Fantasy" },
+  { id: 878, name: "Sci-Fi" },
 ];
 
 export function Header() {
