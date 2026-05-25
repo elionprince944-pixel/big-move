@@ -79,12 +79,28 @@ export const getEmbedUrl = createServerFn({ method: "GET" })
   });
 
 export const discoverByGenre = createServerFn({ method: "GET" })
-  .inputValidator((data: { genreId: number; type?: "movie" | "tv" }) => data)
+  .inputValidator((data: {
+    genreId: number;
+    type?: "movie" | "tv";
+    sortBy?: string;
+    year?: number;
+    minRating?: number;
+    page?: number;
+  }) => data)
   .handler(async ({ data }) => {
     const type = data.type === "tv" ? "tv" : "movie";
-    return tmdb<{ results: any[] }>(`/discover/${type}`, {
+    const params: Record<string, string> = {
       with_genres: String(data.genreId),
-      sort_by: "popularity.desc",
-    });
+      sort_by: data.sortBy || "popularity.desc",
+      page: String(data.page ?? 1),
+    };
+    if (data.year) {
+      params[type === "movie" ? "primary_release_year" : "first_air_date_year"] = String(data.year);
+    }
+    if (typeof data.minRating === "number" && data.minRating > 0) {
+      params["vote_average.gte"] = String(data.minRating);
+      params["vote_count.gte"] = "50";
+    }
+    return tmdb<{ results: any[]; total_pages: number; page: number }>(`/discover/${type}`, params);
   });
 
