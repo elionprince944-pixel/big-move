@@ -1,5 +1,5 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Search, User, LogOut, Shield, Settings as SettingsIcon, Bookmark, Sun, Moon, ChevronDown } from "lucide-react";
+import { Search, User, LogOut, Shield, Settings as SettingsIcon, Bookmark, Sun, Moon, Menu, Home, Film, Tv } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -8,8 +8,10 @@ import { usePreferences } from "@/lib/preferences";
 import { getGenres } from "@/lib/tmdb.functions";
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel,
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetClose } from "@/components/ui/sheet";
+import { Separator } from "@/components/ui/separator";
 
 const QUICK_GENRES: { id: number; name: string }[] = [
   { id: 28, name: "Action" },
@@ -27,6 +29,7 @@ export function Header() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const [scrolled, setScrolled] = useState(false);
   const [q, setQ] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
   const genresFn = useServerFn(getGenres);
   const genres = useQuery({ queryKey: ["genres"], queryFn: () => genresFn() });
 
@@ -42,16 +45,7 @@ export function Header() {
     if (q.trim()) navigate({ to: "/search", search: { q: q.trim() } });
   };
 
-  const navItems: { to: string; label: string; params?: any; search?: any }[] = [
-    { to: "/", label: t("home") },
-    ...QUICK_GENRES.map((g) => ({
-      to: "/genre/$id",
-      label: g.name,
-      params: { id: String(g.id) },
-      search: { type: "movie" as const },
-    })),
-    { to: "/watchlist", label: t("watchlist") },
-  ];
+  const closeMenu = () => setMenuOpen(false);
 
   return (
     <header
@@ -59,48 +53,108 @@ export function Header() {
         scrolled ? "bg-background/85 backdrop-blur-md border-b border-border" : "bg-gradient-to-b from-background/90 to-transparent"
       }`}
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center gap-3 sm:gap-6">
-        <Link to="/" className="flex items-center gap-1 shrink-0">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center gap-3 sm:gap-4">
+        <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon" aria-label="Open menu">
+              <Menu className="size-5" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-80 sm:w-96 p-0 flex flex-col bg-background">
+            <SheetHeader className="px-6 py-5 border-b border-border">
+              <SheetTitle className="flex items-center gap-1">
+                <span className="font-display text-2xl tracking-tight text-primary leading-none">BIG</span>
+                <span className="font-display text-2xl tracking-tight text-foreground leading-none">MOV</span>
+              </SheetTitle>
+            </SheetHeader>
+
+            <div className="flex-1 overflow-y-auto px-3 py-4">
+              <nav className="flex flex-col gap-0.5">
+                <SheetClose asChild>
+                  <Link
+                    to="/"
+                    className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors hover:bg-surface ${
+                      path === "/" ? "text-foreground bg-surface font-medium" : "text-muted-foreground"
+                    }`}
+                  >
+                    <Home className="size-4" /> {t("home")}
+                  </Link>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Link
+                    to="/watchlist"
+                    className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors hover:bg-surface ${
+                      path === "/watchlist" ? "text-foreground bg-surface font-medium" : "text-muted-foreground"
+                    }`}
+                  >
+                    <Bookmark className="size-4" /> {t("watchlist")}
+                  </Link>
+                </SheetClose>
+              </nav>
+
+              <Separator className="my-4" />
+
+              <div className="px-3 mb-2 text-[10px] uppercase tracking-wider text-muted-foreground">Quick Genres</div>
+              <div className="flex flex-wrap gap-2 px-3 mb-4">
+                {QUICK_GENRES.map((g) => (
+                  <SheetClose asChild key={g.id}>
+                    <Link
+                      to="/genre/$id"
+                      params={{ id: String(g.id) }}
+                      search={{ type: "movie" }}
+                      className="text-xs px-3 py-1 rounded-full border border-border text-muted-foreground hover:text-foreground hover:bg-surface transition-colors"
+                    >
+                      {g.name}
+                    </Link>
+                  </SheetClose>
+                ))}
+              </div>
+
+              <Separator className="my-4" />
+
+              <div className="px-3 mb-2 flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground">
+                <Film className="size-3" /> Movies
+              </div>
+              <div className="flex flex-col gap-0.5 mb-4">
+                {(genres.data?.movie ?? []).map((g: any) => (
+                  <SheetClose asChild key={`m-${g.id}`}>
+                    <Link
+                      to="/genre/$id"
+                      params={{ id: String(g.id) }}
+                      search={{ type: "movie" }}
+                      className="px-3 py-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-surface transition-colors"
+                    >
+                      {g.name}
+                    </Link>
+                  </SheetClose>
+                ))}
+              </div>
+
+              <div className="px-3 mb-2 flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground">
+                <Tv className="size-3" /> TV
+              </div>
+              <div className="flex flex-col gap-0.5">
+                {(genres.data?.tv ?? []).map((g: any) => (
+                  <SheetClose asChild key={`t-${g.id}`}>
+                    <Link
+                      to="/genre/$id"
+                      params={{ id: String(g.id) }}
+                      search={{ type: "tv" }}
+                      className="px-3 py-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-surface transition-colors"
+                    >
+                      {g.name}
+                    </Link>
+                  </SheetClose>
+                ))}
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
+
+        <Link to="/" className="flex items-center gap-1 shrink-0" onClick={closeMenu}>
           <span className="font-display text-2xl sm:text-3xl tracking-tight text-primary leading-none">BIG</span>
           <span className="font-display text-2xl sm:text-3xl tracking-tight text-foreground leading-none">MOV</span>
         </Link>
-
-        <nav className="hidden md:flex items-center gap-5 text-sm">
-          {navItems.map((n) => (
-            <Link
-              key={`${n.to}-${n.label}`}
-              to={n.to}
-              params={n.params as any}
-              search={n.search as any}
-              className={`transition-colors hover:text-foreground ${
-                path === n.to ? "text-foreground font-medium" : "text-muted-foreground"
-              }`}
-            >
-              {n.label}
-            </Link>
-          ))}
-
-          <DropdownMenu>
-            <DropdownMenuTrigger className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors">
-              {t("genres")} <ChevronDown className="size-3.5" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-64 max-h-96 overflow-y-auto bg-surface-elevated">
-              <DropdownMenuLabel className="text-xs uppercase tracking-wider text-muted-foreground">Movies</DropdownMenuLabel>
-              {(genres.data?.movie ?? []).map((g: any) => (
-                <DropdownMenuItem key={`m-${g.id}`} asChild>
-                  <Link to="/genre/$id" params={{ id: String(g.id) }} search={{ type: "movie" }}>{g.name}</Link>
-                </DropdownMenuItem>
-              ))}
-              <DropdownMenuSeparator />
-              <DropdownMenuLabel className="text-xs uppercase tracking-wider text-muted-foreground">TV</DropdownMenuLabel>
-              {(genres.data?.tv ?? []).map((g: any) => (
-                <DropdownMenuItem key={`t-${g.id}`} asChild>
-                  <Link to="/genre/$id" params={{ id: String(g.id) }} search={{ type: "tv" }}>{g.name}</Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </nav>
 
         <form onSubmit={onSearch} className="ml-auto flex items-center">
           <div className="relative">
@@ -140,22 +194,6 @@ export function Header() {
             <Link to="/login">{t("signIn")}</Link>
           </Button>
         )}
-      </div>
-      <div className="border-t border-border/40 bg-background/70 backdrop-blur-md">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 h-10 flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar text-xs sm:text-sm">
-          <span className="text-muted-foreground shrink-0 mr-2 uppercase tracking-wider text-[10px]">Genres</span>
-          {QUICK_GENRES.map((g) => (
-            <Link
-              key={g.id}
-              to="/genre/$id"
-              params={{ id: String(g.id) }}
-              search={{ type: "movie" }}
-              className="shrink-0 px-3 py-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-surface transition-colors"
-            >
-              {g.name}
-            </Link>
-          ))}
-        </div>
       </div>
     </header>
   );
