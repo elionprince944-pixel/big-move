@@ -5,8 +5,24 @@ type Source = { id: string; label: string; build: (type: "movie" | "tv", id: str
 
 const SOURCES: Source[] = [
   {
+    id: "multiembed",
+    label: "Server 1 (multiembed)",
+    build: (type, id, s, e) =>
+      type === "movie"
+        ? `https://multiembed.mov/?video_id=${id}&tmdb=1`
+        : `https://multiembed.mov/?video_id=${id}&tmdb=1${s ? `&s=${s}` : ""}${e ? `&e=${e}` : ""}`,
+  },
+  {
+    id: "2embed",
+    label: "Server 2 (2embed)",
+    build: (type, id, s, e) =>
+      type === "movie"
+        ? `https://www.2embed.cc/embed/${id}`
+        : `https://www.2embed.cc/embedtv/${id}${s && e ? `&s=${s}&e=${e}` : ""}`,
+  },
+  {
     id: "vidsrc.to",
-    label: "Server 1 (vidsrc.to)",
+    label: "Server 3 (vidsrc.to)",
     build: (type, id, s, e) =>
       type === "movie"
         ? `https://vidsrc.to/embed/movie/${id}`
@@ -14,7 +30,7 @@ const SOURCES: Source[] = [
   },
   {
     id: "vidsrc.xyz",
-    label: "Server 2 (vidsrc.xyz)",
+    label: "Server 4 (vidsrc.xyz)",
     build: (type, id, s, e) =>
       type === "movie"
         ? `https://vidsrc.xyz/embed/movie?tmdb=${id}`
@@ -22,27 +38,11 @@ const SOURCES: Source[] = [
   },
   {
     id: "vidsrc.cc",
-    label: "Server 3 (vidsrc.cc)",
+    label: "Server 5 (vidsrc.cc)",
     build: (type, id, s, e) =>
       type === "movie"
         ? `https://vidsrc.cc/v2/embed/movie/${id}`
         : `https://vidsrc.cc/v2/embed/tv/${id}${s ? `/${s}` : ""}${e ? `/${e}` : ""}`,
-  },
-  {
-    id: "2embed",
-    label: "Server 4 (2embed)",
-    build: (type, id, s, e) =>
-      type === "movie"
-        ? `https://www.2embed.cc/embed/${id}`
-        : `https://www.2embed.cc/embedtv/${id}${s && e ? `&s=${s}&e=${e}` : ""}`,
-  },
-  {
-    id: "multiembed",
-    label: "Server 5 (multiembed)",
-    build: (type, id, s, e) =>
-      type === "movie"
-        ? `https://multiembed.mov/?video_id=${id}&tmdb=1`
-        : `https://multiembed.mov/?video_id=${id}&tmdb=1${s ? `&s=${s}` : ""}${e ? `&e=${e}` : ""}`,
   },
 ];
 
@@ -158,7 +158,6 @@ export function VidSrcPlayer({
           title={title}
           className="w-full h-full"
           allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-          allowFullScreen
           referrerPolicy="no-referrer"
         />
       </div>
