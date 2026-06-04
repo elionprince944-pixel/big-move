@@ -5,8 +5,16 @@ type Source = { id: string; label: string; build: (type: "movie" | "tv", id: str
 
 const SOURCES: Source[] = [
   {
+    id: "vidsrc.to",
+    label: "Server 1 (VidSrc direct)",
+    build: (type, id, s, e) =>
+      type === "movie"
+        ? `https://vidsrc.to/embed/movie/${id}`
+        : `https://vidsrc.to/embed/tv/${id}${s ? `/${s}` : ""}${e ? `/${e}` : ""}`,
+  },
+  {
     id: "multiembed",
-    label: "Server 1 (multiembed)",
+    label: "Server 2 (multiembed)",
     build: (type, id, s, e) =>
       type === "movie"
         ? `https://multiembed.mov/?video_id=${id}&tmdb=1`
@@ -14,19 +22,11 @@ const SOURCES: Source[] = [
   },
   {
     id: "2embed",
-    label: "Server 2 (2embed)",
+    label: "Server 3 (2embed)",
     build: (type, id, s, e) =>
       type === "movie"
         ? `https://www.2embed.cc/embed/${id}`
         : `https://www.2embed.cc/embedtv/${id}${s && e ? `&s=${s}&e=${e}` : ""}`,
-  },
-  {
-    id: "vidsrc.to",
-    label: "Server 3 (vidsrc.to)",
-    build: (type, id, s, e) =>
-      type === "movie"
-        ? `https://vidsrc.to/embed/movie/${id}`
-        : `https://vidsrc.to/embed/tv/${id}${s ? `/${s}` : ""}${e ? `/${e}` : ""}`,
   },
   {
     id: "vidsrc.xyz",
