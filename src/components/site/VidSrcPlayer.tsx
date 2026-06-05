@@ -5,20 +5,20 @@ type Source = { id: string; label: string; build: (type: "movie" | "tv", id: str
 
 const SOURCES: Source[] = [
   {
+    id: "multiembed",
+    label: "Server 1 (Auto player)",
+    build: (type, id, s, e) =>
+      type === "movie"
+        ? `https://multiembed.mov/?video_id=${id}&tmdb=1`
+        : `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s ?? 1}&e=${e ?? 1}`,
+  },
+  {
     id: "vidsrc.to",
-    label: "Server 1 (VidSrc direct)",
+    label: "Server 2 (VidSrc direct)",
     build: (type, id, s, e) =>
       type === "movie"
         ? `https://vidsrc.to/embed/movie/${id}`
         : `https://vidsrc.to/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
-  },
-  {
-    id: "multiembed",
-    label: "Server 2 (multiembed)",
-    build: (type, id, s, e) =>
-      type === "movie"
-        ? `https://multiembed.mov/?video_id=${id}&tmdb=1`
-        : `https://multiembed.mov/?video_id=${id}&tmdb=1${s ? `&s=${s}` : ""}${e ? `&e=${e}` : ""}`,
   },
   {
     id: "2embed",
@@ -179,7 +179,7 @@ export function VidSrcPlayer({
           title={title}
           className="w-full h-full"
           allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-          referrerPolicy="no-referrer"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-presentation allow-popups"
         />
       </div>
 
