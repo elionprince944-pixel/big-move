@@ -179,6 +179,7 @@ export function VidSrcPlayer({
           title={title}
           className="w-full h-full"
           allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-presentation allow-popups"
         />
       </div>
 
