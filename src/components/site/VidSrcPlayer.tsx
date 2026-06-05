@@ -10,7 +10,7 @@ const SOURCES: Source[] = [
     build: (type, id, s, e) =>
       type === "movie"
         ? `https://vidsrc.to/embed/movie/${id}`
-        : `https://vidsrc.to/embed/tv/${id}${s ? `/${s}` : ""}${e ? `/${e}` : ""}`,
+        : `https://vidsrc.to/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
   },
   {
     id: "multiembed",
@@ -66,13 +66,17 @@ export function VidSrcPlayer({
   const [sourceIdx, setSourceIdx] = useState(0);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [iframeKey, setIframeKey] = useState(0);
+  const [selectedSeason, setSelectedSeason] = useState(season ?? 1);
+  const [selectedEpisode, setSelectedEpisode] = useState(episode ?? 1);
 
   useEffect(() => {
     if (open) {
       setSourceIdx(0);
+      setSelectedSeason(season ?? 1);
+      setSelectedEpisode(episode ?? 1);
       setIframeKey((k) => k + 1);
     }
-  }, [open, tmdbId, type]);
+  }, [open, tmdbId, type, season, episode]);
 
   useEffect(() => {
     if (!open) return;
@@ -87,9 +91,15 @@ export function VidSrcPlayer({
   }, [open, onClose]);
 
   const src = useMemo(
-    () => SOURCES[sourceIdx].build(type, String(tmdbId), season, episode),
-    [sourceIdx, type, tmdbId, season, episode],
+    () => SOURCES[sourceIdx].build(type, String(tmdbId), selectedSeason, selectedEpisode),
+    [sourceIdx, type, tmdbId, selectedSeason, selectedEpisode],
   );
+
+  const changeTvPart = (field: "season" | "episode", delta: number) => {
+    if (field === "season") setSelectedSeason((value) => Math.max(1, value + delta));
+    if (field === "episode") setSelectedEpisode((value) => Math.max(1, value + delta));
+    setIframeKey((k) => k + 1);
+  };
 
   if (!open) return null;
 
@@ -107,6 +117,17 @@ export function VidSrcPlayer({
           <h3 className="font-display text-lg sm:text-xl truncate">{title}</h3>
         </div>
         <div className="flex items-center gap-2 shrink-0">
+          {type === "tv" && (
+            <div className="hidden sm:flex items-center gap-1 rounded-md bg-surface-elevated/80 px-2 py-1 text-sm">
+              <button onClick={() => changeTvPart("season", -1)} className="size-7 rounded hover:bg-accent" aria-label="Previous season">−</button>
+              <span className="min-w-10 text-center">S{selectedSeason}</span>
+              <button onClick={() => changeTvPart("season", 1)} className="size-7 rounded hover:bg-accent" aria-label="Next season">+</button>
+              <span className="mx-1 text-muted-foreground">/</span>
+              <button onClick={() => changeTvPart("episode", -1)} className="size-7 rounded hover:bg-accent" aria-label="Previous episode">−</button>
+              <span className="min-w-10 text-center">E{selectedEpisode}</span>
+              <button onClick={() => changeTvPart("episode", 1)} className="size-7 rounded hover:bg-accent" aria-label="Next episode">+</button>
+            </div>
+          )}
           <div className="relative">
             <button
               onClick={() => setPickerOpen((o) => !o)}
