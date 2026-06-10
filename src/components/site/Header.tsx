@@ -1,11 +1,12 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Search, User, LogOut, Shield, Settings as SettingsIcon, Bookmark, Sun, Moon, Menu, Home, Film, Tv } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Search, User, LogOut, Shield, Settings as SettingsIcon, Bookmark, Sun, Moon, Menu, Home, Film, Tv, Star } from "lucide-react";
+import { useDeferredValue, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/lib/auth-context";
 import { usePreferences } from "@/lib/preferences";
-import { getGenres } from "@/lib/tmdb.functions";
+import { getGenres, searchTmdb } from "@/lib/tmdb.functions";
+import { TMDB_IMG } from "@/lib/tmdb-image";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator,
@@ -29,9 +30,21 @@ export function Header() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const [scrolled, setScrolled] = useState(false);
   const [q, setQ] = useState("");
+  const [searchFocused, setSearchFocused] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const deferredQ = useDeferredValue(q.trim());
   const genresFn = useServerFn(getGenres);
+  const searchFn = useServerFn(searchTmdb);
   const genres = useQuery({ queryKey: ["genres"], queryFn: () => genresFn() });
+  const liveSearch = useQuery({
+    queryKey: ["live-search", deferredQ],
+    queryFn: () => searchFn({ data: { query: deferredQ } }),
+    enabled: deferredQ.length >= 2,
+  });
+
+  const liveItems = (liveSearch.data?.results ?? [])
+    .filter((item: any) => item.media_type === "movie" || item.media_type === "tv")
+    .slice(0, 6);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -42,7 +55,10 @@ export function Header() {
 
   const onSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (q.trim()) navigate({ to: "/search", search: { q: q.trim() } });
+    if (q.trim()) {
+      setSearchFocused(false);
+      navigate({ to: "/search", search: { q: q.trim() } });
+    }
   };
 
   const closeMenu = () => setMenuOpen(false);
@@ -162,9 +178,58 @@ export function Header() {
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => window.setTimeout(() => setSearchFocused(false), 120)}
               placeholder={t("search")}
               className="h-9 w-32 sm:w-56 rounded-md bg-surface/80 border border-border pl-8 pr-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
             />
+            {searchFocused && q.trim().length >= 2 && (
+              <div className="absolute right-0 mt-2 w-[min(86vw,22rem)] rounded-md border border-border bg-popover text-popover-foreground shadow-2xl overflow-hidden">
+                {liveSearch.isFetching && !liveItems.length ? (
+                  <div className="px-3 py-3 text-sm text-muted-foreground">Searching…</div>
+                ) : liveItems.length ? (
+                  <div className="py-1">
+                    {liveItems.map((item: any) => {
+                      const itemTitle = item.title ?? item.name ?? "Untitled";
+                      const itemType = item.media_type === "tv" ? "tv" : "movie";
+                      const year = (item.release_date ?? item.first_air_date ?? "").slice(0, 4);
+                      return (
+                        <Link
+                          key={`${itemType}-${item.id}`}
+                          to="/movie/$id"
+                          params={{ id: String(item.id) }}
+                          search={{ type: itemType }}
+                          onClick={() => setSearchFocused(false)}
+                          className="flex items-center gap-3 px-3 py-2 hover:bg-accent transition-colors"
+                        >
+                          <div className="size-10 shrink-0 overflow-hidden rounded bg-surface">
+                            {item.poster_path ? (
+                              <img src={TMDB_IMG(item.poster_path, "w200")} alt={itemTitle} className="h-full w-full object-cover" />
+                            ) : null}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-sm font-medium">{itemTitle}</p>
+                            <p className="flex items-center gap-2 text-xs text-muted-foreground">
+                              <span>{itemType === "tv" ? "TV" : "Movie"}</span>
+                              {year && <span>{year}</span>}
+                              {item.vote_average ? <span className="inline-flex items-center gap-0.5"><Star className="size-3 fill-primary text-primary" />{item.vote_average.toFixed(1)}</span> : null}
+                            </p>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                    <button
+                      type="submit"
+                      className="w-full border-t border-border px-3 py-2 text-left text-sm text-primary hover:bg-accent"
+                    >
+                      View all results for “{q.trim()}”
+                    </button>
+                  </div>
+                ) : (
+                  <div className="px-3 py-3 text-sm text-muted-foreground">No results found.</div>
+                )}
+              </div>
+            )}
           </div>
         </form>
 
