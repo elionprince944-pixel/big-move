@@ -25,13 +25,19 @@ function SearchPage() {
   return (
     <div className="mx-auto max-w-7xl py-8">
       <h1 className="font-display text-3xl px-4 sm:px-6 mb-2">Search</h1>
-      <p className="text-muted-foreground px-4 sm:px-6 mb-6">{q ? `Results for “${q}”` : "Type in the search bar to find movies and shows."}</p>
+      <p className="text-muted-foreground px-4 sm:px-6 mb-6">
+        {q ? `Results for "${q}" — ${items.length} found` : "Type in the search bar to find movies and shows."}
+      </p>
       {query.isLoading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 px-4 sm:px-6">
           {Array.from({ length: 10 }).map((_, i) => <Skeleton key={i} className="aspect-[2/3]" />)}
         </div>
-      ) : (
+      ) : items.length > 0 ? (
         <MovieGrid items={items} />
+      ) : (
+        <div className="px-4 sm:px-6 py-12 text-center text-muted-foreground">
+          {q ? "No results found. Try searching for something else." : ""}
+        </div>
       )}
     </div>
   );
