@@ -5,16 +5,32 @@ type Source = { id: string; label: string; build: (type: "movie" | "tv", id: str
 
 const SOURCES: Source[] = [
   {
-    id: "multiembed",
-    label: "Server 1 (Auto player)",
+    id: "vidlink",
+    label: "Server 1 (VidLink player)",
     build: (type, id, s, e) =>
       type === "movie"
-        ? `https://multiembed.mov/?video_id=${id}&tmdb=1`
-        : `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s ?? 1}&e=${e ?? 1}`,
+        ? `https://vidlink.pro/movie/${id}`
+        : `https://vidlink.pro/tv/${id}/${s ?? 1}/${e ?? 1}`,
+  },
+  {
+    id: "vidsrc.cc",
+    label: "Server 2 (VidSrc player)",
+    build: (type, id, s, e) =>
+      type === "movie"
+        ? `https://vidsrc.cc/v3/embed/movie/${id}?autoPlay=false`
+        : `https://vidsrc.cc/v3/embed/tv/${id}/${s ?? 1}/${e ?? 1}?autoPlay=false`,
+  },
+  {
+    id: "vidsrc-embed",
+    label: "Server 3 (VidSrc backup)",
+    build: (type, id, s, e) =>
+      type === "movie"
+        ? `https://vidsrc-embed.ru/embed/movie?tmdb=${id}&autoplay=1`
+        : `https://vidsrc-embed.ru/embed/tv?tmdb=${id}&season=${s ?? 1}&episode=${e ?? 1}&autoplay=1`,
   },
   {
     id: "vidsrc.to",
-    label: "Server 2 (VidSrc direct)",
+    label: "Server 4 (VidSrc direct)",
     build: (type, id, s, e) =>
       type === "movie"
         ? `https://vidsrc.to/embed/movie/${id}`
@@ -22,27 +38,11 @@ const SOURCES: Source[] = [
   },
   {
     id: "2embed",
-    label: "Server 3 (2embed)",
+    label: "Server 5 (2embed)",
     build: (type, id, s, e) =>
       type === "movie"
         ? `https://www.2embed.cc/embed/${id}`
-        : `https://www.2embed.cc/embedtv/${id}${s && e ? `&s=${s}&e=${e}` : ""}`,
-  },
-  {
-    id: "vidsrc.xyz",
-    label: "Server 4 (vidsrc.xyz)",
-    build: (type, id, s, e) =>
-      type === "movie"
-        ? `https://vidsrc.xyz/embed/movie?tmdb=${id}`
-        : `https://vidsrc.xyz/embed/tv?tmdb=${id}${s ? `&season=${s}` : ""}${e ? `&episode=${e}` : ""}`,
-  },
-  {
-    id: "vidsrc.cc",
-    label: "Server 5 (vidsrc.cc)",
-    build: (type, id, s, e) =>
-      type === "movie"
-        ? `https://vidsrc.cc/v2/embed/movie/${id}`
-        : `https://vidsrc.cc/v2/embed/tv/${id}${s ? `/${s}` : ""}${e ? `/${e}` : ""}`,
+        : `https://www.2embed.cc/embedtv/${id}&s=${s ?? 1}&e=${e ?? 1}`,
   },
 ];
 
@@ -69,6 +69,7 @@ export function VidSrcPlayer({
   const [selectedSeason, setSelectedSeason] = useState(season ?? 1);
   const [selectedEpisode, setSelectedEpisode] = useState(episode ?? 1);
   const [playbackPaused, setPlaybackPaused] = useState(false);
+  const [frameLoaded, setFrameLoaded] = useState(false);
   const frameWrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -77,9 +78,19 @@ export function VidSrcPlayer({
       setSelectedSeason(season ?? 1);
       setSelectedEpisode(episode ?? 1);
       setPlaybackPaused(false);
+      setFrameLoaded(false);
       setIframeKey((k) => k + 1);
     }
   }, [open, tmdbId, type, season, episode]);
+
+  useEffect(() => {
+    if (!open || playbackPaused) return;
+    setFrameLoaded(false);
+    const timeout = window.setTimeout(() => {
+      setSourceIdx((idx) => (frameLoaded ? idx : Math.min(idx + 1, SOURCES.length - 1)));
+    }, 7000);
+    return () => window.clearTimeout(timeout);
+  }, [open, playbackPaused, src, iframeKey, frameLoaded]);
 
   useEffect(() => {
     if (!open) return;
@@ -112,6 +123,14 @@ export function VidSrcPlayer({
 
   const reloadPlayback = () => {
     setPlaybackPaused(false);
+    setFrameLoaded(false);
+    setIframeKey((k) => k + 1);
+  };
+
+  const tryNextSource = () => {
+    setPlaybackPaused(false);
+    setFrameLoaded(false);
+    setSourceIdx((idx) => (idx + 1) % SOURCES.length);
     setIframeKey((k) => k + 1);
   };
 
@@ -160,6 +179,7 @@ export function VidSrcPlayer({
                       setSourceIdx(i);
                       setPickerOpen(false);
                   setPlaybackPaused(false);
+                      setFrameLoaded(false);
                       setIframeKey((k) => k + 1);
                     }}
                     className={`w-full text-left px-3 py-2 text-sm hover:bg-accent ${i === sourceIdx ? "bg-accent/50" : ""}`}
@@ -238,7 +258,8 @@ export function VidSrcPlayer({
             title={title}
             className="w-full h-full"
             allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-            allowFullScreen
+            onLoad={() => setFrameLoaded(true)}
+            onError={tryNextSource}
           />
         )}
       </div>
