@@ -84,15 +84,6 @@ export function VidSrcPlayer({
   }, [open, tmdbId, type, season, episode]);
 
   useEffect(() => {
-    if (!open || playbackPaused) return;
-    setFrameLoaded(false);
-    const timeout = window.setTimeout(() => {
-      setSourceIdx((idx) => (frameLoaded ? idx : Math.min(idx + 1, SOURCES.length - 1)));
-    }, 7000);
-    return () => window.clearTimeout(timeout);
-  }, [open, playbackPaused, src, iframeKey, frameLoaded]);
-
-  useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     document.addEventListener("keydown", onKey);
@@ -108,6 +99,15 @@ export function VidSrcPlayer({
     () => SOURCES[sourceIdx].build(type, String(tmdbId), selectedSeason, selectedEpisode),
     [sourceIdx, type, tmdbId, selectedSeason, selectedEpisode],
   );
+
+  useEffect(() => {
+    if (!open || playbackPaused) return;
+    setFrameLoaded(false);
+    const timeout = window.setTimeout(() => {
+      setSourceIdx((idx) => (frameLoaded ? idx : Math.min(idx + 1, SOURCES.length - 1)));
+    }, 7000);
+    return () => window.clearTimeout(timeout);
+  }, [open, playbackPaused, src, iframeKey, frameLoaded]);
 
   const changeTvPart = (field: "season" | "episode", delta: number) => {
     if (field === "season") setSelectedSeason((value) => Math.max(1, value + delta));
