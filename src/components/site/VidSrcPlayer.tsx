@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { X, ChevronDown, ExternalLink, Pause, Play, RotateCw, Maximize2, Volume2 } from "lucide-react";
+import { X, ChevronDown, ExternalLink, Settings, MoreVertical } from "lucide-react";
 
 type Source = { id: string; label: string; build: (type: "movie" | "tv", id: string, s?: number, e?: number) => string };
 
 const SOURCES: Source[] = [
   {
     id: "vidlink",
-    label: "Server 1 (VidLink player)",
+    label: "Server 1 (VidLink)",
     build: (type, id, s, e) =>
       type === "movie"
         ? `https://vidlink.pro/movie/${id}`
@@ -14,7 +14,7 @@ const SOURCES: Source[] = [
   },
   {
     id: "vidsrc.cc",
-    label: "Server 2 (VidSrc player)",
+    label: "Server 2 (VidSrc)",
     build: (type, id, s, e) =>
       type === "movie"
         ? `https://vidsrc.cc/v3/embed/movie/${id}?autoPlay=false`
@@ -22,7 +22,7 @@ const SOURCES: Source[] = [
   },
   {
     id: "vidsrc-embed",
-    label: "Server 3 (VidSrc backup)",
+    label: "Server 3 (VidSrc Backup)",
     build: (type, id, s, e) =>
       type === "movie"
         ? `https://vidsrc-embed.ru/embed/movie?tmdb=${id}&autoplay=1`
@@ -30,7 +30,7 @@ const SOURCES: Source[] = [
   },
   {
     id: "vidsrc.to",
-    label: "Server 4 (VidSrc direct)",
+    label: "Server 4 (VidSrc Direct)",
     build: (type, id, s, e) =>
       type === "movie"
         ? `https://vidsrc.to/embed/movie/${id}`
@@ -38,7 +38,7 @@ const SOURCES: Source[] = [
   },
   {
     id: "2embed",
-    label: "Server 5 (2embed)",
+    label: "Server 5 (2Embed)",
     build: (type, id, s, e) =>
       type === "movie"
         ? `https://www.2embed.cc/embed/${id}`
@@ -68,16 +68,15 @@ export function VidSrcPlayer({
   const [iframeKey, setIframeKey] = useState(0);
   const [selectedSeason, setSelectedSeason] = useState(season ?? 1);
   const [selectedEpisode, setSelectedEpisode] = useState(episode ?? 1);
-  const [playbackPaused, setPlaybackPaused] = useState(false);
   const [frameLoaded, setFrameLoaded] = useState(false);
   const frameWrapRef = useRef<HTMLDivElement>(null);
+  const retryTimeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
     if (open) {
       setSourceIdx(0);
       setSelectedSeason(season ?? 1);
       setSelectedEpisode(episode ?? 1);
-      setPlaybackPaused(false);
       setFrameLoaded(false);
       setIframeKey((k) => k + 1);
     }
@@ -100,35 +99,29 @@ export function VidSrcPlayer({
     [sourceIdx, type, tmdbId, selectedSeason, selectedEpisode],
   );
 
+  // Auto-retry failed sources
   useEffect(() => {
-    if (!open || playbackPaused) return;
-    setFrameLoaded(false);
-    const timeout = window.setTimeout(() => {
-      setSourceIdx((idx) => (frameLoaded ? idx : Math.min(idx + 1, SOURCES.length - 1)));
-    }, 7000);
-    return () => window.clearTimeout(timeout);
-  }, [open, playbackPaused, src, iframeKey, frameLoaded]);
+    if (!open || frameLoaded) return;
+    if (retryTimeoutRef.current) clearTimeout(retryTimeoutRef.current);
+    retryTimeoutRef.current = window.setTimeout(() => {
+      if (!frameLoaded && sourceIdx < SOURCES.length - 1) {
+        setSourceIdx((idx) => idx + 1);
+        setIframeKey((k) => k + 1);
+      }
+    }, 8000);
+    return () => {
+      if (retryTimeoutRef.current) clearTimeout(retryTimeoutRef.current);
+    };
+  }, [open, frameLoaded, sourceIdx, iframeKey]);
 
   const changeTvPart = (field: "season" | "episode", delta: number) => {
     if (field === "season") setSelectedSeason((value) => Math.max(1, value + delta));
     if (field === "episode") setSelectedEpisode((value) => Math.max(1, value + delta));
-    setPlaybackPaused(false);
-    setIframeKey((k) => k + 1);
-  };
-
-  const resumePlayback = () => {
-    setPlaybackPaused(false);
-    setIframeKey((k) => k + 1);
-  };
-
-  const reloadPlayback = () => {
-    setPlaybackPaused(false);
     setFrameLoaded(false);
     setIframeKey((k) => k + 1);
   };
 
   const tryNextSource = () => {
-    setPlaybackPaused(false);
     setFrameLoaded(false);
     setSourceIdx((idx) => (idx + 1) % SOURCES.length);
     setIframeKey((k) => k + 1);
@@ -151,7 +144,7 @@ export function VidSrcPlayer({
           <p className="text-xs uppercase tracking-widest text-primary">Now streaming</p>
           <h3 className="font-display text-lg sm:text-xl truncate">{title}</h3>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
           {type === "tv" && (
             <div className="hidden sm:flex items-center gap-1 rounded-md bg-surface-elevated/80 px-2 py-1 text-sm">
               <button onClick={() => changeTvPart("season", -1)} className="size-7 rounded hover:bg-accent" aria-label="Previous season">−</button>
@@ -166,7 +159,7 @@ export function VidSrcPlayer({
           <div className="relative">
             <button
               onClick={() => setPickerOpen((o) => !o)}
-              className="inline-flex items-center gap-1.5 rounded-md bg-surface-elevated/80 hover:bg-surface-elevated px-3 py-1.5 text-sm"
+              className="inline-flex items-center gap-1.5 rounded-md bg-surface-elevated/80 hover:bg-surface-elevated px-3 py-1.5 text-sm whitespace-nowrap"
             >
               {SOURCES[sourceIdx].label} <ChevronDown className="size-4" />
             </button>
@@ -178,11 +171,10 @@ export function VidSrcPlayer({
                     onClick={() => {
                       setSourceIdx(i);
                       setPickerOpen(false);
-                  setPlaybackPaused(false);
                       setFrameLoaded(false);
                       setIframeKey((k) => k + 1);
                     }}
-                    className={`w-full text-left px-3 py-2 text-sm hover:bg-accent ${i === sourceIdx ? "bg-accent/50" : ""}`}
+                    className={`w-full text-left px-3 py-2 text-sm hover:bg-accent transition-colors ${i === sourceIdx ? "bg-accent/50" : ""}`}
                   >
                     {s.label}
                   </button>
@@ -191,42 +183,27 @@ export function VidSrcPlayer({
             )}
           </div>
           <button
-            onClick={playbackPaused ? resumePlayback : () => setPlaybackPaused(true)}
-            aria-label={playbackPaused ? "Play" : "Pause"}
-            title={playbackPaused ? "Play" : "Pause"}
-            className="inline-flex items-center justify-center size-9 rounded-md bg-surface-elevated/80 hover:bg-surface-elevated"
+            onClick={tryNextSource}
+            aria-label="Try next source"
+            title="Try next source"
+            className="inline-flex items-center justify-center size-9 rounded-md bg-surface-elevated/80 hover:bg-surface-elevated transition-colors"
           >
-            {playbackPaused ? <Play className="size-4 fill-current" /> : <Pause className="size-4" />}
-          </button>
-          <button
-            onClick={reloadPlayback}
-            aria-label="Reload player"
-            title="Reload player"
-            className="inline-flex items-center justify-center size-9 rounded-md bg-surface-elevated/80 hover:bg-surface-elevated"
-          >
-            <RotateCw className="size-4" />
-          </button>
-          <button
-            aria-label="Volume controls are inside the video player"
-            title="Volume controls are inside the video player"
-            className="inline-flex items-center justify-center size-9 rounded-md bg-surface-elevated/80 text-muted-foreground"
-          >
-            <Volume2 className="size-4" />
+            <MoreVertical className="size-4" />
           </button>
           <button
             onClick={enterFullscreen}
             aria-label="Fullscreen"
             title="Fullscreen"
-            className="inline-flex items-center justify-center size-9 rounded-md bg-surface-elevated/80 hover:bg-surface-elevated"
+            className="inline-flex items-center justify-center size-9 rounded-md bg-surface-elevated/80 hover:bg-surface-elevated transition-colors"
           >
-            <Maximize2 className="size-4" />
+            <Settings className="size-4" />
           </button>
           <a
             href={src}
             target="_blank"
             rel="noopener noreferrer"
             title="Open in new tab"
-            className="inline-flex items-center justify-center size-9 rounded-md bg-surface-elevated/80 hover:bg-surface-elevated"
+            className="inline-flex items-center justify-center size-9 rounded-md bg-surface-elevated/80 hover:bg-surface-elevated transition-colors"
           >
             <ExternalLink className="size-4" />
           </a>
@@ -241,27 +218,25 @@ export function VidSrcPlayer({
       </div>
 
       <div ref={frameWrapRef} className="w-full max-w-6xl aspect-video rounded-lg overflow-hidden shadow-2xl ring-1 ring-white/5 bg-black" onClick={(e) => e.stopPropagation()}>
-        {playbackPaused ? (
-          <button
-            onClick={resumePlayback}
-            className="w-full h-full grid place-items-center bg-black text-foreground"
-            aria-label="Resume playback"
-          >
-            <span className="inline-grid place-items-center size-16 rounded-full bg-primary text-primary-foreground shadow-xl">
-              <Play className="size-8 fill-current ml-1" />
-            </span>
-          </button>
-        ) : (
-          <iframe
-            key={`${iframeKey}-${sourceIdx}`}
-            src={src}
-            title={title}
-            className="w-full h-full"
-            allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-            onLoad={() => setFrameLoaded(true)}
-            onError={tryNextSource}
-          />
+        {!frameLoaded && (
+          <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-10">
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/20 mb-3">
+                <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+              </div>
+              <p className="text-sm text-muted-foreground">Loading stream...</p>
+            </div>
+          </div>
         )}
+        <iframe
+          key={`${iframeKey}-${sourceIdx}`}
+          src={src}
+          title={title}
+          className="w-full h-full"
+          allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+          onLoad={() => setFrameLoaded(true)}
+          onError={tryNextSource}
+        />
       </div>
 
       <p className="mt-3 text-xs text-muted-foreground text-center max-w-2xl">
