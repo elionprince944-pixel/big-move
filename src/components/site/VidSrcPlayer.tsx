@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { X, ChevronDown, ExternalLink } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { X, ChevronDown, ExternalLink, Pause, Play, RotateCw, Maximize2, Volume2 } from "lucide-react";
 
 type Source = { id: string; label: string; build: (type: "movie" | "tv", id: string, s?: number, e?: number) => string };
 
@@ -68,12 +68,15 @@ export function VidSrcPlayer({
   const [iframeKey, setIframeKey] = useState(0);
   const [selectedSeason, setSelectedSeason] = useState(season ?? 1);
   const [selectedEpisode, setSelectedEpisode] = useState(episode ?? 1);
+  const [playbackPaused, setPlaybackPaused] = useState(false);
+  const frameWrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (open) {
       setSourceIdx(0);
       setSelectedSeason(season ?? 1);
       setSelectedEpisode(episode ?? 1);
+      setPlaybackPaused(false);
       setIframeKey((k) => k + 1);
     }
   }, [open, tmdbId, type, season, episode]);
@@ -98,8 +101,21 @@ export function VidSrcPlayer({
   const changeTvPart = (field: "season" | "episode", delta: number) => {
     if (field === "season") setSelectedSeason((value) => Math.max(1, value + delta));
     if (field === "episode") setSelectedEpisode((value) => Math.max(1, value + delta));
+    setPlaybackPaused(false);
     setIframeKey((k) => k + 1);
   };
+
+  const resumePlayback = () => {
+    setPlaybackPaused(false);
+    setIframeKey((k) => k + 1);
+  };
+
+  const reloadPlayback = () => {
+    setPlaybackPaused(false);
+    setIframeKey((k) => k + 1);
+  };
+
+  const enterFullscreen = () => frameWrapRef.current?.requestFullscreen?.();
 
   if (!open) return null;
 
@@ -143,6 +159,7 @@ export function VidSrcPlayer({
                     onClick={() => {
                       setSourceIdx(i);
                       setPickerOpen(false);
+                  setPlaybackPaused(false);
                       setIframeKey((k) => k + 1);
                     }}
                     className={`w-full text-left px-3 py-2 text-sm hover:bg-accent ${i === sourceIdx ? "bg-accent/50" : ""}`}
@@ -153,6 +170,37 @@ export function VidSrcPlayer({
               </div>
             )}
           </div>
+          <button
+            onClick={playbackPaused ? resumePlayback : () => setPlaybackPaused(true)}
+            aria-label={playbackPaused ? "Play" : "Pause"}
+            title={playbackPaused ? "Play" : "Pause"}
+            className="inline-flex items-center justify-center size-9 rounded-md bg-surface-elevated/80 hover:bg-surface-elevated"
+          >
+            {playbackPaused ? <Play className="size-4 fill-current" /> : <Pause className="size-4" />}
+          </button>
+          <button
+            onClick={reloadPlayback}
+            aria-label="Reload player"
+            title="Reload player"
+            className="inline-flex items-center justify-center size-9 rounded-md bg-surface-elevated/80 hover:bg-surface-elevated"
+          >
+            <RotateCw className="size-4" />
+          </button>
+          <button
+            aria-label="Volume controls are inside the video player"
+            title="Volume controls are inside the video player"
+            className="inline-flex items-center justify-center size-9 rounded-md bg-surface-elevated/80 text-muted-foreground"
+          >
+            <Volume2 className="size-4" />
+          </button>
+          <button
+            onClick={enterFullscreen}
+            aria-label="Fullscreen"
+            title="Fullscreen"
+            className="inline-flex items-center justify-center size-9 rounded-md bg-surface-elevated/80 hover:bg-surface-elevated"
+          >
+            <Maximize2 className="size-4" />
+          </button>
           <a
             href={src}
             target="_blank"
@@ -172,15 +220,27 @@ export function VidSrcPlayer({
         </div>
       </div>
 
-      <div className="w-full max-w-6xl aspect-video rounded-lg overflow-hidden shadow-2xl ring-1 ring-white/5 bg-black" onClick={(e) => e.stopPropagation()}>
-        <iframe
-          key={`${iframeKey}-${sourceIdx}`}
-          src={src}
-          title={title}
-          className="w-full h-full"
-          allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-presentation allow-popups"
-        />
+      <div ref={frameWrapRef} className="w-full max-w-6xl aspect-video rounded-lg overflow-hidden shadow-2xl ring-1 ring-white/5 bg-black" onClick={(e) => e.stopPropagation()}>
+        {playbackPaused ? (
+          <button
+            onClick={resumePlayback}
+            className="w-full h-full grid place-items-center bg-black text-foreground"
+            aria-label="Resume playback"
+          >
+            <span className="inline-grid place-items-center size-16 rounded-full bg-primary text-primary-foreground shadow-xl">
+              <Play className="size-8 fill-current ml-1" />
+            </span>
+          </button>
+        ) : (
+          <iframe
+            key={`${iframeKey}-${sourceIdx}`}
+            src={src}
+            title={title}
+            className="w-full h-full"
+            allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+            allowFullScreen
+          />
+        )}
       </div>
 
       <p className="mt-3 text-xs text-muted-foreground text-center max-w-2xl">
