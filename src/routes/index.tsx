@@ -1,37 +1,78 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import { getTrending, getCategory } from "@/lib/tmdb.functions";
-import { Hero } from "@/components/site/Hero";
-import { MovieRow } from "@/components/site/Movie";
-import { Skeleton } from "@/components/ui/skeleton";
+import { createFileRoute } from '@tanstack/react-router';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
-export const Route = createFileRoute("/")({
-  component: HomePage,
-});
+export const Route = createFileRoute('/')(
+  {
+    component: HomePage,
+  },
+);
 
 function HomePage() {
-  const trendingFn = useServerFn(getTrending);
-  const categoryFn = useServerFn(getCategory);
-
-  const trending = useQuery({ queryKey: ["trending"], queryFn: () => trendingFn() });
-  const popular = useQuery({ queryKey: ["cat", "popular"], queryFn: () => categoryFn({ data: { category: "popular" } }) });
-  const topRated = useQuery({ queryKey: ["cat", "top_rated"], queryFn: () => categoryFn({ data: { category: "top_rated" } }) });
-  const upcoming = useQuery({ queryKey: ["cat", "upcoming"], queryFn: () => categoryFn({ data: { category: "upcoming" } }) });
-  const tv = useQuery({ queryKey: ["cat", "tv_popular"], queryFn: () => categoryFn({ data: { category: "tv_popular" } }) });
-
-  const heroItem = trending.data?.results?.find((r: any) => r.backdrop_path) ?? trending.data?.results?.[0];
-
   return (
-    <div className="-mt-16">
-      {trending.isLoading ? <Skeleton className="h-[70vh] w-full" /> : <Hero item={heroItem} />}
-      <div className="mx-auto max-w-7xl">
-        <MovieRow title="Trending Now" items={trending.data?.results ?? []} />
-        <MovieRow title="Popular Movies" items={popular.data?.results ?? []} />
-        <MovieRow title="Top Rated" items={topRated.data?.results ?? []} />
-        <MovieRow title="Coming Soon" items={upcoming.data?.results ?? []} />
-        <MovieRow title="Popular TV Shows" items={(tv.data?.results ?? []).map((r: any) => ({ ...r, media_type: "tv" }))} />
+    <div className="space-y-8">
+      <section className="space-y-4 text-center">
+        <h1 className="text-4xl font-bold tracking-tight">Welcome to Big Move</h1>
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          A modern full-stack application built with TanStack Start, React 19, and Supabase.
+        </p>
+      </section>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>🎨 Beautiful UI</CardTitle>
+            <CardDescription>Built with Radix UI and Tailwind CSS</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">
+              Professional component library with accessible, unstyled primitives.
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>⚡ Full-Stack</CardTitle>
+            <CardDescription>Server & Client in one project</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">
+              TanStack Start handles SSR and routing for you.
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>🔐 Secure Auth</CardTitle>
+            <CardDescription>Lovable + Supabase JWT</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">
+              Enterprise-grade authentication out of the box.
+            </p>
+          </CardContent>
+        </Card>
       </div>
+
+      <section className="space-y-4">
+        <h2 className="text-2xl font-bold">Getting Started</h2>
+        <div className="space-y-3 text-sm text-muted-foreground">
+          <p>✅ Environment variables configured (.env.local)</p>
+          <p>✅ Database schema ready (check src/db/schema.ts)</p>
+          <p>✅ Components library installed (Radix UI)</p>
+          <p>✅ Routing configured (TanStack Router)</p>
+        </div>
+        <div className="flex gap-4">
+          <a href="/dashboard">
+            <Button>Go to Dashboard</Button>
+          </a>
+          <a href="https://tanstack.com/start/latest" target="_blank" rel="noreferrer">
+            <Button variant="outline">Learn TanStack Start</Button>
+          </a>
+        </div>
+      </section>
     </div>
   );
 }
