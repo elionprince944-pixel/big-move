@@ -37,7 +37,6 @@ export function VidSrcPlayer({
   const [selectedEpisode, setSelectedEpisode] = useState(episode ?? 1);
   const [frameLoaded, setFrameLoaded] = useState(false);
   const frameWrapRef = useRef<HTMLDivElement>(null);
-  const retryTimeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
     if (open) {

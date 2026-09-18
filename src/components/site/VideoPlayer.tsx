@@ -38,7 +38,7 @@ export function VideoPlayer({
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [showControls, setShowControls] = useState(true);
-  const controlsTimeoutRef = useRef<NodeJS.Timeout>();
+  const controlsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -143,6 +143,7 @@ export function VideoPlayer({
 
   const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const video = videoRef.current;
+    if (!video) return;
     const container = e.currentTarget;
     const rect = container.getBoundingClientRect();
     const percent = (e.clientX - rect.left) / rect.width;
