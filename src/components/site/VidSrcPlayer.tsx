@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { X, ChevronDown, ExternalLink, Settings, MoreVertical } from "lucide-react";
+import { X, ExternalLink, Settings, RefreshCw } from "lucide-react";
 
 type Source = { id: string; label: string; build: (type: "movie" | "tv", id: string, s?: number, e?: number) => string };
 
@@ -11,38 +11,6 @@ const SOURCES: Source[] = [
       type === "movie"
         ? `https://vidlink.pro/movie/${id}`
         : `https://vidlink.pro/tv/${id}/${s ?? 1}/${e ?? 1}`,
-  },
-  {
-    id: "vidsrc.cc",
-    label: "Server 2 (VidSrc)",
-    build: (type, id, s, e) =>
-      type === "movie"
-        ? `https://vidsrc.cc/v3/embed/movie/${id}?autoPlay=false`
-        : `https://vidsrc.cc/v3/embed/tv/${id}/${s ?? 1}/${e ?? 1}?autoPlay=false`,
-  },
-  {
-    id: "vidsrc-embed",
-    label: "Server 3 (VidSrc Backup)",
-    build: (type, id, s, e) =>
-      type === "movie"
-        ? `https://vidsrc-embed.ru/embed/movie?tmdb=${id}&autoplay=1`
-        : `https://vidsrc-embed.ru/embed/tv?tmdb=${id}&season=${s ?? 1}&episode=${e ?? 1}&autoplay=1`,
-  },
-  {
-    id: "vidsrc.to",
-    label: "Server 4 (VidSrc Direct)",
-    build: (type, id, s, e) =>
-      type === "movie"
-        ? `https://vidsrc.to/embed/movie/${id}`
-        : `https://vidsrc.to/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
-  },
-  {
-    id: "2embed",
-    label: "Server 5 (2Embed)",
-    build: (type, id, s, e) =>
-      type === "movie"
-        ? `https://www.2embed.cc/embed/${id}`
-        : `https://www.2embed.cc/embedtv/${id}&s=${s ?? 1}&e=${e ?? 1}`,
   },
 ];
 
@@ -64,7 +32,6 @@ export function VidSrcPlayer({
   episode?: number;
 }) {
   const [sourceIdx, setSourceIdx] = useState(0);
-  const [pickerOpen, setPickerOpen] = useState(false);
   const [iframeKey, setIframeKey] = useState(0);
   const [selectedSeason, setSelectedSeason] = useState(season ?? 1);
   const [selectedEpisode, setSelectedEpisode] = useState(episode ?? 1);
@@ -99,21 +66,6 @@ export function VidSrcPlayer({
     [sourceIdx, type, tmdbId, selectedSeason, selectedEpisode],
   );
 
-  // Auto-retry failed sources
-  useEffect(() => {
-    if (!open || frameLoaded) return;
-    if (retryTimeoutRef.current) clearTimeout(retryTimeoutRef.current);
-    retryTimeoutRef.current = window.setTimeout(() => {
-      if (!frameLoaded && sourceIdx < SOURCES.length - 1) {
-        setSourceIdx((idx) => idx + 1);
-        setIframeKey((k) => k + 1);
-      }
-    }, 8000);
-    return () => {
-      if (retryTimeoutRef.current) clearTimeout(retryTimeoutRef.current);
-    };
-  }, [open, frameLoaded, sourceIdx, iframeKey]);
-
   const changeTvPart = (field: "season" | "episode", delta: number) => {
     if (field === "season") setSelectedSeason((value) => Math.max(1, value + delta));
     if (field === "episode") setSelectedEpisode((value) => Math.max(1, value + delta));
@@ -123,7 +75,6 @@ export function VidSrcPlayer({
 
   const tryNextSource = () => {
     setFrameLoaded(false);
-    setSourceIdx((idx) => (idx + 1) % SOURCES.length);
     setIframeKey((k) => k + 1);
   };
 
@@ -156,39 +107,13 @@ export function VidSrcPlayer({
               <button onClick={() => changeTvPart("episode", 1)} className="size-7 rounded hover:bg-accent" aria-label="Next episode">+</button>
             </div>
           )}
-          <div className="relative">
-            <button
-              onClick={() => setPickerOpen((o) => !o)}
-              className="inline-flex items-center gap-1.5 rounded-md bg-surface-elevated/80 hover:bg-surface-elevated px-3 py-1.5 text-sm whitespace-nowrap"
-            >
-              {SOURCES[sourceIdx].label} <ChevronDown className="size-4" />
-            </button>
-            {pickerOpen && (
-              <div className="absolute right-0 mt-2 w-64 rounded-md border border-border bg-popover text-popover-foreground shadow-xl z-10 overflow-hidden">
-                {SOURCES.map((s, i) => (
-                  <button
-                    key={s.id}
-                    onClick={() => {
-                      setSourceIdx(i);
-                      setPickerOpen(false);
-                      setFrameLoaded(false);
-                      setIframeKey((k) => k + 1);
-                    }}
-                    className={`w-full text-left px-3 py-2 text-sm hover:bg-accent transition-colors ${i === sourceIdx ? "bg-accent/50" : ""}`}
-                  >
-                    {s.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
           <button
             onClick={tryNextSource}
-            aria-label="Try next source"
-            title="Try next source"
+            aria-label="Reload player"
+            title="Reload player"
             className="inline-flex items-center justify-center size-9 rounded-md bg-surface-elevated/80 hover:bg-surface-elevated transition-colors"
           >
-            <MoreVertical className="size-4" />
+            <RefreshCw className="size-4" />
           </button>
           <button
             onClick={enterFullscreen}
@@ -217,7 +142,7 @@ export function VidSrcPlayer({
         </div>
       </div>
 
-      <div ref={frameWrapRef} className="w-full max-w-6xl aspect-video rounded-lg overflow-hidden shadow-2xl ring-1 ring-white/5 bg-black" onClick={(e) => e.stopPropagation()}>
+      <div ref={frameWrapRef} className="relative w-full max-w-6xl aspect-video rounded-lg overflow-hidden shadow-2xl ring-1 ring-white/5 bg-black" onClick={(e) => e.stopPropagation()}>
         {!frameLoaded && (
           <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-10">
             <div className="text-center">
@@ -240,7 +165,7 @@ export function VidSrcPlayer({
       </div>
 
       <p className="mt-3 text-xs text-muted-foreground text-center max-w-2xl">
-        If the player is blank, try another server above. Streams come from third-party providers — some titles may not be available. Press Esc to close.
+        If the player is blank, use reload or open it in a new tab. Some titles may not be available. Press Esc to close.
       </p>
     </div>
   );
