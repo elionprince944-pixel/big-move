@@ -5,6 +5,17 @@ import { getTrending, getCategory } from "@/lib/tmdb.functions";
 import { Hero } from "@/components/site/Hero";
 import { MovieRow } from "@/components/site/Movie";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Link } from "@tanstack/react-router";
+
+const GENRES = [
+  { id: 28, name: "Action" },
+  { id: 35, name: "Comedy" },
+  { id: 18, name: "Drama" },
+  { id: 27, name: "Horror" },
+  { id: 878, name: "Sci-Fi" },
+  { id: 53, name: "Thriller" },
+  { id: 16, name: "Animation" },
+];
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -18,19 +29,54 @@ function HomePage() {
   const popular = useQuery({ queryKey: ["cat", "popular"], queryFn: () => categoryFn({ data: { category: "popular" } }) });
   const topRated = useQuery({ queryKey: ["cat", "top_rated"], queryFn: () => categoryFn({ data: { category: "top_rated" } }) });
   const upcoming = useQuery({ queryKey: ["cat", "upcoming"], queryFn: () => categoryFn({ data: { category: "upcoming" } }) });
+  const nowPlaying = useQuery({ queryKey: ["cat", "now_playing"], queryFn: () => categoryFn({ data: { category: "now_playing" } }) });
   const tv = useQuery({ queryKey: ["cat", "tv_popular"], queryFn: () => categoryFn({ data: { category: "tv_popular" } }) });
+  const tvTopRated = useQuery({ queryKey: ["cat", "tv_top_rated"], queryFn: () => categoryFn({ data: { category: "tv_top_rated" } }) });
 
   const heroItem = trending.data?.results?.find((r: any) => r.backdrop_path) ?? trending.data?.results?.[0];
 
   return (
     <div className="-mt-16">
       {trending.isLoading ? <Skeleton className="h-[70vh] w-full" /> : <Hero item={heroItem} />}
+
       <div className="mx-auto max-w-7xl">
+        <section className="px-4 sm:px-6 pt-6">
+          <div className="flex items-center justify-between gap-4 mb-3">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold">Explore</p>
+              <h2 className="font-display text-2xl sm:text-3xl">Browse by genre</h2>
+            </div>
+          </div>
+          <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+            {GENRES.map((genre) => (
+              <Link
+                key={genre.id}
+                to="/genre/$id"
+                params={{ id: String(genre.id) }}
+                search={{ type: "movie" }}
+                className="shrink-0 rounded-full border border-border bg-surface/70 px-4 py-2 text-sm text-muted-foreground hover:border-primary/50 hover:text-foreground hover:bg-surface transition-all"
+              >
+                {genre.name}
+              </Link>
+            ))}
+          </div>
+        </section>
+
         <MovieRow title="Trending Now" items={trending.data?.results ?? []} />
         <MovieRow title="Popular Movies" items={popular.data?.results ?? []} />
+        <MovieRow title="Now Playing" items={nowPlaying.data?.results ?? []} />
         <MovieRow title="Top Rated" items={topRated.data?.results ?? []} />
         <MovieRow title="Coming Soon" items={upcoming.data?.results ?? []} />
         <MovieRow title="Popular TV Shows" items={(tv.data?.results ?? []).map((r: any) => ({ ...r, media_type: "tv" }))} />
+        <MovieRow title="Top Rated TV" items={(tvTopRated.data?.results ?? []).map((r: any) => ({ ...r, media_type: "tv" }))} />
+
+        <section className="mx-4 sm:mx-6 my-12 rounded-2xl border border-border bg-surface/50 p-6 sm:p-8">
+          <p className="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold">BIG MOV</p>
+          <h2 className="mt-2 font-display text-3xl sm:text-4xl">Your next movie night starts here.</h2>
+          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+            Discover movies and shows, save your favorites, explore genres, and open a title to see its full details.
+          </p>
+        </section>
       </div>
     </div>
   );
