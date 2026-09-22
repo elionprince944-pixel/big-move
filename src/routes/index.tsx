@@ -7,6 +7,7 @@ import { MovieRow } from "@/components/site/Movie";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@tanstack/react-router";
 import { SpinMovie } from "@/components/site/SpinMovie";
+import { isSafeTitle } from "@/lib/content-rating";
 
 const GENRES = [
   { id: 28, name: "Action" },
@@ -34,7 +35,15 @@ function HomePage() {
   const tv = useQuery({ queryKey: ["cat", "tv_popular"], queryFn: () => categoryFn({ data: { category: "tv_popular" } }) });
   const tvTopRated = useQuery({ queryKey: ["cat", "tv_top_rated"], queryFn: () => categoryFn({ data: { category: "tv_top_rated" } }) });
 
-  const heroItem = trending.data?.results?.find((r: any) => r.backdrop_path) ?? trending.data?.results?.[0];
+  const safe = (items: any[] | undefined) => (items ?? []).filter(isSafeTitle);
+  const safeTrending = safe(trending.data?.results);
+  const safePopular = safe(popular.data?.results);
+  const safeTopRated = safe(topRated.data?.results);
+  const safeUpcoming = safe(upcoming.data?.results);
+  const safeNowPlaying = safe(nowPlaying.data?.results);
+  const safeTv = safe(tv.data?.results).map((r: any) => ({ ...r, media_type: "tv" }));
+  const safeTvTopRated = safe(tvTopRated.data?.results).map((r: any) => ({ ...r, media_type: "tv" }));
+  const heroItem = safeTrending.find((r: any) => r.backdrop_path) ?? safeTrending[0];
 
   return (
     <div className="-mt-16">
@@ -65,13 +74,13 @@ function HomePage() {
 
         <SpinMovie />
 
-        <MovieRow title="Trending Now" items={trending.data?.results ?? []} />
-        <MovieRow title="Popular Movies" items={popular.data?.results ?? []} />
-        <MovieRow title="Now Playing" items={nowPlaying.data?.results ?? []} />
-        <MovieRow title="Top Rated" items={topRated.data?.results ?? []} />
-        <MovieRow title="Coming Soon" items={upcoming.data?.results ?? []} />
-        <MovieRow title="Popular TV Shows" items={(tv.data?.results ?? []).map((r: any) => ({ ...r, media_type: "tv" }))} />
-        <MovieRow title="Top Rated TV" items={(tvTopRated.data?.results ?? []).map((r: any) => ({ ...r, media_type: "tv" }))} />
+        <MovieRow title="Trending Now" items={safeTrending} />
+        <MovieRow title="Popular Movies" items={safePopular} />
+        <MovieRow title="Now Playing" items={safeNowPlaying} />
+        <MovieRow title="Top Rated" items={safeTopRated} />
+        <MovieRow title="Coming Soon" items={safeUpcoming} />
+        <MovieRow title="Popular TV Shows" items={safeTv} />
+        <MovieRow title="Top Rated TV" items={safeTvTopRated} />
 
         <section className="mx-4 sm:mx-6 my-12 rounded-2xl border border-border bg-surface/50 p-6 sm:p-8">
           <p className="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold">BIG MOV</p>
