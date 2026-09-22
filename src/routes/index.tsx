@@ -6,6 +6,7 @@ import { Hero } from "@/components/site/Hero";
 import { MovieRow } from "@/components/site/Movie";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@tanstack/react-router";
+import { SpinMovie } from "@/components/site/SpinMovie";
 
 const GENRES = [
   { id: 28, name: "Action" },
@@ -61,6 +62,8 @@ function HomePage() {
             ))}
           </div>
         </section>
+
+        <SpinMovie />
 
         <MovieRow title="Trending Now" items={trending.data?.results ?? []} />
         <MovieRow title="Popular Movies" items={popular.data?.results ?? []} />
