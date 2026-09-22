@@ -2,7 +2,6 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,6 +17,7 @@ function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [googleBusy, setGoogleBusy] = useState(false);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,10 +37,29 @@ function SignupPage() {
   };
 
   const onGoogle = async () => {
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    if (result.error) return toast.error(result.error.message ?? "Google sign-in failed");
-    if (result.redirected) return;
-    navigate({ to: "/" });
+    if (googleBusy) return;
+    setGoogleBusy(true);
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin,
+      },
+    });
+
+    if (error) {
+      setGoogleBusy(false);
+      toast.error(error.message || "Google sign-in failed");
+      return;
+    }
+
+    if (data.url) {
+      window.location.assign(data.url);
+      return;
+    }
+
+    setGoogleBusy(false);
+    toast.error("Google sign-in could not start.");
   };
 
   return (
@@ -53,7 +72,9 @@ function SignupPage() {
         <h1 className="text-2xl font-semibold mb-1">Create your account</h1>
         <p className="text-sm text-muted-foreground mb-6">Start watching in seconds.</p>
 
-        <Button onClick={onGoogle} variant="outline" className="w-full mb-4">Continue with Google</Button>
+        <Button onClick={onGoogle} disabled={googleBusy || busy} variant="outline" className="w-full mb-4">
+          {googleBusy ? "Connecting to Google…" : "Continue with Google"}
+        </Button>
         <div className="relative mb-4 text-center text-xs text-muted-foreground">
           <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border" /></div>
           <span className="relative bg-surface px-2">or</span>
@@ -72,7 +93,7 @@ function SignupPage() {
             <Label>Password</Label>
             <Input type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} className="mt-1" />
           </div>
-          <Button type="submit" disabled={busy} className="w-full bg-primary hover:bg-primary/90">
+          <Button type="submit" disabled={busy || googleBusy} className="w-full bg-primary hover:bg-primary/90">
             {busy ? "Creating…" : "Create account"}
           </Button>
         </form>
