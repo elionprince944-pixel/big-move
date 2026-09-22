@@ -7,6 +7,7 @@ import { MovieGrid } from "@/components/site/Movie";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Filter } from "lucide-react";
+import { isSafeTitle } from "@/lib/content-rating";
 
 const SORTS = [
   { value: "popularity.desc", label: "Most Popular" },
@@ -49,7 +50,7 @@ function GenrePage() {
   const genreName =
     (type === "tv" ? g.data?.tv : g.data?.movie)?.find((x: any) => x.id === Number(id))?.name ?? "Genre";
 
-  const items = (q.data?.results ?? []).map((r: any) => ({ ...r, media_type: type }));
+  const items = (q.data?.results ?? []).filter(isSafeTitle).map((r: any) => ({ ...r, media_type: type }));
   const totalPages = Math.min(q.data?.total_pages ?? 1, 500);
 
   const update = (patch: Record<string, any>) =>
