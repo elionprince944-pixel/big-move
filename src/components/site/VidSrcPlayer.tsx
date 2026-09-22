@@ -95,97 +95,84 @@ export function VidSrcPlayer({
       role="dialog"
       aria-modal="true"
       aria-label={`${title} player`}
-      className="fixed inset-0 z-50 bg-black/95 backdrop-blur-sm flex flex-col items-center justify-center p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 bg-black/98 backdrop-blur-xl flex flex-col animate-in fade-in duration-200"
       onClick={onClose}
     >
-      <div className="w-full max-w-6xl flex items-center justify-between mb-3 gap-3 text-foreground" onClick={(e) => e.stopPropagation()}>
-        <div className="min-w-0">
-          <p className="text-xs uppercase tracking-widest text-primary">Now streaming</p>
-          <h3 className="font-display text-lg sm:text-xl truncate">{title}</h3>
+      <div className="w-full border-b border-white/10 bg-black/80 px-4 sm:px-6 py-3" onClick={(e) => e.stopPropagation()}>
+        <div className="mx-auto max-w-7xl flex items-center justify-between gap-4">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 text-[10px] sm:text-xs uppercase tracking-[0.2em] text-primary font-semibold">
+              <span className="size-2 rounded-full bg-primary animate-pulse" />
+              Watching
+            </div>
+            <h3 className="mt-1 font-display text-base sm:text-xl font-semibold truncate">{title}</h3>
+          </div>
+
+          <div className="flex items-center gap-1.5 shrink-0">
+            {type === "tv" && (
+              <div className="flex items-center rounded-xl border border-white/10 bg-white/5 p-1 text-xs sm:text-sm">
+                <button onClick={() => changeTvPart("season", -1)} className="size-8 rounded-lg hover:bg-white/10 transition" aria-label="Previous season">−</button>
+                <span className="px-2 font-medium">S{selectedSeason}</span>
+                <button onClick={() => changeTvPart("season", 1)} className="size-8 rounded-lg hover:bg-white/10 transition" aria-label="Next season">+</button>
+                <span className="text-white/20">|</span>
+                <button onClick={() => changeTvPart("episode", -1)} className="size-8 rounded-lg hover:bg-white/10 transition" aria-label="Previous episode">−</button>
+                <span className="px-2 font-medium">E{selectedEpisode}</span>
+                <button onClick={() => changeTvPart("episode", 1)} className="size-8 rounded-lg hover:bg-white/10 transition" aria-label="Next episode">+</button>
+              </div>
+            )}
+
+            <button onClick={() => { setFrameLoaded(false); setIframeKey((k) => k + 1); }} className="size-9 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition" aria-label="Reload player" title="Reload player">
+              <RefreshCw className="mx-auto size-4" />
+            </button>
+            <button onClick={enterFullscreen} className="size-9 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition" aria-label="Fullscreen" title="Fullscreen">
+              <Settings className="mx-auto size-4" />
+            </button>
+            <button onClick={tryNextSource} className="hidden sm:inline-flex h-9 items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 text-xs hover:bg-white/10 transition" title="Try another server">
+              <ExternalLink className="size-4" />
+              Server
+            </button>
+            <a href={src} target="_blank" rel="noopener noreferrer" className="hidden md:inline-flex size-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition" title="Open in new tab">
+              <ExternalLink className="size-4" />
+            </a>
+            <button onClick={onClose} className="size-9 rounded-xl bg-white/10 hover:bg-primary hover:text-primary-foreground transition" aria-label="Close player">
+              <X className="mx-auto size-5" />
+            </button>
+          </div>
         </div>
-        <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
-          {type === "tv" && (
-            <div className="hidden sm:flex items-center gap-1 rounded-md bg-surface-elevated/80 px-2 py-1 text-sm">
-              <button onClick={() => changeTvPart("season", -1)} className="size-7 rounded hover:bg-accent" aria-label="Previous season">−</button>
-              <span className="min-w-10 text-center">S{selectedSeason}</span>
-              <button onClick={() => changeTvPart("season", 1)} className="size-7 rounded hover:bg-accent" aria-label="Next season">+</button>
-              <span className="mx-1 text-muted-foreground">/</span>
-              <button onClick={() => changeTvPart("episode", -1)} className="size-7 rounded hover:bg-accent" aria-label="Previous episode">−</button>
-              <span className="min-w-10 text-center">E{selectedEpisode}</span>
-              <button onClick={() => changeTvPart("episode", 1)} className="size-7 rounded hover:bg-accent" aria-label="Next episode">+</button>
+      </div>
+
+      <div className="flex-1 min-h-0 flex items-center justify-center p-2 sm:p-4 lg:p-6" onClick={(e) => e.stopPropagation()}>
+        <div ref={frameWrapRef} className="relative w-full max-w-7xl aspect-video rounded-xl sm:rounded-2xl overflow-hidden bg-black shadow-[0_25px_80px_rgba(0,0,0,0.65)] ring-1 ring-white/10">
+          {!frameLoaded && (
+            <div className="absolute inset-0 bg-black/90 flex items-center justify-center z-10">
+              <div className="text-center">
+                <div className="mx-auto mb-4 size-14 rounded-full border border-primary/30 bg-primary/10 flex items-center justify-center">
+                  <div className="size-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                </div>
+                <p className="text-sm font-medium text-white">Loading {type === "tv" ? "episode" : "movie"}...</p>
+                <p className="mt-1 text-xs text-white/40">Connecting to {SOURCES[sourceIdx].label}</p>
+              </div>
             </div>
           )}
-          <button
-            onClick={() => {
-              setFrameLoaded(false);
-              setIframeKey((k) => k + 1);
-            }}
-            aria-label="Reload player"
-            title="Reload player"
-            className="inline-flex items-center justify-center size-9 rounded-md bg-surface-elevated/80 hover:bg-surface-elevated transition-colors"
-          >
-            <RefreshCw className="size-4" />
-          </button>
-          <button
-            onClick={enterFullscreen}
-            aria-label="Fullscreen"
-            title="Fullscreen"
-            className="inline-flex items-center justify-center size-9 rounded-md bg-surface-elevated/80 hover:bg-surface-elevated transition-colors"
-          >
-            <Settings className="size-4" />
-          </button>
-          <button
-            onClick={tryNextSource}
-            aria-label="Try another server"
-            title={SOURCES[(sourceIdx + 1) % SOURCES.length].label}
-            className="inline-flex items-center justify-center size-9 rounded-md bg-surface-elevated/80 hover:bg-surface-elevated transition-colors"
-          >
-            <ExternalLink className="size-4" />
-          </button>
-          <a
-            href={src}
-            target="_blank"
-            rel="noopener noreferrer"
-            title="Open in new tab"
-            className="inline-flex items-center justify-center size-9 rounded-md bg-surface-elevated/80 hover:bg-surface-elevated transition-colors"
-          >
-            <ExternalLink className="size-4" />
-          </a>
-          <button
-            onClick={onClose}
-            aria-label="Close player"
-            className="inline-flex items-center justify-center size-9 rounded-md bg-surface-elevated/80 hover:bg-primary hover:text-primary-foreground transition-colors"
-          >
-            <X className="size-5" />
-          </button>
+
+          <iframe
+            key={`${iframeKey}-${sourceIdx}`}
+            src={src}
+            title={title}
+            className="w-full h-full border-0"
+            allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+            onLoad={() => setFrameLoaded(true)}
+            onError={tryNextSource}
+          />
         </div>
       </div>
 
-      <div ref={frameWrapRef} className="relative w-full max-w-6xl aspect-video rounded-lg overflow-hidden shadow-2xl ring-1 ring-white/5 bg-black" onClick={(e) => e.stopPropagation()}>
-        {!frameLoaded && (
-          <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-10">
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/20 mb-3">
-                <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-              </div>
-              <p className="text-sm text-muted-foreground">Loading stream...</p>
-            </div>
-          </div>
-        )}
-        <iframe
-          key={`${iframeKey}-${sourceIdx}`}
-          src={src}
-          title={title}
-          className="w-full h-full"
-          allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-          onLoad={() => setFrameLoaded(true)}
-          onError={tryNextSource}
-        />
+      <div className="border-t border-white/10 bg-black/70 px-4 py-2.5" onClick={(e) => e.stopPropagation()}>
+        <div className="mx-auto max-w-7xl flex items-center justify-between gap-3 text-[11px] sm:text-xs text-white/45">
+          <span>Source: <span className="text-white/70">{SOURCES[sourceIdx].label}</span></span>
+          <span className="hidden sm:inline">ESC to close • Use Server if playback is unavailable</span>
+        </div>
       </div>
-
-      <p className="mt-3 text-xs text-muted-foreground text-center max-w-2xl">
-        Source: {SOURCES[sourceIdx].label}. Use the server button if the current player is unavailable. Press Esc to close.
-      </p>
     </div>
   );
 }
