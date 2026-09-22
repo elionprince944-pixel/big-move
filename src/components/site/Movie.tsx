@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { useRef } from "react";
-import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star, ShieldCheck } from "lucide-react";
 import { TMDB_IMG } from "@/lib/tmdb-image";
+import { isSafeTitle } from "@/lib/content-rating";
 
 export type TmdbItem = {
   id: number;
@@ -13,9 +14,11 @@ export type TmdbItem = {
   media_type?: string;
   release_date?: string;
   first_air_date?: string;
+  adult?: boolean;
 };
 
 export function MovieCard({ item }: { item: TmdbItem }) {
+  if (!isSafeTitle(item)) return null;
   const title = item.title ?? item.name ?? "Untitled";
   const type = item.media_type === "tv" ? "tv" : "movie";
   const year = (item.release_date ?? item.first_air_date ?? "").slice(0, 4);
@@ -57,7 +60,7 @@ export function MovieRow({ title, items }: { title: string; items: TmdbItem[] })
   const scroll = (dir: 1 | -1) => {
     ref.current?.scrollBy({ left: dir * (ref.current.clientWidth * 0.8), behavior: "smooth" });
   };
-  if (!items?.length) return null;
+  const safeItems = items?.filter(isSafeTitle) ?? [];\n  if (!safeItems.length) return null;
   return (
     <section className="relative my-8">
       <h2 className="text-xl sm:text-2xl font-display tracking-wide mb-3 px-4 sm:px-6">{title}</h2>
@@ -70,7 +73,7 @@ export function MovieRow({ title, items }: { title: string; items: TmdbItem[] })
           <ChevronLeft className="size-6" />
         </button>
         <div ref={ref} className="flex gap-3 overflow-x-auto no-scrollbar px-4 sm:px-6 pb-2">
-          {items.map((m) => <MovieCard key={`${m.media_type ?? "x"}-${m.id}`} item={m} />)}
+          {safeItems.map((m) => <MovieCard key={`${m.media_type ?? "x"}-${m.id}`} item={m} />)}
         </div>
         <button
           onClick={() => scroll(1)}
@@ -85,10 +88,10 @@ export function MovieRow({ title, items }: { title: string; items: TmdbItem[] })
 }
 
 export function MovieGrid({ items }: { items: TmdbItem[] }) {
-  if (!items?.length) return <p className="text-muted-foreground text-sm px-4 sm:px-6">No results.</p>;
+  const safeItems = items?.filter(isSafeTitle) ?? [];\n  if (!safeItems.length) return <p className="text-muted-foreground text-sm px-4 sm:px-6">No safe titles found.</p>;
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 px-4 sm:px-6">
-      {items.map((m) => <MovieCard key={`${m.media_type ?? "x"}-${m.id}`} item={m} />)}
+      {safeItems.map((m) => <MovieCard key={`${m.media_type ?? "x"}-${m.id}`} item={m} />)}
     </div>
   );
 }
