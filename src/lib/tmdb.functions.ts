@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 
 const TMDB_BASE = "https://api.themoviedb.org/3";
+const SAFE_PARAMS = { include_adult: "false" };
 
 async function tmdb<T>(path: string, params: Record<string, string> = {}): Promise<T> {
   const apiKey = process.env.TMDB_API_KEY;
@@ -14,7 +15,7 @@ async function tmdb<T>(path: string, params: Record<string, string> = {}): Promi
 }
 
 export const getTrending = createServerFn({ method: "GET" }).handler(async () => {
-  return tmdb<{ results: any[] }>("/trending/all/week");
+  return tmdb<{ results: any[] }>("/trending/all/week", SAFE_PARAMS);
 });
 
 export const getCategory = createServerFn({ method: "GET" })
@@ -29,21 +30,22 @@ export const getCategory = createServerFn({ method: "GET" })
       tv_top_rated: "/tv/top_rated",
     };
     const path = map[data.category] ?? "/movie/popular";
-    return tmdb<{ results: any[] }>(path);
+    return tmdb<{ results: any[] }>(path, SAFE_PARAMS);
   });
 
 export const getMovieDetails = createServerFn({ method: "GET" })
   .inputValidator((data: { id: number; type?: string }) => data)
   .handler(async ({ data }) => {
     const type = data.type === "tv" ? "tv" : "movie";
-    return tmdb<any>(`/${type}/${data.id}`, { append_to_response: "videos,credits,similar" });
+    const append = type === "tv" ? "videos,credits,similar,content_ratings" : "videos,credits,similar,release_dates";
+    return tmdb<any>(`/${type}/${data.id}`, { append_to_response: append });
   });
 
 export const searchTmdb = createServerFn({ method: "GET" })
   .inputValidator((data: { query: string }) => data)
   .handler(async ({ data }) => {
     if (!data.query.trim()) return { results: [] };
-    return tmdb<{ results: any[] }>("/search/multi", { query: data.query });
+    return tmdb<{ results: any[] }>("/search/multi", { query: data.query, include_adult: "false" });
   });
 
 export const getGenres = createServerFn({ method: "GET" }).handler(async () => {
@@ -94,8 +96,8 @@ export const getRandomMovie = createServerFn({ method: "GET" })
     const page = Math.floor(Math.random() * maxPage) + 1;
     const result = await tmdb<{ results: any[] }>(`/discover/${type}`, { ...params, page: String(page) });
     const items = result.results?.filter((item: any) => item.poster_path) ?? [];
-    const item = items[Math.floor(Math.random() * items.length)] ?? result.results?.[0];
-    if (!item) throw new Error("No movie found");
+    const item = items[Math.floor(Math.random() * items.length)] ?? result.results?.find((x: any) => x.adult !== true);
+    if (!item) throw new Error("No safe title found");
     return { ...item, media_type: type };
   });
 
@@ -114,6 +116,7 @@ export const discoverByGenre = createServerFn({ method: "GET" })
       with_genres: String(data.genreId),
       sort_by: data.sortBy || "popularity.desc",
       page: String(data.page ?? 1),
+      include_adult: "false",
     };
     if (data.year) {
       params[type === "movie" ? "primary_release_year" : "first_air_date_year"] = String(data.year);
@@ -121,6 +124,10 @@ export const discoverByGenre = createServerFn({ method: "GET" })
     if (typeof data.minRating === "number" && data.minRating > 0) {
       params["vote_average.gte"] = String(data.minRating);
       params["vote_count.gte"] = "50";
+    }
+    if (type === "movie") {
+      params.certification_country = "US";
+      params["certification.lte"] = "PG-13";
     }
     return tmdb<{ results: any[]; total_pages: number; page: number }>(`/discover/${type}`, params);
   });
