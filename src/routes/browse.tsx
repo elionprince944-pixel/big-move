@@ -5,6 +5,7 @@ import { z } from "zod";
 import { getCategory } from "@/lib/tmdb.functions";
 import { MovieGrid } from "@/components/site/Movie";
 import { Skeleton } from "@/components/ui/skeleton";
+import { isSafeTitle } from "@/lib/content-rating";
 
 const CATS = [
   { id: "popular", label: "Popular" },
@@ -34,7 +35,7 @@ function BrowsePage() {
     queryFn: () => categoryFn({ data: { category: cat } }),
   });
   const isTv = cat.startsWith("tv");
-  const items = (q.data?.results ?? []).map((r: any) => ({ ...r, media_type: isTv ? "tv" : "movie" }));
+  const items = (q.data?.results ?? []).filter(isSafeTitle).map((r: any) => ({ ...r, media_type: isTv ? "tv" : "movie" }));
 
   return (
     <div className="mx-auto max-w-7xl py-8">
