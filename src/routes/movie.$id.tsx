@@ -14,6 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/integrations/supabase/client";
+import { getContentRating, isMatureRating } from "@/lib/content-rating";
 
 export const Route = createFileRoute("/movie/$id")({
   validateSearch: z.object({ type: z.enum(["movie", "tv"]).optional().default("movie") }),
@@ -80,6 +81,8 @@ function MovieDetailsPage() {
   const year = (m.release_date ?? m.first_air_date ?? "").slice(0, 4);
   const videos = (m.videos?.results ?? []) as any[];
   const trailer = pickBestVideo(videos);
+  const contentRating = getContentRating(m);
+  const mature = m.adult === true || isMatureRating(contentRating);
 
   return (
     <div className="-mt-16">
@@ -96,18 +99,23 @@ function MovieDetailsPage() {
           <div className="flex-1">
             <h1 className="font-display text-4xl sm:text-5xl mb-3">{title}</h1>
             {m.tagline && <p className="text-muted-foreground italic mb-4">{m.tagline}</p>}
-            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-5">
+            <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mb-5">
               {m.vote_average ? <span className="flex items-center gap-1"><Star className="size-4 fill-primary text-primary" />{m.vote_average.toFixed(1)}</span> : null}
               {year && <span className="flex items-center gap-1"><Calendar className="size-4" />{year}</span>}
               {m.runtime ? <span className="flex items-center gap-1"><Clock className="size-4" />{m.runtime}m</span> : null}
               {m.genres?.length ? <span>{m.genres.map((g: any) => g.name).join(" · ")}</span> : null}
+              {contentRating && <span className="rounded-md border border-border bg-surface px-2 py-1 font-semibold text-foreground">{contentRating}</span>}
             </div>
             <p className="text-foreground/80 leading-relaxed mb-6 max-w-3xl">{m.overview}</p>
             <div className="flex flex-wrap gap-3">
+              {mature ? (
+                <div className="rounded-lg border border-border bg-surface px-4 py-3 text-sm text-muted-foreground">This title is unavailable in Safe Content mode.</div>
+              ) : (
               <Button onClick={() => setStreamOpen(true)} className="bg-primary hover:bg-primary/90">
                 <Film className="size-4 mr-2" /> Watch Now
               </Button>
-              {trailer && (
+              )}
+              {!mature && trailer && (
                 <Button onClick={() => setTrailerOpen(true)} variant="secondary">
                   <Play className="size-4 fill-current mr-2" /> Trailer
                 </Button>
