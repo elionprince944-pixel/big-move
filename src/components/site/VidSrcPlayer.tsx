@@ -5,12 +5,20 @@ type Source = { id: string; label: string; build: (type: "movie" | "tv", id: str
 
 const SOURCES: Source[] = [
   {
-    id: "vidlink",
-    label: "Server 1 (VidLink)",
+    id: "vidsrc",
+    label: "VidSrc",
     build: (type, id, s, e) =>
       type === "movie"
-        ? `https://vidlink.pro/movie/${id}`
-        : `https://vidlink.pro/tv/${id}/${s ?? 1}/${e ?? 1}`,
+        ? `https://vidsrc.sh/embed/movie/${id}`
+        : `https://vidsrc.sh/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
+  },
+  {
+    id: "vidking",
+    label: "VidKing",
+    build: (type, id, s, e) =>
+      type === "movie"
+        ? `https://www.vidking.net/embed/movie/${id}`
+        : `https://www.vidking.net/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
   },
 ];
 
@@ -74,6 +82,7 @@ export function VidSrcPlayer({
 
   const tryNextSource = () => {
     setFrameLoaded(false);
+    setSourceIdx((current) => (current + 1) % SOURCES.length);
     setIframeKey((k) => k + 1);
   };
 
@@ -107,7 +116,10 @@ export function VidSrcPlayer({
             </div>
           )}
           <button
-            onClick={tryNextSource}
+            onClick={() => {
+              setFrameLoaded(false);
+              setIframeKey((k) => k + 1);
+            }}
             aria-label="Reload player"
             title="Reload player"
             className="inline-flex items-center justify-center size-9 rounded-md bg-surface-elevated/80 hover:bg-surface-elevated transition-colors"
@@ -121,6 +133,14 @@ export function VidSrcPlayer({
             className="inline-flex items-center justify-center size-9 rounded-md bg-surface-elevated/80 hover:bg-surface-elevated transition-colors"
           >
             <Settings className="size-4" />
+          </button>
+          <button
+            onClick={tryNextSource}
+            aria-label="Try another server"
+            title={SOURCES[(sourceIdx + 1) % SOURCES.length].label}
+            className="inline-flex items-center justify-center size-9 rounded-md bg-surface-elevated/80 hover:bg-surface-elevated transition-colors"
+          >
+            <ExternalLink className="size-4" />
           </button>
           <a
             href={src}
@@ -164,7 +184,7 @@ export function VidSrcPlayer({
       </div>
 
       <p className="mt-3 text-xs text-muted-foreground text-center max-w-2xl">
-        If the player is blank, use reload or open it in a new tab. Some titles may not be available. Press Esc to close.
+        Source: {SOURCES[sourceIdx].label}. Use the server button if the current player is unavailable. Press Esc to close.
       </p>
     </div>
   );
