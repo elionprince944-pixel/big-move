@@ -44,6 +44,18 @@ export type Database = {
         }
         Relationships: []
       }
+      big_ai_settings: {
+        Row: { enabled: boolean; id: boolean; name: string; welcome_message: string; system_prompt: string; updated_at: string }
+        Insert: { enabled?: boolean; id?: boolean; name?: string; welcome_message?: string; system_prompt?: string; updated_at?: string }
+        Update: { enabled?: boolean; id?: boolean; name?: string; welcome_message?: string; system_prompt?: string; updated_at?: string }
+        Relationships: []
+      }
+      big_ai_usage: {
+        Row: { id: string; user_id: string | null; prompt_length: number; response_length: number; created_at: string }
+        Insert: { id?: string; user_id?: string | null; prompt_length?: number; response_length?: number; created_at?: string }
+        Update: { id?: string; user_id?: string | null; prompt_length?: number; response_length?: number; created_at?: string }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
