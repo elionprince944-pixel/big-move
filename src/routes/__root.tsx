@@ -11,6 +11,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth-context";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
+import { BigAI } from "@/components/site/BigAI";
 import { PreferencesProvider } from "@/lib/preferences";
 
 import appCss from "../styles.css?url";
@@ -101,6 +102,7 @@ function RootComponent() {
             </main>
             <Footer />
           </div>
+          <BigAI />
           <Toaster />
         </AuthProvider>
       </PreferencesProvider>
