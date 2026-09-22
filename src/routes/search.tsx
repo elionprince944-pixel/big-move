@@ -5,6 +5,7 @@ import { z } from "zod";
 import { searchTmdb } from "@/lib/tmdb.functions";
 import { MovieGrid } from "@/components/site/Movie";
 import { Skeleton } from "@/components/ui/skeleton";
+import { isSafeTitle } from "@/lib/content-rating";
 
 export const Route = createFileRoute("/search")({
   validateSearch: z.object({ q: z.string().optional().default("") }),
@@ -20,7 +21,7 @@ function SearchPage() {
     queryFn: () => fn({ data: { query: q } }),
     enabled: !!q,
   });
-  const items = (query.data?.results ?? []).filter((r: any) => r.media_type !== "person");
+  const items = (query.data?.results ?? []).filter((r: any) => r.media_type !== "person").filter(isSafeTitle);
 
   return (
     <div className="mx-auto max-w-7xl py-8">
