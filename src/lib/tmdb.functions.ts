@@ -78,6 +78,27 @@ export const getEmbedUrl = createServerFn({ method: "GET" })
     return { url, type, id: String(data.id) };
   });
 
+export const getRandomMovie = createServerFn({ method: "GET" })
+  .inputValidator((data: { type?: "movie" | "tv"; genreId?: number }) => data)
+  .handler(async ({ data }) => {
+    const type = data.type === "tv" ? "tv" : "movie";
+    const params: Record<string, string> = {
+      sort_by: "popularity.desc",
+      include_adult: "false",
+      "vote_count.gte": "50",
+    };
+    if (data.genreId) params.with_genres = String(data.genreId);
+
+    const first = await tmdb<{ total_pages: number }>(`/discover/${type}`, params);
+    const maxPage = Math.min(first.total_pages || 1, 500);
+    const page = Math.floor(Math.random() * maxPage) + 1;
+    const result = await tmdb<{ results: any[] }>(`/discover/${type}`, { ...params, page: String(page) });
+    const items = result.results?.filter((item: any) => item.poster_path) ?? [];
+    const item = items[Math.floor(Math.random() * items.length)] ?? result.results?.[0];
+    if (!item) throw new Error("No movie found");
+    return { ...item, media_type: type };
+  });
+
 export const discoverByGenre = createServerFn({ method: "GET" })
   .inputValidator((data: {
     genreId: number;
