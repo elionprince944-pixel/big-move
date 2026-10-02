@@ -26,8 +26,8 @@ export const askBigAi = createServerFn({ method: "POST" })
     if (!message) throw new Error("Please enter a message.");
     const settings = await getSettings();
     if (!settings.enabled) throw new Error("BIG AI is currently disabled.");
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) throw new Error("GEMINI_API_KEY is not configured on the server.");
+    const apiKey = process.env.AI_API_KEY;
+    if (!apiKey) throw new Error("AI_API_KEY is not configured on the server.");
 
     const prompt = [
       settings.system_prompt || DEFAULT_SYSTEM_PROMPT,
