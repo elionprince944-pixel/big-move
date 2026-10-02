@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      big_ai_settings: {
+        Row: {
+          enabled: boolean
+          id: boolean
+          name: string
+          system_prompt: string
+          updated_at: string
+          welcome_message: string
+        }
+        Insert: {
+          enabled?: boolean
+          id?: boolean
+          name?: string
+          system_prompt?: string
+          updated_at?: string
+          welcome_message?: string
+        }
+        Update: {
+          enabled?: boolean
+          id?: boolean
+          name?: string
+          system_prompt?: string
+          updated_at?: string
+          welcome_message?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
