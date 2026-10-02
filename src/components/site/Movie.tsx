@@ -60,7 +60,8 @@ export function MovieRow({ title, items }: { title: string; items: TmdbItem[] })
   const scroll = (dir: 1 | -1) => {
     ref.current?.scrollBy({ left: dir * (ref.current.clientWidth * 0.8), behavior: "smooth" });
   };
-  const safeItems = items?.filter(isSafeTitle) ?? [];\n  if (!safeItems.length) return null;
+  const safeItems = items?.filter(isSafeTitle) ?? [];
+  if (!safeItems.length) return null;
   return (
     <section className="relative my-8">
       <h2 className="text-xl sm:text-2xl font-display tracking-wide mb-3 px-4 sm:px-6">{title}</h2>
@@ -88,7 +89,8 @@ export function MovieRow({ title, items }: { title: string; items: TmdbItem[] })
 }
 
 export function MovieGrid({ items }: { items: TmdbItem[] }) {
-  const safeItems = items?.filter(isSafeTitle) ?? [];\n  if (!safeItems.length) return <p className="text-muted-foreground text-sm px-4 sm:px-6">No safe titles found.</p>;
+  const safeItems = items?.filter(isSafeTitle) ?? [];
+  if (!safeItems.length) return <p className="text-muted-foreground text-sm px-4 sm:px-6">No safe titles found.</p>;
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 px-4 sm:px-6">
       {safeItems.map((m) => <MovieCard key={`${m.media_type ?? "x"}-${m.id}`} item={m} />)}
