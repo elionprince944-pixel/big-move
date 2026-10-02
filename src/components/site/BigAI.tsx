@@ -27,10 +27,11 @@ export function BigAI() {
     const text = input.trim();
     if (!text || busy) return;
     setInput("");
+    const history = messages;
     setMessages(m => [...m, { role: "user", text }]);
     setBusy(true);
     try {
-      const result = await ask({ data: { message: text, context: "BIG MOV has movie and TV discovery, search, genres, watchlist, movie details and Spin a Movie. Keep recommendations safe and age-appropriate." } });
+      const result = await ask({ data: { message: text, history, context: "BIG MOV has movie and TV discovery, search, genres, watchlist, movie details and Spin a Movie. Keep recommendations safe and age-appropriate." } });
       setMessages(m => [...m, { role: "assistant", text: result.answer }]);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "BIG AI is unavailable.");
