@@ -20,19 +20,23 @@ export const getBigAiSettings = createServerFn({ method: "GET" }).handler(async 
 type Msg = { role: "user" | "assistant"; text: string };
 
 async function viaGateway(system: string, history: Msg[], key: string) {
-  const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+  const res = await fetch("https://ai.gateway.lovable.dev/v1/responses", {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
     body: JSON.stringify({
-      model: "google/gemini-2.5-flash",
-      messages: [{ role: "system", content: system }, ...history.map(m => ({ role: m.role, content: m.text }))],
+      model: "openai/gpt-6-astra",
+      instructions: system,
+      input: history.map(m => ({ role: m.role, content: m.text })),
     }),
   });
   if (res.status === 429) throw new Error("BIG AI is busy, please try again in a moment.");
   if (res.status === 402) throw new Error("BIG AI credits are exhausted.");
   if (!res.ok) throw new Error(`gateway ${res.status}`);
   const j = await res.json();
-  return (j?.choices?.[0]?.message?.content as string | undefined)?.trim();
+  if (typeof j?.output_text === "string") return j.output_text.trim();
+  const parts: string[] = [];
+  for (const o of j?.output ?? []) for (const c of o?.content ?? []) if (typeof c?.text === "string") parts.push(c.text);
+  return parts.join("").trim();
 }
 
 async function viaGemini(system: string, history: Msg[], key: string) {
