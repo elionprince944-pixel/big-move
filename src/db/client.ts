@@ -21,6 +21,6 @@ export function getDb() {
   return pool;
 }
 
-export async function dbQuery<T = unknown>(text: string, values: unknown[] = []) {
+export async function dbQuery<T extends import("pg").QueryResultRow = any>(text: string, values: unknown[] = []) {
   return getDb().query<T>(text, values);
 }
