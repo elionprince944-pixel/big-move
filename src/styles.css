@@ -45,6 +45,8 @@
 
 :root {
   --radius: 0.5rem;
+  --shadow-elegant: 0 10px 30px -10px color-mix(in oklab, var(--primary) 25%, transparent);
+
 
   /* Light theme */
   --background: oklch(0.99 0.003 270);
