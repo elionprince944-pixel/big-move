@@ -3,14 +3,25 @@ import { X, ExternalLink, Settings, RefreshCw } from "lucide-react";
 
 type Source = { id: string; label: string; build: (type: "movie" | "tv", id: string, s?: number, e?: number) => string };
 
+const VIDSRC_BASE_URL = "https://vidsrc.tw/embed";
+const VIDSRC_FALLBACK_BASE_URL = "https://vidsrc.ir/embed";
+
 const SOURCES: Source[] = [
   {
     id: "vidsrc",
     label: "VidSrc",
     build: (type, id, s, e) =>
       type === "movie"
-        ? `https://vidsrc.sh/embed/movie/${id}`
-        : `https://vidsrc.sh/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
+        ? `${VIDSRC_BASE_URL}/movie/${id}`
+        : `${VIDSRC_BASE_URL}/tv/${id}/${s ?? 1}/${e ?? 1}`,
+  },
+  {
+    id: "vidsrc-fallback",
+    label: "VidSrc Fallback",
+    build: (type, id, s, e) =>
+      type === "movie"
+        ? `${VIDSRC_FALLBACK_BASE_URL}/movie/${id}`
+        : `${VIDSRC_FALLBACK_BASE_URL}/tv/${id}/${s ?? 1}/${e ?? 1}`,
   },
   {
     id: "vidking",
