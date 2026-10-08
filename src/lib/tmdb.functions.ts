@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 
-const TMDB_BASE = "https://api.themoviedb.org/3";
+const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 const SAFE_PARAMS = { include_adult: "false" };
 
 async function tmdb<T>(path: string, params: Record<string, string> = {}): Promise<T> {
