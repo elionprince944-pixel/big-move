@@ -18,7 +18,7 @@ export const Route = createFileRoute("/admin/")({
   component: AdminPage,
 });
 
-const navSections = [
+const navSections: { title: string; items: { label: string; icon: typeof Film; active?: boolean }[] }[] = [
   { title: "Main", items: [{ label: "Dashboard", icon: LayoutDashboard, active: true }] },
   { title: "Content", items: [
     { label: "Movies", icon: Film }, { label: "TV Shows", icon: Tv },
