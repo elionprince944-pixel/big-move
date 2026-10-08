@@ -84,6 +84,16 @@ export function VidSrcPlayer({
     [sourceIdx, type, tmdbId, selectedSeason, selectedEpisode],
   );
 
+  // Auto-failover: if a server doesn't load within 9s, switch to the next one
+  useEffect(() => {
+    if (!open || frameLoaded) return;
+    const timer = setTimeout(() => {
+      setSourceIdx((current) => (current + 1) % SOURCES.length);
+      setIframeKey((k) => k + 1);
+    }, 9000);
+    return () => clearTimeout(timer);
+  }, [open, frameLoaded, iframeKey, sourceIdx]);
+
   const changeTvPart = (field: "season" | "episode", delta: number) => {
     if (field === "season") setSelectedSeason((value) => Math.max(1, value + delta));
     if (field === "episode") setSelectedEpisode((value) => Math.max(1, value + delta));
