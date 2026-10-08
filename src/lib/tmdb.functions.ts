@@ -6,7 +6,7 @@ const SAFE_PARAMS = { include_adult: "false" };
 async function tmdb<T>(path: string, params: Record<string, string> = {}): Promise<T> {
   const apiKey = process.env.TMDB_API_KEY;
   if (!apiKey) throw new Error("TMDB_API_KEY is not configured");
-  const url = new URL(TMDB_BASE + path);
+  const url = new URL(TMDB_BASE_URL + path);
   url.searchParams.set("api_key", apiKey);
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
   const res = await fetch(url.toString());
