@@ -105,7 +105,7 @@ function AdminPage() {
                 <div className="space-y-1">
                   {section.items.map((item) => {
                     const Icon = item.icon;
-                    return <button key={item.label} className={\`w-full flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition \${item.active ? "bg-lime-400/[0.12] text-lime-400 ring-1 ring-lime-400/20" : "text-white/55 hover:bg-white/[0.04] hover:text-white"}\`}>
+                    return <button key={item.label} className={`w-full flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition ${item.active ? "bg-lime-400/[0.12] text-lime-400 ring-1 ring-lime-400/20" : "text-white/55 hover:bg-white/[0.04] hover:text-white"}`}>
                       <Icon className="size-4" /><span>{item.label}</span>{item.active && <span className="ml-auto text-lime-400">›</span>}
                     </button>;
                   })}
