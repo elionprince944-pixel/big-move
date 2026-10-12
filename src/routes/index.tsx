@@ -20,6 +20,14 @@ const GENRES = [
 ];
 
 export const Route = createFileRoute("/")({
+  head: () => ({ meta: [
+    { title: "BIG MOV \u2014 Movies & TV Shows" },
+    { name: "description", content: "Discover trending movies, popular TV shows, and your next movie night on BIG MOV." },
+    { property: "og:title", content: "BIG MOV \u2014 Movies & TV Shows" },
+    { property: "og:description", content: "Discover trending movies, popular TV shows, and your next movie night on BIG MOV." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: HomePage,
 });
 
@@ -46,7 +54,7 @@ function HomePage() {
   const heroItem = safeTrending.find((r: any) => r.backdrop_path) ?? safeTrending[0];
 
   return (
-    <div className="-mt-16">
+    <div className="home-content">
       {trending.isLoading ? <Skeleton className="h-[70vh] w-full" /> : <Hero item={heroItem} />}
 
       <div className="mx-auto max-w-7xl">
@@ -82,7 +90,7 @@ function HomePage() {
         <MovieRow title="Popular TV Shows" items={safeTv} />
         <MovieRow title="Top Rated TV" items={safeTvTopRated} />
 
-        <section className="mx-4 sm:mx-6 my-12 rounded-2xl border border-border bg-surface/50 p-6 sm:p-8">
+        <section className="mx-4 sm:mx-6 my-12 border-t border-border py-6 sm:py-8">
           <p className="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold">BIG MOV</p>
           <h2 className="mt-2 font-display text-3xl sm:text-4xl">Your next movie night starts here.</h2>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">

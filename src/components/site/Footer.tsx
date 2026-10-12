@@ -4,7 +4,7 @@ import ceoPortrait from "@/assets/ceo-portrait.jpg";
 
 export function Footer() {
   return (
-    <footer className="border-t border-border bg-surface/50 mt-24">
+    <footer className="site-footer border-t border-border bg-surface/50 mt-16">
       <div className="mx-auto max-w-7xl px-6 py-12 grid grid-cols-1 md:grid-cols-2 gap-10">
         {/* Brand + links */}
         <div>
@@ -21,7 +21,7 @@ export function Footer() {
         </div>
 
         {/* CEO card */}
-        <div className="bg-surface border border-border rounded-2xl p-5 flex items-center gap-5 shadow-[var(--shadow-elegant)]">
+        <div className="bg-surface border border-border rounded-lg p-5 flex items-center gap-5 shadow-[var(--shadow-elegant)]">
           <img
             src={ceoPortrait}
             alt="Ishimwe Elion Prince, Founder & CEO of BIG MOV"

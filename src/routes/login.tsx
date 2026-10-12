@@ -7,7 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/login")({
-  head: () => ({ meta: [{ title: "Sign in — BIG MOV" }] }),
+  head: () => ({ meta: [
+    { title: "Sign in \u2014 BIG MOV" },
+    { name: "description", content: "Sign in to your BIG MOV account." },
+    { property: "og:title", content: "Sign in \u2014 BIG MOV" },
+    { property: "og:description", content: "Sign in to your BIG MOV account." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: LoginPage,
 });
 

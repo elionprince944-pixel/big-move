@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useRef } from "react";
-import { ChevronLeft, ChevronRight, Star, ShieldCheck } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { TMDB_IMG } from "@/lib/tmdb-image";
 import { isSafeTitle } from "@/lib/content-rating";
 
@@ -27,7 +28,7 @@ export function MovieCard({ item }: { item: TmdbItem }) {
       to="/movie/$id"
       params={{ id: String(item.id) }}
       search={{ type }}
-      className="group relative shrink-0 w-[140px] sm:w-[170px] md:w-[190px] rounded-md overflow-hidden bg-surface transition-transform duration-300 hover:scale-105 hover:z-10"
+      className="movie-card group relative shrink-0 w-[140px] sm:w-[158px] md:w-[174px] rounded-lg overflow-hidden bg-card border border-border transition-transform duration-300 hover:-translate-y-1 hover:border-primary/60"
       style={{ boxShadow: "var(--shadow-card)" }}
     >
       <div className="aspect-[2/3] relative">
@@ -41,16 +42,16 @@ export function MovieCard({ item }: { item: TmdbItem }) {
         ) : (
           <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs p-2 text-center">{title}</div>
         )}
-        <div className="absolute inset-x-0 bottom-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: "var(--gradient-card)" }}>
-          <p className="text-sm font-medium line-clamp-2">{title}</p>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+      </div>
+        <div className="px-2.5 py-3">
+          <p className="text-xs font-semibold truncate" title={title}>{title}</p>
+          <div className="flex items-center justify-between gap-2 text-[11px] text-muted-foreground mt-2">
             {year && <span>{year}</span>}
             {item.vote_average ? (
               <span className="flex items-center gap-0.5"><Star className="size-3 fill-primary text-primary" />{item.vote_average.toFixed(1)}</span>
             ) : null}
           </div>
         </div>
-      </div>
     </Link>
   );
 }
@@ -63,26 +64,26 @@ export function MovieRow({ title, items }: { title: string; items: TmdbItem[] })
   const safeItems = items?.filter(isSafeTitle) ?? [];
   if (!safeItems.length) return null;
   return (
-    <section className="relative my-8">
-      <h2 className="text-xl sm:text-2xl font-display tracking-wide mb-3 px-4 sm:px-6">{title}</h2>
+    <section className="relative my-10">
+      <h2 className="movie-row-title text-lg sm:text-xl font-display mb-5 px-4 sm:px-6">{title}</h2>
       <div className="relative group">
-        <button
+        <Button variant="ghost"
           onClick={() => scroll(-1)}
           className="hidden md:grid place-items-center absolute left-0 top-0 bottom-0 w-12 z-10 bg-gradient-to-r from-background/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
           aria-label="Scroll left"
         >
           <ChevronLeft className="size-6" />
-        </button>
+        </Button>
         <div ref={ref} className="flex gap-3 overflow-x-auto no-scrollbar px-4 sm:px-6 pb-2">
           {safeItems.map((m) => <MovieCard key={`${m.media_type ?? "x"}-${m.id}`} item={m} />)}
         </div>
-        <button
+        <Button variant="ghost"
           onClick={() => scroll(1)}
           className="hidden md:grid place-items-center absolute right-0 top-0 bottom-0 w-12 z-10 bg-gradient-to-l from-background/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
           aria-label="Scroll right"
         >
           <ChevronRight className="size-6" />
-        </button>
+        </Button>
       </div>
     </section>
   );

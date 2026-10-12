@@ -12,7 +12,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export const Route = createFileRoute("/settings")({
-  head: () => ({ meta: [{ title: "Settings — BIG MOV" }] }),
+  head: () => ({ meta: [
+    { title: "Settings \u2014 BIG MOV" },
+    { name: "description", content: "Manage your BIG MOV profile, appearance, and language." },
+    { property: "og:title", content: "Settings \u2014 BIG MOV" },
+    { property: "og:description", content: "Manage your BIG MOV profile, appearance, and language." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: SettingsPage,
 });
 

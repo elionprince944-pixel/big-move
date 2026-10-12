@@ -2,12 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Film, Tv, Bookmark, Search } from "lucide-react";
 
 export const Route = createFileRoute("/about")({
-  head: () => ({
-    meta: [
-      { title: "About — BIG MOV" },
-      { name: "description", content: "BIG MOV brings you the world's biggest catalog of movies and TV shows in one place." },
-    ],
-  }),
+  head: () => ({ meta: [
+    { title: "About \u2014 BIG MOV" },
+    { name: "description", content: "BIG MOV brings you the world's biggest catalog of movies and TV shows in one place." },
+    { property: "og:title", content: "About \u2014 BIG MOV" },
+    { property: "og:description", content: "BIG MOV brings you the world's biggest catalog of movies and TV shows in one place." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: AboutPage,
 });
 

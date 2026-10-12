@@ -66,13 +66,13 @@ export function Header() {
   return (
     <header
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-background/85 backdrop-blur-md border-b border-border" : "bg-gradient-to-b from-background/90 to-transparent"
+        scrolled ? "bg-background/95 backdrop-blur-md border-b border-border" : "bg-background/95 border-b border-border"
       }`}
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center gap-3 sm:gap-4">
+      <div className="site-header-inner px-3 sm:px-6 h-16 flex items-center gap-2 sm:gap-4">
         <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" aria-label="Open menu">
+            <Button variant="ghost" size="icon" aria-label="Open menu" className="lg:hidden shrink-0">
               <Menu className="size-5" />
             </Button>
           </SheetTrigger>
@@ -167,12 +167,12 @@ export function Header() {
           </SheetContent>
         </Sheet>
 
-        <Link to="/" className="flex items-center gap-1 shrink-0" onClick={closeMenu}>
+        <Link to="/" className="site-brand flex items-center gap-1 shrink-0" onClick={closeMenu}>
           <span className="font-display text-2xl sm:text-3xl tracking-tight text-primary leading-none">BIG</span>
           <span className="font-display text-2xl sm:text-3xl tracking-tight text-foreground leading-none">MOV</span>
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-1 ml-4">
+        <nav className="hidden xl:flex items-center gap-1 ml-4">
           <Link to="/" className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface transition-colors">Home</Link>
           <Link to="/genre/$id" params={{ id: "28" }} search={{ type: "movie" }} className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface transition-colors">Movies</Link>
           <Link to="/genre/$id" params={{ id: "10759" }} search={{ type: "tv" }} className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface transition-colors">TV Shows</Link>
@@ -188,7 +188,7 @@ export function Header() {
               onFocus={() => setSearchFocused(true)}
               onBlur={() => window.setTimeout(() => setSearchFocused(false), 120)}
               placeholder={t("search")}
-              className="h-9 w-32 sm:w-56 rounded-md bg-surface/80 border border-border pl-8 pr-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+               className="header-search h-9 w-24 sm:w-56 rounded-md bg-surface-elevated border border-border pl-8 pr-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
             />
             {searchFocused && q.trim().length >= 2 && (
               <div className="absolute right-0 mt-2 w-[min(86vw,22rem)] rounded-md border border-border bg-popover text-popover-foreground shadow-2xl overflow-hidden">

@@ -7,7 +7,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/watchlist")({
-  head: () => ({ meta: [{ title: "Watchlist — BIG MOV" }] }),
+  head: () => ({ meta: [
+    { title: "Watchlist \u2014 BIG MOV" },
+    { name: "description", content: "Your saved movies and TV shows on BIG MOV." },
+    { property: "og:title", content: "Watchlist \u2014 BIG MOV" },
+    { property: "og:description", content: "Your saved movies and TV shows on BIG MOV." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: WatchlistPage,
 });
 

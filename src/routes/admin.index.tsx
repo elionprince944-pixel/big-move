@@ -14,7 +14,14 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/")({
-  head: () => ({ meta: [{ title: "Cinemax Admin Panel — BIG MOV" }] }),
+  head: () => ({ meta: [
+    { title: "Admin Panel \u2014 BIG MOV" },
+    { name: "description", content: "Manage BIG MOV content and assistant settings." },
+    { property: "og:title", content: "Admin Panel \u2014 BIG MOV" },
+    { property: "og:description", content: "Manage BIG MOV content and assistant settings." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: AdminPage,
 });
 
