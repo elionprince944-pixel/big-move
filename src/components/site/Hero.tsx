@@ -8,7 +8,7 @@ export function Hero({ item }: { item: TmdbItem | undefined }) {
   const title = item.title ?? item.name ?? "";
   const type = item.media_type === "tv" ? "tv" : "movie";
   return (
-    <section className="relative h-[70vh] min-h-[420px] w-full overflow-hidden">
+    <section className="movie-hero relative w-full overflow-hidden">
       {item.backdrop_path && (
         <img
           src={TMDB_IMG(item.backdrop_path, "original")}
@@ -18,12 +18,12 @@ export function Hero({ item }: { item: TmdbItem | undefined }) {
       )}
       <div className="absolute inset-0" style={{ background: "var(--gradient-hero)" }} />
       <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent" />
-      <div className="relative h-full mx-auto max-w-7xl px-4 sm:px-6 flex flex-col justify-end pb-16 sm:pb-24">
+      <div className="relative h-full mx-auto max-w-7xl px-6 sm:px-10 flex flex-col justify-end pb-10 sm:pb-14">
         <div className="max-w-xl">
           <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-primary mb-3">
             <span className="size-1.5 rounded-full bg-primary animate-pulse" /> Featured
           </div>
-          <h1 className="font-display text-4xl sm:text-6xl mb-4 leading-none">{title}</h1>
+          <h1 className="font-display text-4xl sm:text-5xl mb-4 leading-tight break-words">{title}</h1>
           {item.vote_average ? (
             <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
               <Star className="size-4 fill-primary text-primary" />

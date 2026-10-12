@@ -11,6 +11,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth-context";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
+import { Sidebar } from "@/components/site/Sidebar";
 import { BigAI } from "@/components/site/BigAI";
 import { PreferencesProvider } from "@/lib/preferences";
 
@@ -71,7 +72,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" },
     ],
   }),
   shellComponent: RootShell,
@@ -97,7 +98,8 @@ function RootComponent() {
         <AuthProvider>
           <div className="min-h-screen flex flex-col bg-background">
             <Header />
-            <main className="flex-1 pt-16">
+            <Sidebar />
+            <main className="site-main flex-1 pt-16">
               <Outlet />
             </main>
             <Footer />

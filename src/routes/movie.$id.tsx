@@ -85,8 +85,8 @@ function MovieDetailsPage() {
   const mature = m.adult === true || isMatureRating(contentRating);
 
   return (
-    <div className="-mt-16">
-      <div className="relative h-[55vh] min-h-[360px] overflow-hidden">
+    <div className="movie-details">
+      <div className="detail-backdrop relative h-[48vh] min-h-[300px] overflow-hidden">
         {m.backdrop_path && <img src={TMDB_IMG(m.backdrop_path, "original")} alt={title} className="absolute inset-0 w-full h-full object-cover" />}
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
       </div>
@@ -97,7 +97,7 @@ function MovieDetailsPage() {
             <img src={TMDB_IMG(m.poster_path, "w500")} alt={title} className="w-48 sm:w-56 rounded-lg shadow-2xl shrink-0" />
           )}
           <div className="flex-1">
-            <h1 className="font-display text-4xl sm:text-5xl mb-3">{title}</h1>
+            <h1 className="font-display text-3xl sm:text-4xl mb-3 break-words">{title}</h1>
             {m.tagline && <p className="text-muted-foreground italic mb-4">{m.tagline}</p>}
             <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mb-5">
               {m.vote_average ? <span className="flex items-center gap-1"><Star className="size-4 fill-primary text-primary" />{m.vote_average.toFixed(1)}</span> : null}
