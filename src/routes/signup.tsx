@@ -7,7 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/signup")({
-  head: () => ({ meta: [{ title: "Create account — BIG MOV" }] }),
+  head: () => ({ meta: [
+    { title: "Create account \u2014 BIG MOV" },
+    { name: "description", content: "Create your BIG MOV account." },
+    { property: "og:title", content: "Create account \u2014 BIG MOV" },
+    { property: "og:description", content: "Create your BIG MOV account." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: SignupPage,
 });
 

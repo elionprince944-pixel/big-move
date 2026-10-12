@@ -20,6 +20,14 @@ const GENRES = [
 ];
 
 export const Route = createFileRoute("/")({
+  head: () => ({ meta: [
+    { title: "BIG MOV \u2014 Movies & TV Shows" },
+    { name: "description", content: "Discover trending movies, popular TV shows, and your next movie night on BIG MOV." },
+    { property: "og:title", content: "BIG MOV \u2014 Movies & TV Shows" },
+    { property: "og:description", content: "Discover trending movies, popular TV shows, and your next movie night on BIG MOV." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: HomePage,
 });
 

@@ -2,7 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 export const Route = createFileRoute("/help")({
-  head: () => ({ meta: [{ title: "Help — BIG MOV" }, { name: "description", content: "Get help using BIG MOV." }] }),
+  head: () => ({ meta: [
+    { title: "Help \u2014 BIG MOV" },
+    { name: "description", content: "Get help using BIG MOV." },
+    { property: "og:title", content: "Help \u2014 BIG MOV" },
+    { property: "og:description", content: "Get help using BIG MOV." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: HelpPage,
 });
 

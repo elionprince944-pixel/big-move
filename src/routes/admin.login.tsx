@@ -8,7 +8,14 @@ import { Label } from "@/components/ui/label";
 import { Shield } from "lucide-react";
 
 export const Route = createFileRoute("/admin/login")({
-  head: () => ({ meta: [{ title: "Admin sign in — BIG MOV" }] }),
+  head: () => ({ meta: [
+    { title: "Admin sign in \u2014 BIG MOV" },
+    { name: "description", content: "Authorized administrator sign in for BIG MOV." },
+    { property: "og:title", content: "Admin sign in \u2014 BIG MOV" },
+    { property: "og:description", content: "Authorized administrator sign in for BIG MOV." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: AdminLoginPage,
 });
 

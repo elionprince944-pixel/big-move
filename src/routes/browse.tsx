@@ -20,7 +20,14 @@ const CAT_IDS = CATS.map((c) => c.id) as unknown as [string, ...string[]];
 
 export const Route = createFileRoute("/browse")({
   validateSearch: z.object({ cat: z.enum(CAT_IDS).optional() }),
-  head: () => ({ meta: [{ title: "Browse — BIG MOV" }, { name: "description", content: "Browse popular, top-rated, and upcoming movies and shows." }] }),
+  head: () => ({ meta: [
+    { title: "Browse \u2014 BIG MOV" },
+    { name: "description", content: "Browse popular, top-rated, and upcoming movies and shows." },
+    { property: "og:title", content: "Browse \u2014 BIG MOV" },
+    { property: "og:description", content: "Browse popular, top-rated, and upcoming movies and shows." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: BrowsePage,
 });
 

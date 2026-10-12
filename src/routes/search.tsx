@@ -9,7 +9,14 @@ import { isSafeTitle } from "@/lib/content-rating";
 
 export const Route = createFileRoute("/search")({
   validateSearch: z.object({ q: z.string().optional().default("") }),
-  head: () => ({ meta: [{ title: "Search — BIG MOV" }] }),
+  head: () => ({ meta: [
+    { title: "Search \u2014 BIG MOV" },
+    { name: "description", content: "Search movies and TV shows on BIG MOV." },
+    { property: "og:title", content: "Search \u2014 BIG MOV" },
+    { property: "og:description", content: "Search movies and TV shows on BIG MOV." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: SearchPage,
 });
 

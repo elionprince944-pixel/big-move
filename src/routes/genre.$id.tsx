@@ -29,6 +29,14 @@ export const Route = createFileRoute("/genre/$id")({
     rating: z.coerce.number().optional().default(0),
     page: z.coerce.number().optional().default(1),
   }),
+  head: () => ({ meta: [
+    { title: "Genres \u2014 BIG MOV" },
+    { name: "description", content: "Explore BIG MOV movies and shows by genre, year, and rating." },
+    { property: "og:title", content: "Genres \u2014 BIG MOV" },
+    { property: "og:description", content: "Explore BIG MOV movies and shows by genre, year, and rating." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: GenrePage,
 });
 

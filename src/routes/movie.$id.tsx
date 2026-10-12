@@ -18,6 +18,14 @@ import { getContentRating, isMatureRating } from "@/lib/content-rating";
 
 export const Route = createFileRoute("/movie/$id")({
   validateSearch: z.object({ type: z.enum(["movie", "tv"]).optional().default("movie") }),
+  head: () => ({ meta: [
+    { title: "Movie & TV Details \u2014 BIG MOV" },
+    { name: "description", content: "Explore movie and TV details, trailers, cast, and watch options on BIG MOV." },
+    { property: "og:title", content: "Movie & TV Details \u2014 BIG MOV" },
+    { property: "og:description", content: "Explore movie and TV details, trailers, cast, and watch options on BIG MOV." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: MovieDetailsPage,
 });
 
