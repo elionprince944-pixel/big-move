@@ -48,26 +48,20 @@ function SignupPage() {
     if (googleBusy) return;
     setGoogleBusy(true);
 
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: window.location.origin,
-      },
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
     });
 
-    if (error) {
+    if (result.error) {
       setGoogleBusy(false);
-      toast.error(error.message || "Google sign-in failed");
+      toast.error(result.error.message || "Google sign-in failed");
       return;
     }
 
-    if (data.url) {
-      window.location.assign(data.url);
-      return;
-    }
+    if (result.redirected) return;
 
     setGoogleBusy(false);
-    toast.error("Google sign-in could not start.");
+    navigate({ to: "/" });
   };
 
   return (
