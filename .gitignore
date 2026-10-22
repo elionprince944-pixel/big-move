@@ -30,3 +30,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local environment files may contain private API keys and database credentials
+.env
+.env.*
+!.env.example
