@@ -59,9 +59,9 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.18 0.01 270);
 
-  --primary: oklch(0.5 0.17 140);
+  --primary: oklch(0.5 0.17 55);
   --primary-foreground: oklch(0.99 0 0);
-  --primary-glow: oklch(0.65 0.2 140);
+  --primary-glow: oklch(0.65 0.2 55);
 
   --secondary: oklch(0.93 0.006 270);
   --secondary-foreground: oklch(0.18 0.01 270);
@@ -69,8 +69,8 @@
   --muted: oklch(0.93 0.006 270);
   --muted-foreground: oklch(0.45 0.012 270);
 
-  --accent: oklch(0.93 0.04 140);
-  --accent-foreground: oklch(0.25 0.07 140);
+  --accent: oklch(0.93 0.04 55);
+  --accent-foreground: oklch(0.25 0.07 55);
 
   --destructive: oklch(0.68 0.16 58);
   --destructive-foreground: oklch(0.99 0.005 70);
@@ -89,20 +89,20 @@
 .dark {
 
   /* Cinematic dark base */
-  --background: oklch(0.16 0.004 160);
+  --background: oklch(0.16 0.004 260);
   --foreground: oklch(0.97 0 0);
-  --surface: oklch(0.13 0.004 160);
+  --surface: oklch(0.13 0.004 260);
   --surface-elevated: oklch(0.23 0.006 260);
 
-  --card: oklch(0.13 0.004 160);
+  --card: oklch(0.13 0.004 260);
   --card-foreground: oklch(0.98 0.005 270);
   --popover: oklch(0.18 0.005 260);
   --popover-foreground: oklch(0.98 0.005 270);
 
-  /* Bright green controls against neutral cinematic surfaces. */
-  --primary: oklch(0.87 0.29 140);
-  --primary-foreground: oklch(0.1 0.01 140);
-  --primary-glow: oklch(0.92 0.24 140);
+  /* Warm cinematic orange controls against deep charcoal surfaces. */
+  --primary: oklch(0.87 0.29 55);
+  --primary-foreground: oklch(0.1 0.01 55);
+  --primary-glow: oklch(0.92 0.24 55);
 
   --secondary: oklch(0.25 0.012 270);
   --secondary-foreground: oklch(0.98 0.005 270);
@@ -110,8 +110,8 @@
   --muted: oklch(0.22 0.006 260);
   --muted-foreground: oklch(0.68 0.015 270);
 
-  --accent: oklch(0.24 0.04 140);
-  --accent-foreground: oklch(0.87 0.29 140);
+  --accent: oklch(0.24 0.04 55);
+  --accent-foreground: oklch(0.87 0.29 55);
 
   --destructive: oklch(0.68 0.16 58);
   --destructive-foreground: oklch(0.99 0.005 70);
