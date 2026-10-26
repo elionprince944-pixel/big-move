@@ -24,14 +24,24 @@ const SOURCES: Source[] = [
         : `${VIDSRC_FALLBACK_BASE_URL}/tv/${id}/${s ?? 1}/${e ?? 1}`,
   },
   {
-    id: "vidking",
-    label: "VidKing",
+    id: "videasy",
+    label: "Videasy",
     build: (type, id, s, e) =>
       type === "movie"
-        ? `https://www.vidking.net/embed/movie/${id}`
-        : `https://www.vidking.net/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
+        ? `https://player.videasy.net/movie/${id}`
+        : `https://player.videasy.net/tv/${id}/${s ?? 1}/${e ?? 1}`,
   },
 ];
+
+// The video servers refuse to play inside a locked-down (sandboxed) outer window,
+// such as an editor preview. On the live site the page is the top window, so this is false.
+function isInsideFrame() {
+  try {
+    return window.self !== window.top;
+  } catch {
+    return true;
+  }
+}
 
 export function VidSrcPlayer({
   tmdbId,
@@ -55,7 +65,19 @@ export function VidSrcPlayer({
   const [selectedSeason, setSelectedSeason] = useState(season ?? 1);
   const [selectedEpisode, setSelectedEpisode] = useState(episode ?? 1);
   const [frameLoaded, setFrameLoaded] = useState(false);
+  const [embedded, setEmbedded] = useState(false);
+  const [noticeDismissed, setNoticeDismissed] = useState(false);
   const frameWrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setEmbedded(isInsideFrame());
+  }, []);
+
+  const openSiteInNewTab = () => {
+    const url = new URL(window.location.href);
+    url.searchParams.set("play", "1");
+    window.open(url.toString(), "_blank", "noopener");
+  };
 
   useEffect(() => {
     if (open) {
@@ -86,13 +108,13 @@ export function VidSrcPlayer({
 
   // Auto-failover: if a server doesn't load within 9s, switch to the next one
   useEffect(() => {
-    if (!open || frameLoaded) return;
+    if (!open || frameLoaded || embedded) return;
     const timer = setTimeout(() => {
       setSourceIdx((current) => (current + 1) % SOURCES.length);
       setIframeKey((k) => k + 1);
     }, 9000);
     return () => clearTimeout(timer);
-  }, [open, frameLoaded, iframeKey, sourceIdx]);
+  }, [open, frameLoaded, embedded, iframeKey, sourceIdx]);
 
   const changeTvPart = (field: "season" | "episode", delta: number) => {
     if (field === "season") setSelectedSeason((value) => Math.max(1, value + delta));
@@ -175,6 +197,35 @@ export function VidSrcPlayer({
               </div>
             </div>
           )}
+
+          {embedded && !noticeDismissed && (
+            <div className="absolute inset-0 z-20 bg-black flex items-center justify-center p-6">
+              <div className="max-w-md text-center">
+                <div className="mx-auto mb-4 size-14 rounded-full border border-primary/30 bg-primary/10 flex items-center justify-center">
+                  <ExternalLink className="size-6 text-primary" />
+                </div>
+                <p className="text-base font-semibold text-white">Open BIG MOV in a new tab to watch</p>
+                <p className="mt-2 text-sm text-white/60">
+                  This window blocks the video player. In a new tab, or on your live site, the movie plays normally.
+                </p>
+                <div className="mt-5 flex flex-wrap justify-center gap-2">
+                  <button
+                    onClick={openSiteInNewTab}
+                    className="inline-flex h-10 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition"
+                  >
+                    <ExternalLink className="size-4" /> Open in new tab
+                  </button>
+                  <button
+                    onClick={() => setNoticeDismissed(true)}
+                    className="inline-flex h-10 items-center rounded-xl border border-white/15 bg-white/5 px-4 text-sm text-white/80 hover:bg-white/10 transition"
+                  >
+                    Try here anyway
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
 
           <iframe
             key={`${iframeKey}-${sourceIdx}`}

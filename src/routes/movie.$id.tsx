@@ -17,7 +17,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { getContentRating } from "@/lib/content-rating";
 
 export const Route = createFileRoute("/movie/$id")({
-  validateSearch: z.object({ type: z.enum(["movie", "tv"]).optional().default("movie") }),
+  validateSearch: z.object({
+    type: z.enum(["movie", "tv"]).optional().default("movie"),
+    play: z.coerce.number().optional(),
+  }),
   head: () => ({ meta: [
     { title: "Movie & TV Details \u2014 BIG MOV" },
     { name: "description", content: "Explore movie and TV details, trailers, cast, and watch options on BIG MOV." },
@@ -31,13 +34,17 @@ export const Route = createFileRoute("/movie/$id")({
 
 function MovieDetailsPage() {
   const { id } = Route.useParams();
-  const { type } = Route.useSearch();
+  const { type, play } = Route.useSearch();
   const { user } = useAuth();
   const detailsFn = useServerFn(getMovieDetails);
   const providersFn = useServerFn(getWatchProviders);
   const [trailerOpen, setTrailerOpen] = useState(false);
   const [streamOpen, setStreamOpen] = useState(false);
   const [inWatchlist, setInWatchlist] = useState(false);
+
+  useEffect(() => {
+    if (play === 1) setStreamOpen(true);
+  }, [play]);
 
   const q = useQuery({
     queryKey: ["details", type, id],
