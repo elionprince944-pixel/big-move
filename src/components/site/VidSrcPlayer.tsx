@@ -114,7 +114,7 @@ export function VidSrcPlayer({
       setIframeKey((k) => k + 1);
     }, 9000);
     return () => clearTimeout(timer);
-  }, [open, frameLoaded, iframeKey, sourceIdx]);
+  }, [open, frameLoaded, embedded, iframeKey, sourceIdx]);
 
   const changeTvPart = (field: "season" | "episode", delta: number) => {
     if (field === "season") setSelectedSeason((value) => Math.max(1, value + delta));
