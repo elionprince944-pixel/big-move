@@ -14,7 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/integrations/supabase/client";
-import { getContentRating, isMatureRating } from "@/lib/content-rating";
+import { getContentRating } from "@/lib/content-rating";
 
 export const Route = createFileRoute("/movie/$id")({
   validateSearch: z.object({ type: z.enum(["movie", "tv"]).optional().default("movie") }),
@@ -90,7 +90,8 @@ function MovieDetailsPage() {
   const videos = (m.videos?.results ?? []) as any[];
   const trailer = pickBestVideo(videos);
   const contentRating = getContentRating(m);
-  const mature = m.adult === true || isMatureRating(contentRating);
+  // Only explicit adult-flagged titles are blocked; age-rated titles (R, TV-MA, etc.) can play.
+  const mature = m.adult === true;
 
   return (
     <div className="movie-details">
