@@ -199,7 +199,7 @@ export function VidSrcPlayer({
           )}
 
           {embedded && !noticeDismissed && (
-            <div className="absolute inset-0 z-20 bg-black/95 flex items-center justify-center p-6">
+            <div className="absolute inset-0 z-20 bg-black flex items-center justify-center p-6">
               <div className="max-w-md text-center">
                 <div className="mx-auto mb-4 size-14 rounded-full border border-primary/30 bg-primary/10 flex items-center justify-center">
                   <ExternalLink className="size-6 text-primary" />
