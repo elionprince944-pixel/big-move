@@ -8,29 +8,34 @@ type Source = { id: string; label: string; build: (type: "movie" | "tv", id: str
 
 // Playback servers, tried in this order. All use TMDB ids:
 //   movie: {base}/movie/{tmdbId}    tv: {base}/tv/{tmdbId}/{season}/{episode}
-const VIDSRC_BASE_URL = "https://vidsrc.tw/embed";
-const VIDSRC_FALLBACK_BASE_URL = "https://vidsrc.ir/embed";
-const VIDSRC_SH_BASE_URL = "https://vidsrc.sh/embed";
-const VIDKING_BASE_URL = "https://www.vidking.net/embed";
-
-const embed = (base: string) => (type: "movie" | "tv", id: string, s?: number, e?: number) =>
-  type === "movie"
-    ? `${base}/movie/${encodeURIComponent(id)}`
-    : `${base}/tv/${encodeURIComponent(id)}/${s ?? 1}/${e ?? 1}`;
+const VIDSRC_BASE_URL = "https://vidsrc.sh/embed";
+const VIDSRC_FALLBACK_BASE_URL = "https://vidsrc.tw/embed";
 
 const SOURCES: Source[] = [
-  { id: "vidsrc", label: "VidSrc", build: embed(VIDSRC_BASE_URL) },
-  { id: "vidsrc-fallback", label: "VidSrc alternate", build: embed(VIDSRC_FALLBACK_BASE_URL) },
-  { id: "vidsrc-sh", label: "VidSrc SH", build: embed(VIDSRC_SH_BASE_URL) },
   {
-    id: "videasy",
-    label: "Videasy",
+    id: "vidsrc-sh",
+    label: "VidSrc",
     build: (type, id, s, e) =>
       type === "movie"
-        ? `https://player.videasy.net/movie/${encodeURIComponent(id)}`
-        : `https://player.videasy.net/tv/${encodeURIComponent(id)}/${s ?? 1}/${e ?? 1}`,
+        ? `${VIDSRC_BASE_URL}/movie/${encodeURIComponent(id)}`
+        : `${VIDSRC_BASE_URL}/tv/${encodeURIComponent(id)}/${s ?? 1}/${e ?? 1}`,
   },
-  { id: "vidking", label: "VidKing", build: embed(VIDKING_BASE_URL) },
+  {
+    id: "vidking",
+    label: "VidKing",
+    build: (type, id, s, e) =>
+      type === "movie"
+        ? `https://www.vidking.net/embed/movie/${encodeURIComponent(id)}`
+        : `https://www.vidking.net/embed/tv/${encodeURIComponent(id)}/${s ?? 1}/${e ?? 1}`,
+  },
+  {
+    id: "vidsrc-tw",
+    label: "VidSrc alternate",
+    build: (type, id, s, e) =>
+      type === "movie"
+        ? `${VIDSRC_FALLBACK_BASE_URL}/movie/${encodeURIComponent(id)}`
+        : `${VIDSRC_FALLBACK_BASE_URL}/tv/${encodeURIComponent(id)}/${s ?? 1}/${e ?? 1}`,
+  },
 ];
 
 function isInsideFrame() {
