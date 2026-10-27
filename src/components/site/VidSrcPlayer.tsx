@@ -3,8 +3,8 @@ import { X, ExternalLink, Settings, RefreshCw } from "lucide-react";
 
 type Source = { id: string; label: string; build: (type: "movie" | "tv", id: string, s?: number, e?: number) => string };
 
-const VIDSRC_BASE_URL = "https://vidsrc.tw/embed";
-const VIDSRC_FALLBACK_BASE_URL = "https://vidsrc.ir/embed";
+const VIDSRC_BASE_URL = "https://vidsrc.ir/embed";
+const VIDSRC_FALLBACK_BASE_URL = "https://vidsrc.tw/embed";
 
 const SOURCES: Source[] = [
   {
@@ -12,24 +12,24 @@ const SOURCES: Source[] = [
     label: "VidSrc",
     build: (type, id, s, e) =>
       type === "movie"
-        ? `${VIDSRC_BASE_URL}/movie/${id}`
-        : `${VIDSRC_BASE_URL}/tv/${id}/${s ?? 1}/${e ?? 1}`,
+        ? `${VIDSRC_BASE_URL}/movie/${encodeURIComponent(id)}`
+        : `${VIDSRC_BASE_URL}/tv/${encodeURIComponent(id)}/${s ?? 1}/${e ?? 1}`,
   },
   {
     id: "vidsrc-fallback",
-    label: "VidSrc Fallback",
+    label: "VidSrc (alternate domain)",
     build: (type, id, s, e) =>
       type === "movie"
-        ? `${VIDSRC_FALLBACK_BASE_URL}/movie/${id}`
-        : `${VIDSRC_FALLBACK_BASE_URL}/tv/${id}/${s ?? 1}/${e ?? 1}`,
+        ? `${VIDSRC_FALLBACK_BASE_URL}/movie/${encodeURIComponent(id)}`
+        : `${VIDSRC_FALLBACK_BASE_URL}/tv/${encodeURIComponent(id)}/${s ?? 1}/${e ?? 1}`,
   },
   {
     id: "videasy",
     label: "Videasy",
     build: (type, id, s, e) =>
       type === "movie"
-        ? `https://player.videasy.net/movie/${id}`
-        : `https://player.videasy.net/tv/${id}/${s ?? 1}/${e ?? 1}`,
+        ? `https://player.videasy.net/movie/${encodeURIComponent(id)}`
+        : `https://player.videasy.net/tv/${encodeURIComponent(id)}/${s ?? 1}/${e ?? 1}`,
   },
 ];
 
