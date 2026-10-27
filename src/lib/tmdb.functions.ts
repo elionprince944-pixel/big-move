@@ -69,14 +69,12 @@ export const getEmbedUrl = createServerFn({ method: "GET" })
   .inputValidator((data: { id: number | string; type?: "movie" | "tv"; season?: number; episode?: number }) => data)
   .handler(async ({ data }) => {
     const type = data.type === "tv" ? "tv" : "movie";
-    const base = process.env.VIDSRC_BASE ?? "https://vidsrc.xyz/embed";
-    const token = process.env.VIDSRC_TOKEN;
+    const base = process.env.VIDSRC_BASE_URL ?? "https://vidsrc.tw/embed";
     const tmdbId = encodeURIComponent(String(data.id));
-    let url =
+    const url =
       type === "movie"
-        ? `${base}/movie?tmdb=${tmdbId}`
-        : `${base}/tv?tmdb=${tmdbId}${data.season ? `&season=${data.season}` : ""}${data.episode ? `&episode=${data.episode}` : ""}`;
-    if (token) url += `&token=${encodeURIComponent(token)}`;
+        ? `${base}/movie/${tmdbId}`
+        : `${base}/tv/${tmdbId}/${data.season ?? 1}/${data.episode ?? 1}`;
     return { url, type, id: String(data.id) };
   });
 
