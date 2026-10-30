@@ -210,6 +210,7 @@ export function VidSrcPlayer({
             </div>
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/15 bg-emerald-400/[0.06] px-2.5 py-1 text-[10px] font-semibold text-emerald-300"><ShieldCheck className="size-3" /> Player connection</span>
+              <a href={src} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="inline-flex items-center gap-1.5 rounded-lg bg-orange-300 px-3 py-1.5 text-xs font-bold text-black transition hover:bg-orange-200" title="Open the video provider outside the embedded frame"><ExternalLink className="size-3.5" />Open player in new tab</a>
               <button onClick={(e) => { e.stopPropagation(); tryNextSource(); }} className="rounded-lg border border-orange-300/20 bg-orange-300/[0.08] px-3 py-1.5 text-xs font-semibold text-orange-200 transition hover:bg-orange-300/15">Switch server <span className="ml-1 text-orange-200/50">(N)</span></button>
             </div>
           </div>
@@ -273,7 +274,7 @@ export function VidSrcPlayer({
           <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/[0.07] bg-white/[0.025] px-4 py-3">
             <div className="flex items-center gap-2 text-xs text-white/45">
               <Volume2 className="size-4 text-orange-300/80" />
-              <span>Use the controls inside the video for volume, pause and seeking.</span>
+              <span>If playback shows a sandbox error, choose “Open player in new tab” above.</span>
             </div>
             <div className="flex items-center gap-3 text-[11px] text-white/35">
               <span className="hidden sm:inline">Tip: use the provider's timeline to seek</span>
