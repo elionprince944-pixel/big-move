@@ -57,7 +57,7 @@ function HomePage() {
     <div className="home-content">
       {trending.isLoading ? <Skeleton className="h-[70vh] w-full" /> : <Hero item={heroItem} />}
 
-      <div className="mx-auto max-w-7xl">
+      <div id="browse" className="mx-auto max-w-7xl scroll-mt-20">
         <section className="px-4 sm:px-6 pt-6">
           <div className="flex items-center justify-between gap-4 mb-3">
             <div>
