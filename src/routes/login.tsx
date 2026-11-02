@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { Button } from "@/components/ui/button";
+import { Brand, FromBig } from "@/components/site/Brand";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -57,12 +58,26 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md bg-surface/80 backdrop-blur border border-border rounded-xl p-8" style={{ boxShadow: "var(--shadow-card)" }}>
-        <div className="text-center mb-6">
-          <span className="font-display text-3xl text-primary">BIG</span>
-          <span className="font-display text-3xl"> MOV</span>
-        </div>
+    <div className="login-stage relative isolate flex min-h-[calc(100vh-4rem)] items-center justify-center overflow-hidden px-4 py-12">
+      <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+        <div className="absolute left-1/2 top-[-16rem] h-[34rem] w-[34rem] -translate-x-1/2 rounded-full bg-primary/20 blur-[110px]" />
+        <div className="absolute bottom-[-18rem] right-[-8rem] h-[34rem] w-[34rem] rounded-full bg-orange-600/10 blur-[110px]" />
+      </div>
+      <div className="grid w-full max-w-5xl overflow-hidden rounded-[28px] border border-white/10 bg-black/45 shadow-[0_35px_120px_rgba(0,0,0,.72)] backdrop-blur-2xl lg:grid-cols-[1.1fr_.9fr]">
+        <section className="relative flex min-h-[340px] flex-col items-center justify-center overflow-hidden px-7 py-12 text-center sm:px-12">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,116,0,.19),transparent_62%)]" />
+          <div className="relative">
+            <div className="mx-auto mb-5 grid size-32 place-items-center rounded-[2rem] border border-orange-300/25 bg-white/[.04] shadow-[0_0_80px_rgba(255,105,0,.22),inset_0_1px_0_rgba(255,255,255,.22)] backdrop-blur-xl sm:size-40">
+              <Brand compact tagline />
+            </div>
+            <h2 className="font-display text-4xl font-black tracking-tight sm:text-6xl"><span className="text-white">BIG</span> <span className="text-primary">MOV</span></h2>
+            <p className="mt-3 text-xs font-semibold uppercase tracking-[.32em] text-white/55">Watch · Stream · Enjoy</p>
+            <p className="mx-auto mt-5 max-w-sm text-sm leading-6 text-white/65">Your next great story starts here. Discover movies and series in one cinematic destination.</p>
+            <FromBig className="mt-8" />
+          </div>
+        </section>
+        <section className="border-t border-white/10 bg-white/[.035] p-7 sm:p-10 lg:border-l lg:border-t-0">
+          <div className="mb-7"><Brand compact tagline /></div>
         <h1 className="text-2xl font-semibold mb-1">Sign in</h1>
         <p className="text-sm text-muted-foreground mb-6">Welcome back. Continue watching.</p>
 
@@ -90,6 +105,7 @@ function LoginPage() {
         <p className="text-sm text-muted-foreground text-center mt-6">
           New to BIG MOV? <Link to="/signup" className="text-primary hover:underline">Create account</Link>
         </p>
+        </section>
       </div>
     </div>
   );
