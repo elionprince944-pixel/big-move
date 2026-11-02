@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetClose } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
+import { Brand } from "@/components/site/Brand";
 
 const QUICK_GENRES: { id: number; name: string }[] = [
   { id: 28, name: "Action" },
@@ -78,10 +79,7 @@ export function Header() {
           </SheetTrigger>
           <SheetContent side="left" className="w-80 sm:w-96 p-0 flex flex-col bg-background">
             <SheetHeader className="px-6 py-5 border-b border-border">
-              <SheetTitle className="flex items-center gap-1">
-                <span className="font-display text-2xl tracking-tight text-primary leading-none">BIG</span>
-                <span className="font-display text-2xl tracking-tight text-foreground leading-none">MOV</span>
-              </SheetTitle>
+              <SheetTitle><Brand compact tagline /></SheetTitle>
             </SheetHeader>
 
             <div className="flex-1 overflow-y-auto px-3 py-4">
@@ -167,10 +165,7 @@ export function Header() {
           </SheetContent>
         </Sheet>
 
-        <Link to="/" className="site-brand flex items-center gap-1 shrink-0" onClick={closeMenu}>
-          <span className="font-display text-2xl sm:text-3xl tracking-tight text-primary leading-none">BIG</span>
-          <span className="font-display text-2xl sm:text-3xl tracking-tight text-foreground leading-none">MOV</span>
-        </Link>
+        <Brand className="site-brand shrink-0" tagline />
 
         <nav className="hidden xl:flex items-center gap-1 ml-4">
           <Link to="/" className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface transition-colors">Home</Link>
