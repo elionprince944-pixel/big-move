@@ -86,9 +86,9 @@ export function Header() {
               <nav className="flex flex-col gap-0.5">
                 <SheetClose asChild>
                   <Link
-                    to="/"
+                    to="/home"
                     className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors hover:bg-surface ${
-                      path === "/" ? "text-foreground bg-surface font-medium" : "text-muted-foreground"
+                      path === "/home" ? "text-foreground bg-surface font-medium" : "text-muted-foreground"
                     }`}
                   >
                     <Home className="size-4" /> {t("home")}
@@ -168,7 +168,7 @@ export function Header() {
         <Brand className="site-brand shrink-0" tagline />
 
         <nav className="hidden xl:flex items-center gap-1 ml-3 rounded-full border border-white/10 bg-black/35 p-1 shadow-[inset_0_1px_0_rgba(255,255,255,.06)] backdrop-blur-xl">
-          <Link to="/" className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${path === "/" ? "bg-gradient-to-r from-orange-700 to-orange-500 text-white shadow-[0_0_18px_rgba(255,105,0,.3)]" : "text-white/75 hover:bg-white/10 hover:text-white"}`}><Home className="mr-1.5 inline size-4"/>Home</Link>
+          <Link to="/home" className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${path === "/home" ? "bg-gradient-to-r from-orange-700 to-orange-500 text-white shadow-[0_0_18px_rgba(255,105,0,.3)]" : "text-white/75 hover:bg-white/10 hover:text-white"}`}><Home className="mr-1.5 inline size-4"/>Home</Link>
           <Link to="/genre/$id" params={{ id: "28" }} search={{ type: "movie" }} className="rounded-full px-3 py-2 text-sm text-white/80 transition hover:bg-white/10 hover:text-white"><Film className="mr-1.5 inline size-4"/>Movies</Link>
           <Link to="/genre/$id" params={{ id: "10759" }} search={{ type: "tv" }} className="rounded-full px-3 py-2 text-sm text-white/80 transition hover:bg-white/10 hover:text-white"><Tv className="mr-1.5 inline size-4"/>TV Shows</Link>
           <DropdownMenu>
