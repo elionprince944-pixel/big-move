@@ -560,7 +560,7 @@ button[data-slot="button"], .site-main button:not(.bm-featured-controls button) 
   .bm-featured-count { top:16px; right:17px; }
   .movie-card { width:clamp(126px,39vw,160px) !important; }
   .movie-row-title { padding-inline:14px !important; }
-  .home-content .px-4, .home-content .sm\\:px-6 { padding-left:14px; padding-right:14px; }
+  .home-content .px-4, .home-content .sm\:px-6 { padding-left:14px; padding-right:14px; }
   .site-footer .grid { gap:25px; }
 }
 @media (prefers-reduced-motion:reduce) {
