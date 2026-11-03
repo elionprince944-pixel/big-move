@@ -566,3 +566,6 @@ button[data-slot="button"], .site-main button:not(.bm-featured-controls button) 
 @media (prefers-reduced-motion:reduce) {
   .bm-featured-slide,.bm-featured-title,.bm-featured-cta { animation:none !important; transition:none !important; }
 }
+
+/* Grid results must fill their grid tracks; horizontal shelves keep poster sizing. */
+.grid > .movie-card { width:100% !important; }
