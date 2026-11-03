@@ -167,11 +167,23 @@ export function Header() {
 
         <Brand className="site-brand shrink-0" tagline />
 
-        <nav className="hidden xl:flex items-center gap-1 ml-4">
-          <Link to="/" className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface transition-colors">Home</Link>
-          <Link to="/genre/$id" params={{ id: "28" }} search={{ type: "movie" }} className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface transition-colors">Movies</Link>
-          <Link to="/genre/$id" params={{ id: "10759" }} search={{ type: "tv" }} className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface transition-colors">TV Shows</Link>
-          <Link to="/watchlist" className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface transition-colors">My List</Link>
+        <nav className="hidden xl:flex items-center gap-1 ml-3 rounded-full border border-white/10 bg-black/35 p-1 shadow-[inset_0_1px_0_rgba(255,255,255,.06)] backdrop-blur-xl">
+          <Link to="/" className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${path === "/" ? "bg-gradient-to-r from-orange-700 to-orange-500 text-white shadow-[0_0_18px_rgba(255,105,0,.3)]" : "text-white/75 hover:bg-white/10 hover:text-white"}`}><Home className="mr-1.5 inline size-4"/>Home</Link>
+          <Link to="/genre/$id" params={{ id: "28" }} search={{ type: "movie" }} className="rounded-full px-3 py-2 text-sm text-white/80 transition hover:bg-white/10 hover:text-white"><Film className="mr-1.5 inline size-4"/>Movies</Link>
+          <Link to="/genre/$id" params={{ id: "10759" }} search={{ type: "tv" }} className="rounded-full px-3 py-2 text-sm text-white/80 transition hover:bg-white/10 hover:text-white"><Tv className="mr-1.5 inline size-4"/>TV Shows</Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild><Button variant="ghost" size="sm" className="rounded-full px-3 text-white/80 hover:bg-white/10 hover:text-white"><Star className="mr-1.5 size-4"/>Genres <span className="ml-1 text-xs">⌄</span></Button></DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="max-h-80 overflow-y-auto border-white/10 bg-[#111] text-white">
+              {(genres.data?.movie ?? QUICK_GENRES).map((g: any) => <DropdownMenuItem key={g.id} asChild><Link to="/genre/$id" params={{id:String(g.id)}} search={{type:"movie"}}>{g.name}</Link></DropdownMenuItem>)}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild><Button variant="ghost" size="sm" className="rounded-full px-3 text-white/80 hover:bg-white/10 hover:text-white">••• More <span className="ml-1 text-xs">⌄</span></Button></DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="border-white/10 bg-[#111] text-white">
+              <DropdownMenuItem asChild><Link to="/watchlist"><Bookmark className="mr-2 size-4"/>My List</Link></DropdownMenuItem>
+              <DropdownMenuItem asChild><Link to="/settings"><SettingsIcon className="mr-2 size-4"/>Settings</Link></DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </nav>
 
         <form onSubmit={onSearch} className="ml-auto flex items-center">
