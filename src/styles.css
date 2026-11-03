@@ -297,3 +297,16 @@
   .bm-reel-right { right:-16%; bottom:13%; }
   .bm-filmstrip { width:90vw; opacity:.25; }
 }
+
+
+/* Landing route is a standalone full-screen intro. The catalogue lives at /home. */
+body:has(.bigmov-landing) .site-footer { display: none !important; }
+.bigmov-landing { min-height: calc(100svh - 64px); overflow: hidden; }
+.bigmov-landing .bigmov-welcome { min-height: calc(100svh - 64px); }
+.bigmov-welcome { background-color:#050607; }
+.bm-emblem-wrap { transform:translateY(2px); }
+@media (min-width: 700px) {
+  .bigmov-welcome { padding-top:0; }
+  .bm-popcorn { left:1.5%; bottom:2rem; }
+  .bm-clapper { right:1.5%; bottom:2.5rem; }
+}
