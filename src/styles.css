@@ -59,9 +59,9 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.18 0.01 270);
 
-  --primary: oklch(0.68 0.23 48);
+  --primary: oklch(0.72 0.25 48);
   --primary-foreground: oklch(0.99 0 0);
-  --primary-glow: oklch(0.78 0.24 50);
+  --primary-glow: oklch(0.84 0.25 50);
 
   --secondary: oklch(0.93 0.006 270);
   --secondary-foreground: oklch(0.18 0.01 270);
@@ -100,9 +100,9 @@
   --popover-foreground: oklch(0.98 0.005 270);
 
   /* Warm cinematic orange controls against deep charcoal surfaces. */
-  --primary: oklch(0.74 0.25 48);
+  --primary: oklch(0.78 0.27 47);
   --primary-foreground: oklch(0.1 0.01 55);
-  --primary-glow: oklch(0.82 0.23 50);
+  --primary-glow: oklch(0.87 0.25 49);
 
   --secondary: oklch(0.25 0.012 270);
   --secondary-foreground: oklch(0.98 0.005 270);
@@ -310,3 +310,7 @@ body:has(.bigmov-landing) .site-footer { display: none !important; }
   .bm-popcorn { left:1.5%; bottom:2rem; }
   .bm-clapper { right:1.5%; bottom:2.5rem; }
 }
+
+/* Bright signature orange for the new BIG MOV 3D identity. */
+:root, .dark { --shadow-elegant: 0 12px 38px -10px rgba(255, 102, 0, .34); }
+.bigmov-welcome .bm-art-frame { filter: drop-shadow(0 22px 55px rgba(255, 83, 0, .13)); }
