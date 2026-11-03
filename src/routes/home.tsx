@@ -5,6 +5,7 @@ import { getTrending, getCategory } from "@/lib/tmdb.functions";
 import { MovieRow } from "@/components/site/Movie";
 import { Link } from "@tanstack/react-router";
 import { SpinMovie } from "@/components/site/SpinMovie";
+import { FeaturedCarousel } from "@/components/site/FeaturedCarousel";
 import { isSafeTitle } from "@/lib/content-rating";
 
 const GENRES = [
@@ -74,6 +75,8 @@ function HomePage() {
             ))}
           </div>
         </section>
+
+        <FeaturedCarousel items={safeTrending} />
 
         <SpinMovie />
 
