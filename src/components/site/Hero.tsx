@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Play } from "lucide-react";
+import { ChevronDown, Play } from "lucide-react";
 import { FromBig } from "@/components/site/Brand";
 
 function BigMovEmblem() {
