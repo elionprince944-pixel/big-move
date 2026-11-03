@@ -2,9 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getTrending, getCategory } from "@/lib/tmdb.functions";
-import { Hero } from "@/components/site/Hero";
 import { MovieRow } from "@/components/site/Movie";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@tanstack/react-router";
 import { SpinMovie } from "@/components/site/SpinMovie";
 import { isSafeTitle } from "@/lib/content-rating";
@@ -51,12 +49,9 @@ function HomePage() {
   const safeNowPlaying = safe(nowPlaying.data?.results);
   const safeTv = safe(tv.data?.results).map((r: any) => ({ ...r, media_type: "tv" }));
   const safeTvTopRated = safe(tvTopRated.data?.results).map((r: any) => ({ ...r, media_type: "tv" }));
-  const heroItem = safeTrending.find((r: any) => r.backdrop_path) ?? safeTrending[0];
 
   return (
     <div className="home-content">
-      {trending.isLoading ? <Skeleton className="h-[70vh] w-full" /> : <Hero item={heroItem} />}
-
       <div id="browse" className="mx-auto max-w-7xl scroll-mt-20">
         <section className="px-4 sm:px-6 pt-6">
           <div className="flex items-center justify-between gap-4 mb-3">
