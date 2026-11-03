@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronDown, Play, Sparkles } from "lucide-react";
+import { ChevronDown, Play } from "lucide-react";
 import { FromBig } from "@/components/site/Brand";
 
 function CinemaDecor() {
@@ -18,7 +18,7 @@ function CinemaDecor() {
 
 function BigMovEmblem() {
   return (
-    <svg viewBox="0 0 180 180" role="img" aria-label="BIG MOV crowned film-play logo" className="mx-auto h-36 w-36 sm:h-48 sm:w-48">
+    <svg viewBox="0 0 180 180" role="img" aria-label="BIG MOV crowned film-play logo" className="mx-auto h-44 w-44 sm:h-64 sm:w-64">
       <defs>
         <linearGradient id="bm-metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#fff2bc"/><stop offset=".2" stopColor="#ffc34b"/><stop offset=".52" stopColor="#ff7900"/><stop offset=".82" stopColor="#ff4a00"/><stop offset="1" stopColor="#a92300"/></linearGradient>
         <linearGradient id="bm-side" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#ff9b24"/><stop offset="1" stopColor="#7e1b00"/></linearGradient>
@@ -53,7 +53,7 @@ export function Hero() {
       <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col items-center px-5 pb-16 pt-8 text-center sm:px-8">
         <div className="mb-1 inline-flex items-center gap-2 rounded-full border border-orange-400/30 bg-black/55 px-4 py-2 text-[10px] font-bold uppercase tracking-[.24em] text-orange-100 shadow-xl backdrop-blur-xl"><Sparkles className="size-3.5 text-orange-400"/> Your cinema. Your stories.</div>
         <div className="bm-emblem-wrap"><BigMovEmblem/></div>
-        <h1 className="bigmov-hero-wordmark -mt-1 font-display text-6xl font-black uppercase leading-none tracking-[-.06em] sm:text-8xl"><span className="text-white">BIG</span><span className="bg-gradient-to-b from-[#fff0bd] via-[#ff8700] to-[#ed3900] bg-clip-text text-transparent"> MOV</span></h1>
+        <h1 className="bigmov-hero-wordmark -mt-1 font-display text-6xl font-black uppercase leading-none tracking-[-.06em] sm:text-9xl"><span className="text-white">BIG</span><span className="bg-gradient-to-b from-[#fff0bd] via-[#ff8700] to-[#ed3900] bg-clip-text text-transparent"> MOV</span></h1>
         <div className="mt-4 flex items-center gap-3 text-[10px] font-extrabold uppercase tracking-[.32em] text-white/90 sm:text-sm sm:tracking-[.43em]"><span className="h-px w-7 bg-orange-500 sm:w-16"/><span>WATCH <b className="text-orange-400">•</b> STREAM <b className="text-orange-400">•</b> ENJOY</span><span className="h-px w-7 bg-orange-500 sm:w-16"/></div>
         <p className="mt-5 max-w-xl text-sm text-white/80 sm:text-lg">Your ultimate destination for movies and TV series.</p>
         <Link to="/home" className="mt-7 inline-flex items-center gap-3 rounded-full border border-orange-200/80 bg-gradient-to-r from-[#ffb51b] via-[#ff7900] to-[#f04400] px-8 py-4 text-sm font-black text-black shadow-[0_0_36px_rgba(255,103,0,.48)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_0_54px_rgba(255,103,0,.65)] sm:text-base"><Play className="size-4 fill-current"/>Explore Now<ChevronDown className="size-4 -rotate-90"/></Link>
