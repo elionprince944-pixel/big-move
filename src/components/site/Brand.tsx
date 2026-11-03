@@ -4,7 +4,7 @@ type BrandProps = { compact?: boolean; className?: string; tagline?: boolean };
 
 export function Brand({ compact = false, className = "", tagline = false }: BrandProps) {
   return (
-    <Link to="/" aria-label="BIG MOV home" className={`inline-flex items-center gap-2.5 ${className}`}>
+    <Link to="/home" aria-label="BIG MOV home" className={`inline-flex items-center gap-2.5 ${className}`}>
       <svg viewBox="0 0 72 72" role="img" aria-label="BIG MOV film-play emblem" className={compact ? "h-9 w-9 shrink-0" : "h-12 w-12 shrink-0"}>
         <defs>
           <linearGradient id="bigmov-orange" x1="0" y1="0" x2="1" y2="1">
