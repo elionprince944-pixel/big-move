@@ -569,3 +569,37 @@ button[data-slot="button"], .site-main button:not(.bm-featured-controls button) 
 
 /* Grid results must fill their grid tracks; horizontal shelves keep poster sizing. */
 .grid > .movie-card { width:100% !important; }
+
+
+/* VIBRANT BLUE brand refresh */
+:root, .dark {
+  --primary: #1677ff;
+  --primary-foreground: #ffffff;
+  --primary-glow: #58b6ff;
+  --accent: rgba(22,119,255,.18);
+  --accent-foreground: #8bcaff;
+  --ring: #4aa3ff;
+  --shadow-glow: 0 0 32px rgba(22,119,255,.3);
+  --border: rgba(95,170,255,.2);
+  --input: rgba(95,170,255,.24);
+  --shadow-elegant: 0 12px 38px -10px rgba(22,119,255,.36);
+}
+::selection { background:rgba(22,119,255,.45); color:#fff; }
+:focus-visible { outline-color:#69baff !important; }
+.site-header-inner { border-bottom-color:rgba(60,150,255,.3) !important; }
+.site-brand > svg { filter:drop-shadow(0 0 13px rgba(22,119,255,.48)); }
+.site-footer { border-top-color:rgba(60,150,255,.25) !important; }
+.movie-row-title::before { background:linear-gradient(180deg,#a8ddff,#1677ff,#0647b8); box-shadow:0 0 18px rgba(22,119,255,.5); }
+.movie-card:hover { border-color:rgba(80,165,255,.78) !important; box-shadow:0 22px 46px rgba(0,0,0,.65),0 0 24px rgba(22,119,255,.2) !important; }
+.bigmov-welcome::before, .bigmov-welcome::after { background:linear-gradient(90deg,transparent,#1677ff 25%,#a8ddff 50%,#1677ff 75%,transparent) !important; box-shadow:0 0 26px 8px rgba(22,119,255,.28) !important; }
+.bigmov-hero-wordmark { text-shadow:0 4px 28px rgba(22,119,255,.24) !important; }
+.bm-reel { filter:drop-shadow(0 0 18px rgba(22,119,255,.4)) !important; }
+.bm-reel svg { stroke:#4aa3ff !important; }
+.bm-filmstrip { border-top-color:rgba(75,160,255,.8) !important; border-bottom-color:rgba(75,160,255,.8) !important; box-shadow:0 0 22px rgba(22,119,255,.24) !important; }
+.bm-filmstrip span { border-color:rgba(160,215,255,.65) !important; background:linear-gradient(145deg,rgba(22,119,255,.2),rgba(0,0,0,.65)) !important; }
+.bm-popcorn-cup { border-color:#4aa3ff !important; background:repeating-linear-gradient(90deg,#073b91 0 18%,#2f9bff 18% 36%) !important; }
+.bm-popcorn-pile { color:#d9efff !important; text-shadow:0 2px 5px #073b91 !important; }
+.bm-clapper { border-color:#357fd2 !important; color:#cde7ff !important; }
+.bm-clapper-top { border-color:#5caaff !important; }
+.bm-floor-glow { background:#1677ff !important; }
+.login-stage { background:radial-gradient(ellipse at 50% 15%,rgba(22,119,255,.12),transparent 48%),#08090b !important; }
