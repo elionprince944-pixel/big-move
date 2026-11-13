@@ -54,30 +54,13 @@ function HomePage() {
   return (
     <div className="home-content">
       <div id="browse" className="mx-auto max-w-7xl scroll-mt-20">
-        <section className="px-4 sm:px-6 pt-6">
-          <div className="flex items-center justify-between gap-4 mb-3">
-            <div>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold">Explore</p>
-              <h2 className="font-display text-2xl sm:text-3xl">Browse by genre</h2>
-            </div>
-          </div>
-          <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
-            {GENRES.map((genre) => (
-              <Link
-                key={genre.id}
-                to="/genre/$id"
-                params={{ id: String(genre.id) }}
-                search={{ type: "movie" }}
-                className="shrink-0 rounded-full border border-border bg-surface/70 px-4 py-2 text-sm text-muted-foreground hover:border-primary/50 hover:text-foreground hover:bg-surface transition-all"
-              >
-                {genre.name}
-              </Link>
-            ))}
+        <FeaturedCarousel items={safeTrending} />
+        <section className="px-4 sm:px-6 pt-8 pb-2">
+          <div className="flex items-center justify-between mb-4"><h2 className="movie-row-title text-lg sm:text-xl">Browse by Categories</h2><Link to="/genre/$id" params={{id:"28"}} search={{type:"movie"}} className="text-xs font-bold text-primary hover:underline">All Categories →</Link></div>
+          <div className="category-tiles">
+            {GENRES.concat([{id:10749,name:"Romance"}]).map((genre,index)=><Link key={genre.id} to="/genre/$id" params={{id:String(genre.id)}} search={{type:"movie"}} className={`category-tile category-tile-${index%8}`}><span>{genre.name}</span><small>Explore</small></Link>)}
           </div>
         </section>
-
-        <FeaturedCarousel items={safeTrending} />
-
         <SpinMovie />
 
         <MovieRow title="Trending Now" items={safeTrending} />
