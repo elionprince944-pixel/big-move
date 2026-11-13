@@ -7,6 +7,7 @@ import { Link } from "@tanstack/react-router";
 import { SpinMovie } from "@/components/site/SpinMovie";
 import { FeaturedCarousel } from "@/components/site/FeaturedCarousel";
 import { isSafeTitle } from "@/lib/content-rating";
+import { TMDB_IMG } from "@/lib/tmdb-image";
 
 const GENRES = [
   { id: 28, name: "Action" },
@@ -58,7 +59,11 @@ function HomePage() {
         <section className="px-4 sm:px-6 pt-8 pb-2">
           <div className="flex items-center justify-between mb-4"><h2 className="movie-row-title text-lg sm:text-xl">Browse by Categories</h2><Link to="/genre/$id" params={{id:"28"}} search={{type:"movie"}} className="text-xs font-bold text-primary hover:underline">All Categories →</Link></div>
           <div className="category-tiles">
-            {GENRES.concat([{id:10749,name:"Romance"}]).map((genre,index)=><Link key={genre.id} to="/genre/$id" params={{id:String(genre.id)}} search={{type:"movie"}} className={`category-tile category-tile-${index%8}`}><span>{genre.name}</span><small>Explore</small></Link>)}
+            {GENRES.concat([{id:10749,name:"Romance"}]).map((genre,index)=>{
+              const artwork = safeTrending.find((movie: any) => movie.genre_ids?.includes(genre.id) && (movie.backdrop_path || movie.poster_path));
+              const imagePath = artwork?.backdrop_path ?? artwork?.poster_path;
+              return <Link key={genre.id} to="/genre/$id" params={{id:String(genre.id)}} search={{type:"movie"}} className={`category-tile category-tile-${index%8}`} style={imagePath ? { backgroundImage: `linear-gradient(0deg,rgba(0,0,0,.92),rgba(0,0,0,.12)),url("${TMDB_IMG(imagePath,"w780")}")` } : undefined}><span>{genre.name}</span><small>Explore</small></Link>;
+            })}
           </div>
         </section>
         <SpinMovie />
