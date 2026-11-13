@@ -845,3 +845,73 @@ body {
 @media (prefers-reduced-motion:reduce) {
   .movie-card,.movie-card img,.bm-featured-image { transition:none !important; }
 }
+
+
+/* Final layout correction: the earlier welcome-page experiment hid the sidebar.
+   The catalogue now restores it on desktop while keeping the mobile sheet menu. */
+@media (min-width:1024px) {
+  .site-sidebar {
+    display:flex !important;
+    position:fixed !important;
+    inset:0 auto 0 0 !important;
+    width:252px !important;
+    padding:18px 14px 22px !important;
+    overflow-y:auto !important;
+    z-index:40 !important;
+  }
+  .site-sidebar .sidebar-brand {
+    display:flex !important;
+    padding:2px 7px 22px !important;
+    margin-bottom:14px !important;
+    border-bottom:1px solid rgba(255,255,255,.09);
+  }
+  .site-sidebar .sidebar-divider { background:rgba(255,255,255,.1) !important; margin:12px 6px !important; }
+  .site-sidebar .sidebar-section-label { color:#f4f4f5 !important; }
+  .site-sidebar .sidebar-all-categories { background:#151515 !important; border:1px solid rgba(255,255,255,.07); }
+  .site-header-inner { margin-left:252px !important; width:calc(100% - 252px) !important; }
+  .site-header-inner > nav { display:none !important; }
+  .site-header-inner form { min-width:160px; }
+  .site-header-inner form > div { width:100%; }
+  .site-header-inner .header-search { width:100% !important; }
+  .site-main,.site-footer { margin-left:252px !important; }
+}
+.site-sidebar .sidebar-link {
+  display:flex; align-items:center; gap:12px; min-height:43px;
+  padding:10px 12px; border:1px solid transparent; border-radius:12px;
+  color:#d4d4d8; font-size:13px; transition:background .18s ease,color .18s ease,transform .18s ease;
+}
+.site-sidebar .sidebar-link svg { width:18px; height:18px; flex-shrink:0; }
+.site-sidebar .sidebar-link:hover { background:rgba(255,101,0,.1) !important; color:#ffad70 !important; }
+.site-sidebar .sidebar-link-active {
+  color:#ff8b35 !important;
+  background:linear-gradient(100deg,rgba(255,101,0,.22),rgba(255,101,0,.055)) !important;
+  border-color:rgba(255,132,55,.32) !important;
+  box-shadow:inset 3px 0 #ff6500,0 0 22px rgba(255,101,0,.07) !important;
+}
+.sidebar-new { margin-left:auto; padding:3px 8px; border-radius:20px; color:#170900 !important; background:#ff7900 !important; font-size:9px; font-weight:900; }
+.bm-featured-stage { position:relative; isolation:isolate; }
+.bm-featured-image { width:100%; height:100%; object-fit:cover; object-position:center 35%; }
+.bm-featured-content { position:absolute; z-index:2; left:clamp(22px,4vw,52px); bottom:clamp(68px,8vw,100px); max-width:min(58%,680px); }
+.bm-featured-controls { z-index:3; }
+.bm-featured-count { z-index:3; }
+.movie-card { overflow:hidden; }
+.movie-card > div:first-child { overflow:hidden; }
+.category-tile { isolation:isolate; }
+.category-tile::after {
+  content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+  background:linear-gradient(0deg,rgba(0,0,0,.86),rgba(0,0,0,.08) 78%);
+}
+.category-tile span,.category-tile small { z-index:1; }
+@media (max-width:1023px) {
+  .site-sidebar { display:none !important; }
+  .site-header-inner { margin-left:0 !important; width:100% !important; }
+  .site-header-inner > .site-brand { display:flex !important; }
+  .site-header-inner > nav { display:none !important; }
+  .site-main,.site-footer { margin-left:0 !important; }
+}
+@media (max-width:700px) {
+  .bm-featured-content { max-width:none; }
+  .site-header-inner { gap:7px !important; padding-inline:10px !important; }
+  .site-header-inner form { flex:1; min-width:70px; }
+  .site-header-inner .header-search { min-width:0; }
+}
