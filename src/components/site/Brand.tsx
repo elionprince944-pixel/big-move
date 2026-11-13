@@ -54,7 +54,7 @@ function BEmblem({ compact = false }: { compact?: boolean }) {
 
 export function Brand({ compact = false, className = "", tagline = false }: BrandProps) {
   return (
-    <Link to="/home" aria-label="BIG MOV home" className={`group inline-flex items-center gap-2.5 ${className}`}>
+    <Link to="/" aria-label="BIG MOV home" className={`group inline-flex items-center gap-2.5 ${className}`}>
       <span className="relative grid shrink-0 place-items-center">
         <span aria-hidden="true" className="absolute inset-1 rounded-full bg-orange-500/25 blur-lg transition-opacity duration-300 group-hover:opacity-100 opacity-60" />
         <BEmblem compact={compact} />
