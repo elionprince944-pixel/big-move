@@ -9,14 +9,27 @@ import { FeaturedCarousel } from "@/components/site/FeaturedCarousel";
 import { isSafeTitle } from "@/lib/content-rating";
 import { TMDB_IMG } from "@/lib/tmdb-image";
 
+// TMDB's official movie genre catalogue (19 supported genres).
 const GENRES = [
   { id: 28, name: "Action" },
-  { id: 35, name: "Comedy" },
-  { id: 18, name: "Drama" },
-  { id: 27, name: "Horror" },
-  { id: 878, name: "Sci-Fi" },
-  { id: 53, name: "Thriller" },
+  { id: 12, name: "Adventure" },
   { id: 16, name: "Animation" },
+  { id: 35, name: "Comedy" },
+  { id: 80, name: "Crime" },
+  { id: 99, name: "Documentary" },
+  { id: 18, name: "Drama" },
+  { id: 10751, name: "Family" },
+  { id: 14, name: "Fantasy" },
+  { id: 36, name: "History" },
+  { id: 27, name: "Horror" },
+  { id: 10402, name: "Music" },
+  { id: 9648, name: "Mystery" },
+  { id: 10749, name: "Romance" },
+  { id: 878, name: "Science Fiction" },
+  { id: 10770, name: "TV Movie" },
+  { id: 53, name: "Thriller" },
+  { id: 10752, name: "War" },
+  { id: 37, name: "Western" },
 ];
 
 export const Route = createFileRoute("/home")({
@@ -59,7 +72,7 @@ function HomePage() {
         <section className="px-4 sm:px-6 pt-8 pb-2">
           <div className="flex items-center justify-between mb-4"><h2 className="movie-row-title text-lg sm:text-xl">Browse by Categories</h2><Link to="/genre/$id" params={{id:"28"}} search={{type:"movie"}} className="text-xs font-bold text-primary hover:underline">All Categories →</Link></div>
           <div className="category-tiles">
-            {GENRES.concat([{id:10749,name:"Romance"}]).map((genre,index)=>{
+            {GENRES.map((genre,index)=>{
               const artwork = safeTrending.find((movie: any) => movie.genre_ids?.includes(genre.id) && (movie.backdrop_path || movie.poster_path));
               const imagePath = artwork?.backdrop_path ?? artwork?.poster_path;
               return <Link key={genre.id} to="/genre/$id" params={{id:String(genre.id)}} search={{type:"movie"}} className={`category-tile category-tile-${index%8}`} style={imagePath ? { backgroundImage: `linear-gradient(0deg,rgba(0,0,0,.92),rgba(0,0,0,.12)),url("${TMDB_IMG(imagePath,"w780")}")` } : undefined}><span>{genre.name}</span><small>Explore</small></Link>;

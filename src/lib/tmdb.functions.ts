@@ -19,7 +19,7 @@ export const getTrending = createServerFn({ method: "GET" }).handler(async () =>
 });
 
 export const getCategory = createServerFn({ method: "GET" })
-  .inputValidator((data: { category: string }) => data)
+  .inputValidator((data: { category: string; page?: number }) => data)
   .handler(async ({ data }) => {
     const map: Record<string, string> = {
       popular: "/movie/popular",
@@ -30,7 +30,7 @@ export const getCategory = createServerFn({ method: "GET" })
       tv_top_rated: "/tv/top_rated",
     };
     const path = map[data.category] ?? "/movie/popular";
-    return tmdb<{ results: any[] }>(path, SAFE_PARAMS);
+    return tmdb<{ results: any[]; page: number; total_pages: number }>(path, { ...SAFE_PARAMS, page: String(Math.max(1, Math.min(data.page ?? 1, 500))) });
   });
 
 export const getMovieDetails = createServerFn({ method: "GET" })
