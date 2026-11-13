@@ -99,7 +99,7 @@ function BrowsePage() {
         <div className="browse-genre-grid">
           {GENRES.map((g, index) => (
             <Link key={g.id} to="/genre/$id" params={{ id: String(g.id) }} search={{ type: "movie" }}
-              className="browse-genre-chip" style={{ "--genre-index": index } as React.CSSProperties}>
+              className="browse-genre-chip">
               <span>{g.name}</span><span aria-hidden="true">↗</span>
             </Link>
           ))}
