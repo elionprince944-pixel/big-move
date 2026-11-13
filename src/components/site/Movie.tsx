@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useRef } from "react";
-import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { ChevronLeft, ChevronRight, Play, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TMDB_IMG } from "@/lib/tmdb-image";
 import { isSafeTitle } from "@/lib/content-rating";
@@ -16,6 +16,8 @@ export type TmdbItem = {
   release_date?: string;
   first_air_date?: string;
   adult?: boolean;
+  overview?: string;
+  genre_ids?: number[];
 };
 
 export function MovieCard({ item }: { item: TmdbItem }) {
@@ -31,7 +33,7 @@ export function MovieCard({ item }: { item: TmdbItem }) {
       className="movie-card group relative shrink-0 w-[140px] sm:w-[158px] md:w-[174px] rounded-lg overflow-hidden bg-card border border-border transition-transform duration-300 hover:-translate-y-1 hover:border-primary/60"
       style={{ boxShadow: "var(--shadow-card)" }}
     >
-      <div className="aspect-[2/3] relative">
+      <div className="movie-card-poster aspect-[2/3] relative">
         {item.poster_path ? (
           <img
             src={TMDB_IMG(item.poster_path, "w300")}
@@ -42,16 +44,19 @@ export function MovieCard({ item }: { item: TmdbItem }) {
         ) : (
           <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs p-2 text-center">{title}</div>
         )}
+        <span className="movie-card-type">{type === "tv" ? "SERIES" : "MOVIE"}</span>
+        <span className="movie-card-play" aria-hidden="true"><Play className="size-4 fill-current" /></span>
+        <div className="movie-card-poster-shade" />
       </div>
-        <div className="px-2.5 py-3">
-          <p className="text-xs font-semibold truncate" title={title}>{title}</p>
-          <div className="flex items-center justify-between gap-2 text-[11px] text-muted-foreground mt-2">
-            {year && <span>{year}</span>}
-            {item.vote_average ? (
-              <span className="flex items-center gap-0.5"><Star className="size-3 fill-primary text-primary" />{item.vote_average.toFixed(1)}</span>
-            ) : null}
-          </div>
+      <div className="px-2.5 py-3">
+        <p className="text-xs font-semibold truncate" title={title}>{title}</p>
+        <div className="flex items-center justify-between gap-2 text-[11px] text-muted-foreground mt-2">
+          {year && <span>{year}</span>}
+          {item.vote_average ? (
+            <span className="flex items-center gap-0.5"><Star className="size-3 fill-primary text-primary" />{item.vote_average.toFixed(1)}</span>
+          ) : null}
         </div>
+      </div>
     </Link>
   );
 }
