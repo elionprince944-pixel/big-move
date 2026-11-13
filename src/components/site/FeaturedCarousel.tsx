@@ -28,16 +28,12 @@ export function FeaturedCarousel({ items }: { items: TmdbItem[] }) {
     return () => window.clearInterval(timer);
   }, [featured.length]);
 
-  if (!featured.length) return null;
-  const item = featured[active];
-  const title = item.title ?? item.name ?? "Featured";
-  const type = item.media_type === "tv" ? "tv" : "movie";
-  const year = (item.release_date ?? item.first_air_date ?? "").slice(0, 4);
-  const genres = (item.genre_ids ?? []).map((id) => GENRE_NAMES[id]).filter(Boolean).slice(0, 2);
+  const item = featured[active] ?? featured[0];
+  const type = item?.media_type === "tv" ? "tv" : "movie";
 
   useEffect(() => {
     let cancelled = false;
-    if (!user) {
+    if (!user || !item) {
       setInWatchlist(false);
       return;
     }
@@ -45,7 +41,12 @@ export function FeaturedCarousel({ items }: { items: TmdbItem[] }) {
       .eq("user_id", user.id).eq("tmdb_id", item.id).eq("media_type", type).maybeSingle()
       .then(({ data }) => { if (!cancelled) setInWatchlist(!!data); });
     return () => { cancelled = true; };
-  }, [user, item.id, type]);
+  }, [user, item?.id, type]);
+
+  if (!featured.length || !item) return null;
+  const title = item.title ?? item.name ?? "Featured";
+  const year = (item.release_date ?? item.first_air_date ?? "").slice(0, 4);
+  const genres = (item.genre_ids ?? []).map((id) => GENRE_NAMES[id]).filter(Boolean).slice(0, 2);
 
   const toggleWatchlist = async () => {
     if (!user) {
