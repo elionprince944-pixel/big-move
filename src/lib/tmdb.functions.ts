@@ -129,4 +129,35 @@ export const discoverByGenre = createServerFn({ method: "GET" })
     }
     return tmdb<{ results: any[]; total_pages: number; page: number }>(`/discover/${type}`, params);
   });
+// Build a Shorts-style feed from official YouTube clips referenced by TMDB.
+// TMDB supplies video metadata and YouTube IDs; playback stays in YouTube's embed player.
+export const getShortsFeed = createServerFn({ method: "GET" }).handler(async () => {
+  const trending = await tmdb<{ results: any[] }>("/trending/all/week", SAFE_PARAMS);
+  const titles = (trending.results ?? [])
+    .filter((item: any) => (item.media_type === "movie" || item.media_type === "tv") && item.adult !== true)
+    .slice(0, 18);
 
+  const entries = await Promise.all(titles.map(async (item: any) => {
+    try {
+      const type = item.media_type === "tv" ? "tv" : "movie";
+      const detail = await tmdb<any>("/" + type + "/" + item.id + "/videos", SAFE_PARAMS);
+      const videos = (detail.results ?? []).filter((video: any) =>
+        video.site === "YouTube" && video.key && video.official === true &&
+        ["Clip", "Teaser", "Trailer", "Featurette"].includes(video.type)
+      ).sort((a: any, b: any) => {
+        const rank = (v: any) => v.type === "Clip" ? 0 : v.type === "Teaser" ? 1 : v.type === "Trailer" ? 2 : 3;
+        return rank(a) - rank(b);
+      });
+      return videos.slice(0, 2).map((video: any) => ({
+        id: type + "-" + item.id + "-" + video.id,
+        tmdbId: item.id, mediaType: type,
+        title: item.title ?? item.name ?? "Untitled",
+        overview: item.overview ?? "",
+        posterPath: item.poster_path ?? null, backdropPath: item.backdrop_path ?? null,
+        rating: item.vote_average ?? 0, videoKey: video.key,
+        videoName: video.name, videoType: video.type,
+      }));
+    } catch { return []; }
+  }));
+  return entries.flat().slice(0, 24);
+});
