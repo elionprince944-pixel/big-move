@@ -1162,3 +1162,18 @@ body {
 .site-sidebar.site-sidebar-mobile .sidebar-section-label {
   padding-left:24px !important;
 }
+ 
+/* BIG MOV Shorts: responsive vertical clip feed */
+.shorts-page { color:#f7f7f7; }
+.shorts-feed { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr)); gap:22px; align-items:start; }
+.shorts-card { overflow:hidden; border:1px solid rgba(255,255,255,.11); border-radius:19px; background:linear-gradient(160deg,#171717,#0d0d0d); box-shadow:0 16px 38px rgba(0,0,0,.28); }
+.shorts-player-wrap { position:relative; width:100%; aspect-ratio:9/14; overflow:hidden; background:#050505; }
+.shorts-player-wrap iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+.shorts-type { position:absolute; top:12px; left:12px; pointer-events:none; padding:5px 9px; border:1px solid rgba(255,255,255,.2); border-radius:7px; background:rgba(0,0,0,.72); color:#fff; font-size:9px; font-weight:900; letter-spacing:.1em; text-transform:uppercase; backdrop-filter:blur(10px); }
+.shorts-caption { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px; }
+.shorts-details-link { flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:9px 12px; border-radius:999px; background:#ff6500; color:#090909; font-size:11px; font-weight:900; transition:filter .2s ease; }
+.shorts-details-link:hover { filter:brightness(1.15); }
+@media (max-width:640px) {
+  .shorts-feed { grid-template-columns:minmax(0,1fr); max-width:440px; margin-inline:auto; gap:18px; }
+  .shorts-player-wrap { aspect-ratio:9/14; }
+}
