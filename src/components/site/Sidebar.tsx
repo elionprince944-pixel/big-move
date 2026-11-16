@@ -34,7 +34,7 @@ export function Sidebar({ mobile = false }: { mobile?: boolean }) {
       <div className="sidebar-section-label">MAIN</div>
       <nav className="sidebar-primary-nav" aria-label="Main">
         <Link to="/home" className={cls(path === "/home")}><Home /><span>Home</span></Link>
-        <DisabledItem Icon={CirclePlay}>Shorts</DisabledItem>
+        <Link to="/shorts" className={cls(path === "/shorts")}><CirclePlay /><span>Shorts</span><span className="sidebar-new">NEW</span></Link>
         <Link to="/browse" search={{ cat: "tv_popular" }} className={cls(path === "/browse" && search.cat === "tv_popular")}><Tv /><span>TV Shows</span></Link>
         <Link to="/browse" search={{ cat: "popular" }} className={`${cls(path === "/browse" && (search.cat === "popular" || !search.cat))} sidebar-link-featured`}><Film /><span>Agasobanurye</span></Link>
         <DisabledItem Icon={Link2}>Mirror</DisabledItem>
