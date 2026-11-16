@@ -11,8 +11,8 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetClose } from "@/components/ui/sheet";
-import { Separator } from "@/components/ui/separator";
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Sidebar } from "@/components/site/Sidebar";
 import { Brand } from "@/components/site/Brand";
 
 const QUICK_GENRES: { id: number; name: string }[] = [
@@ -77,90 +77,12 @@ export function Header() {
               <Menu className="size-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-80 sm:w-96 p-0 flex flex-col bg-background">
-            <SheetHeader className="px-6 py-5 border-b border-border">
+          <SheetContent side="left" className="w-80 sm:w-96 p-0 flex flex-col bg-[#101010] border-r-0">
+            <SheetHeader className="px-6 py-5 border-b border-white/10">
               <SheetTitle><Brand compact tagline /></SheetTitle>
             </SheetHeader>
-
-            <div className="flex-1 overflow-y-auto px-3 py-4">
-              <nav className="flex flex-col gap-0.5">
-                <SheetClose asChild>
-                  <Link
-                    to="/home"
-                    className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors hover:bg-surface ${
-                      path === "/home" ? "text-foreground bg-surface font-medium" : "text-muted-foreground"
-                    }`}
-                  >
-                    <Home className="size-4" /> {t("home")}
-                  </Link>
-                </SheetClose>
-                <SheetClose asChild>
-                  <Link
-                    to="/watchlist"
-                    className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors hover:bg-surface ${
-                      path === "/watchlist" ? "text-foreground bg-surface font-medium" : "text-muted-foreground"
-                    }`}
-                  >
-                    <Bookmark className="size-4" /> {t("watchlist")}
-                  </Link>
-                </SheetClose>
-              </nav>
-
-              <Separator className="my-4" />
-
-              <div className="px-3 mb-2 text-[10px] uppercase tracking-wider text-muted-foreground">Quick Genres</div>
-              <div className="flex flex-wrap gap-2 px-3 mb-4">
-                {QUICK_GENRES.map((g) => (
-                  <SheetClose asChild key={g.id}>
-                    <Link
-                      to="/genre/$id"
-                      params={{ id: String(g.id) }}
-                      search={{ type: "movie" }}
-                      className="text-xs px-3 py-1 rounded-full border border-border text-muted-foreground hover:text-foreground hover:bg-surface transition-colors"
-                    >
-                      {g.name}
-                    </Link>
-                  </SheetClose>
-                ))}
-              </div>
-
-              <Separator className="my-4" />
-
-              <div className="px-3 mb-2 flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground">
-                <Film className="size-3" /> Movies
-              </div>
-              <div className="flex flex-col gap-0.5 mb-4">
-                {(genres.data?.movie ?? []).map((g: any) => (
-                  <SheetClose asChild key={`m-${g.id}`}>
-                    <Link
-                      to="/genre/$id"
-                      params={{ id: String(g.id) }}
-                      search={{ type: "movie" }}
-                      className="px-3 py-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-surface transition-colors"
-                    >
-                      {g.name}
-                    </Link>
-                  </SheetClose>
-                ))}
-              </div>
-
-              <div className="px-3 mb-2 flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground">
-                <Tv className="size-3" /> TV
-              </div>
-              <div className="flex flex-col gap-0.5">
-                {(genres.data?.tv ?? []).map((g: any) => (
-                  <SheetClose asChild key={`t-${g.id}`}>
-                    <Link
-                      to="/genre/$id"
-                      params={{ id: String(g.id) }}
-                      search={{ type: "tv" }}
-                      className="px-3 py-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-surface transition-colors"
-                    >
-                      {g.name}
-                    </Link>
-                  </SheetClose>
-                ))}
-              </div>
+            <div className="flex-1 overflow-y-auto">
+              <Sidebar mobile />
             </div>
           </SheetContent>
         </Sheet>
