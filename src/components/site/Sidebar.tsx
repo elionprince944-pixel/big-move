@@ -1,4 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import type { ElementType, ReactNode } from "react";
 import {
   Home, CirclePlay, Tv, Film, Link2, Users, Crown, UserRound,
   MessageSquare, Contact, Crosshair, Smile, Clapperboard, Ghost,
@@ -14,7 +15,7 @@ const genres = [
   { id: 10749, name: "Romance", Icon: Heart },
 ];
 
-function DisabledItem({ Icon, children }: { Icon: React.ElementType; children: React.ReactNode }) {
+function DisabledItem({ Icon, children }: { Icon: ElementType; children: ReactNode }) {
   return (
     <div className="sidebar-link sidebar-link-disabled" aria-disabled="true" title="Coming soon">
       <Icon aria-hidden="true" />
@@ -27,7 +28,6 @@ export function Sidebar() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const search = useRouterState({ select: (s) => s.location.search });
   const cls = (active: boolean) => `sidebar-link ${active ? "sidebar-link-active" : ""}`;
-  const activeGenre = path.startsWith("/genre/");
 
   return (
     <aside className="site-sidebar" aria-label="Main navigation">
