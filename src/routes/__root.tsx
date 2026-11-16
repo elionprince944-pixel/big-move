@@ -66,9 +66,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "BIG MOV" },
       { property: "og:description", content: "Discover and stream the best movies and TV shows." },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: "/brand/big-mov-logo.png" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "/brand/big-mov-logo.png" },
     ],
     links: [
+      { rel: "icon", type: "image/png", href: "/brand/big-mov-logo.png" },
+      { rel: "apple-touch-icon", href: "/brand/big-mov-logo.png" },
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
