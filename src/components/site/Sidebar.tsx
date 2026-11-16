@@ -1,80 +1,65 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
-  Home, Film, Tv, Bookmark, Heart, History, Settings, CircleHelp, Info,
-  Tags, Clapperboard, Globe, ChevronDown, Sparkles,
+  Home, CirclePlay, Tv, Film, Link2, Users, Crown, UserRound,
+  MessageSquare, Contact, Crosshair, Smile, Clapperboard, Ghost,
+  Rocket, Heart,
 } from "lucide-react";
-import { Brand } from "@/components/site/Brand";
 
 const genres = [
-  { id: 28, name: "Action" }, { id: 12, name: "Adventure" },
-  { id: 16, name: "Animation" }, { id: 35, name: "Comedy" },
-  { id: 80, name: "Crime" }, { id: 99, name: "Documentary" },
-  { id: 18, name: "Drama" }, { id: 10751, name: "Family" },
-  { id: 14, name: "Fantasy" }, { id: 36, name: "History" },
-  { id: 27, name: "Horror" }, { id: 10402, name: "Music" },
-  { id: 9648, name: "Mystery" }, { id: 10749, name: "Romance" },
-  { id: 878, name: "Science Fiction" }, { id: 10770, name: "TV Movie" },
-  { id: 53, name: "Thriller" }, { id: 10752, name: "War" },
-  { id: 37, name: "Western" },
+  { id: 28, name: "Action", Icon: Crosshair },
+  { id: 35, name: "Comedy", Icon: Smile },
+  { id: 18, name: "Drama", Icon: Clapperboard },
+  { id: 27, name: "Horror", Icon: Ghost },
+  { id: 878, name: "Sci-Fi", Icon: Rocket },
+  { id: 10749, name: "Romance", Icon: Heart },
 ];
+
+function DisabledItem({ Icon, children }: { Icon: React.ElementType; children: React.ReactNode }) {
+  return (
+    <div className="sidebar-link sidebar-link-disabled" aria-disabled="true" title="Coming soon">
+      <Icon aria-hidden="true" />
+      <span>{children}</span>
+    </div>
+  );
+}
 
 export function Sidebar() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const search = useRouterState({ select: (s) => s.location.search });
   const cls = (active: boolean) => `sidebar-link ${active ? "sidebar-link-active" : ""}`;
-  const activeGenre = path === "/genre/$id" || path.startsWith("/genre/");
+  const activeGenre = path.startsWith("/genre/");
 
   return (
     <aside className="site-sidebar" aria-label="Main navigation">
-      <div className="sidebar-brand"><Brand tagline /></div>
-
-      <nav className="sidebar-primary-nav" aria-label="Discover">
-        <Link to="/home" className={cls(path === "/home")}><Home />Home</Link>
-        <Link to="/browse" search={{ cat: "popular" }} className={cls(path === "/browse" && search.cat !== "tv_popular" && search.cat !== "tv_top_rated")}><Film />Movies</Link>
-        <Link to="/browse" search={{ cat: "tv_popular" }} className={cls(path === "/browse" && (search.cat === "tv_popular" || search.cat === "tv_top_rated"))}><Tv />TV Shows</Link>
-        <Link to="/browse" search={{ cat: "upcoming" }} className={cls(path === "/browse" && search.cat === "upcoming")}><Clapperboard />Coming Soon <span className="sidebar-new">NEW</span></Link>
+      <div className="sidebar-section-label">MAIN</div>
+      <nav className="sidebar-primary-nav" aria-label="Main">
+        <Link to="/home" className={cls(path === "/home")}><Home /><span>Home</span></Link>
+        <DisabledItem Icon={CirclePlay}>Shorts</DisabledItem>
+        <Link to="/browse" search={{ cat: "tv_popular" }} className={cls(path === "/browse" && search.cat === "tv_popular")}><Tv /><span>TV Shows</span></Link>
+        <Link to="/browse" search={{ cat: "popular" }} className={`${cls(path === "/browse" && (search.cat === "popular" || !search.cat))} sidebar-link-featured`}><Film /><span>Agasobanurye</span></Link>
+        <DisabledItem Icon={Link2}>Mirror</DisabledItem>
+        <DisabledItem Icon={Users}>Cinema Arena</DisabledItem>
+        <DisabledItem Icon={Crown}><span className="sidebar-premium-label">Premium Plans</span></DisabledItem>
+        <Link to="/settings" className={cls(path === "/settings")}><UserRound /><span>My Profile</span></Link>
+        <DisabledItem Icon={MessageSquare}>Messaging</DisabledItem>
+        <Link to="/settings" className={cls(false)}><Contact /><span>My Subscription</span></Link>
       </nav>
 
-      <div className="sidebar-divider" />
-
-      <nav className="sidebar-primary-nav" aria-label="Your library">
-        <Link to="/watchlist" className={cls(path === "/watchlist")}><Bookmark />My List</Link>
-        
-      </nav>
-
-      <div className="sidebar-divider" />
-
-      <div className="sidebar-section-label"><Tags />Explore Genres</div>
-      <Link to="/browse" search={{ cat: "popular" }} className={`sidebar-all-categories ${activeGenre ? "is-active" : ""}`}>
-        All Categories <ChevronDown className="size-3.5" />
-      </Link>
-      <nav className="sidebar-genre-list" aria-label="Movie genres">
-        {genres.map((genre, index) => (
+      <div className="sidebar-section-label sidebar-genres-heading">GENRES</div>
+      <nav className="sidebar-genre-list" aria-label="Genres">
+        {genres.map(({ id, name, Icon }) => (
           <Link
-            key={`${genre.name}-${index}`}
+            key={id}
             to="/genre/$id"
-            params={{ id: String(genre.id) }}
+            params={{ id: String(id) }}
             search={{ type: "movie" }}
-            className={cls(path === `/genre/${genre.id}`)}
+            className={cls(path === `/genre/${id}`)}
           >
-            <span>{genre.name}</span>
+            <Icon />
+            <span>{name}</span>
           </Link>
         ))}
       </nav>
-
-      <div className="sidebar-divider" />
-
-      <nav className="sidebar-primary-nav sidebar-utility-nav" aria-label="Support and settings">
-        <Link to="/settings" className={cls(path === "/settings")}><Settings />Settings</Link>
-        <Link to="/help" className={cls(path === "/help")}><CircleHelp />Help Desk</Link>
-        <Link to="/about" className={cls(path === "/about")}><Info />About BIG MOV</Link>
-      </nav>
-      <div className="sidebar-language"><Globe /><span>Language</span><button type="button" aria-label="Current language English">🇬🇧 English⌄</button></div>
-      <div className="sidebar-premium">
-        <div className="flex items-center gap-2 text-primary"><Sparkles className="size-4" /><strong>BIG MOV Premium</strong></div>
-        <p>Discover more with a premium experience.</p>
-        <Link to="/settings">Explore Premium <span>→</span></Link>
-      </div>
     </aside>
   );
 }
