@@ -24,13 +24,13 @@ function DisabledItem({ Icon, children }: { Icon: ElementType; children: ReactNo
   );
 }
 
-export function Sidebar() {
+export function Sidebar({ mobile = false }: { mobile?: boolean }) {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const search = useRouterState({ select: (s) => s.location.search });
   const cls = (active: boolean) => `sidebar-link ${active ? "sidebar-link-active" : ""}`;
 
   return (
-    <aside className="site-sidebar" aria-label="Main navigation">
+    <aside className={`site-sidebar${mobile ? " site-sidebar-mobile" : ""}`} aria-label="Main navigation">
       <div className="sidebar-section-label">MAIN</div>
       <nav className="sidebar-primary-nav" aria-label="Main">
         <Link to="/home" className={cls(path === "/home")}><Home /><span>Home</span></Link>
