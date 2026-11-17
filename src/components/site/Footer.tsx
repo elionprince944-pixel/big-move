@@ -1,11 +1,11 @@
 import { Link } from "@tanstack/react-router";
-import { Crown, Instagram, Youtube, Facebook, MessageCircle, Clapperboard, Film, Play, ArrowUpRight } from "lucide-react";
+import { Crown, Instagram, Youtube, Facebook, MessageCircle, Twitter, Clapperboard, Film, Play, ArrowUpRight } from "lucide-react";
 import ceoPortrait from "@/assets/ceo-portrait.jpg";
 import { Brand } from "@/components/site/Brand";
 
 const socialLinks = [
   { label: "Instagram", href: "https://www.instagram.com/", Icon: Instagram },
-  { label: "X", href: "https://x.com/", Icon: MessageCircle },
+  { label: "X", href: "https://x.com/", Icon: Twitter },
   { label: "YouTube", href: "https://www.youtube.com/", Icon: Youtube },
   { label: "WhatsApp", href: "https://www.whatsapp.com/", Icon: MessageCircle },
   { label: "Facebook", href: "https://www.facebook.com/", Icon: Facebook },
@@ -37,7 +37,7 @@ export function Footer() {
               <Link to="/home" className="hover:text-orange-300">Home</Link>
               <Link to="/genre/$id" params={{ id: "10759" }} search={{ type: "tv" }} className="hover:text-orange-300">TV Shows</Link>
               <Link to="/browse" search={{ cat: "popular" }} className="hover:text-orange-300">Movies</Link>
-              <Link to="/help#content-ratings" className="hover:text-orange-300">Content ratings</Link>
+              <Link to="/help" className="hover:text-orange-300">Content ratings</Link>
               <Link to="/watchlist" className="hover:text-orange-300">Watchlist</Link>
             </nav>
           </section>
@@ -47,7 +47,7 @@ export function Footer() {
             <nav className="flex flex-col gap-3 text-sm text-white/55">
               <Link to="/help" className="hover:text-orange-300">Help & Support</Link>
               <a href="#big-ai" className="hover:text-orange-300" onClick={(e) => { e.preventDefault(); document.querySelector<HTMLButtonElement>('[aria-label*="BIG AI"], button.fixed.bottom-5.right-5')?.click(); }}>BIG AI Assistant</a>
-              <Link to="/help#live-chat" className="hover:text-orange-300">Live Chat information</Link>
+              <Link to="/help" className="hover:text-orange-300">Live Chat information</Link>
             </nav>
           </section>
 
