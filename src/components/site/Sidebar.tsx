@@ -1,65 +1,43 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import type { ElementType, ReactNode } from "react";
 import {
-  Home, CirclePlay, Tv, Film, Link2, Users, Crown, UserRound,
-  MessageSquare, Contact, Crosshair, Smile, Clapperboard, Ghost,
-  Rocket, Heart,
+  Home, Clapperboard, Bookmark, ShieldCheck, Info, LifeBuoy, Crown, CirclePlay,
 } from "lucide-react";
 
-const genres = [
-  { id: 28, name: "Action", Icon: Crosshair },
-  { id: 35, name: "Comedy", Icon: Smile },
-  { id: 18, name: "Drama", Icon: Clapperboard },
-  { id: 27, name: "Horror", Icon: Ghost },
-  { id: 878, name: "Sci-Fi", Icon: Rocket },
-  { id: 10749, name: "Romance", Icon: Heart },
-];
-
-function DisabledItem({ Icon, children }: { Icon: ElementType; children: ReactNode }) {
-  return (
-    <div className="sidebar-link sidebar-link-disabled" aria-disabled="true" title="Coming soon">
-      <Icon aria-hidden="true" />
-      <span>{children}</span>
-    </div>
-  );
-}
+const items = [
+  { label: "Home", to: "/home", Icon: Home, active: (path: string) => path === "/home" || path === "/" },
+  { label: "Shorts", to: "/shorts", Icon: CirclePlay, active: (path: string) => path === "/shorts", badge: "NEW" },
+  { label: "Genre", to: "/browse", Icon: Clapperboard, active: (path: string) => path === "/browse" || path.startsWith("/genre/") },
+  { label: "Watchlist", to: "/watchlist", Icon: Bookmark, active: (path: string) => path === "/watchlist" },
+  // Mature-rated titles are not linked directly. This opens the help page's content-rating guidance.
+  { label: "18+", to: "/help#content-ratings", Icon: ShieldCheck, active: () => false },
+  { label: "About", to: "/about", Icon: Info, active: (path: string) => path === "/about" },
+  { label: "Help", to: "/help", Icon: LifeBuoy, active: (path: string) => path === "/help" },
+  { label: "Subscription", to: "/settings#subscription", Icon: Crown, active: (path: string) => path === "/settings" },
+] as const;
 
 export function Sidebar({ mobile = false }: { mobile?: boolean }) {
   const path = useRouterState({ select: (s) => s.location.pathname });
-  const search = useRouterState({ select: (s) => s.location.search });
-  const cls = (active: boolean) => `sidebar-link ${active ? "sidebar-link-active" : ""}`;
 
   return (
     <aside className={`site-sidebar${mobile ? " site-sidebar-mobile" : ""}`} aria-label="Main navigation">
-      <div className="sidebar-section-label">MAIN</div>
-      <nav className="sidebar-primary-nav" aria-label="Main">
-        <Link to="/home" className={cls(path === "/home")}><Home /><span>Home</span></Link>
-        <Link to="/shorts" className={cls(path === "/shorts")}><CirclePlay /><span>Shorts</span><span className="sidebar-new">NEW</span></Link>
-        <Link to="/browse" search={{ cat: "tv_popular" }} className={cls(path === "/browse" && search.cat === "tv_popular")}><Tv /><span>TV Shows</span></Link>
-        <Link to="/browse" search={{ cat: "popular" }} className={`${cls(path === "/browse" && (search.cat === "popular" || !search.cat))} sidebar-link-featured`}><Film /><span>Agasobanurye</span></Link>
-        <DisabledItem Icon={Link2}>Mirror</DisabledItem>
-        <DisabledItem Icon={Users}>Cinema Arena</DisabledItem>
-        <DisabledItem Icon={Crown}><span className="sidebar-premium-label">Premium Plans</span></DisabledItem>
-        <Link to="/settings" className={cls(path === "/settings")}><UserRound /><span>My Profile</span></Link>
-        <DisabledItem Icon={MessageSquare}>Messaging</DisabledItem>
-        <Link to="/settings" className={cls(false)}><Contact /><span>My Subscription</span></Link>
-      </nav>
-
-      <div className="sidebar-section-label sidebar-genres-heading">GENRES</div>
-      <nav className="sidebar-genre-list" aria-label="Genres">
-        {genres.map(({ id, name, Icon }) => (
+      <div className="sidebar-section-label">EXPLORE BIG MOV</div>
+      <nav className="sidebar-primary-nav" aria-label="Main navigation">
+        {items.map(({ label, to, Icon, active, ...rest }) => (
           <Link
-            key={id}
-            to="/genre/$id"
-            params={{ id: String(id) }}
-            search={{ type: "movie" }}
-            className={cls(path === `/genre/${id}`)}
+            key={label}
+            to={to as any}
+            className={`sidebar-link ${active(path) ? "sidebar-link-active" : ""}`}
+            aria-current={active(path) ? "page" : undefined}
           >
-            <Icon />
-            <span>{name}</span>
+            <Icon aria-hidden="true" />
+            <span>{label}</span>
+            {"badge" in rest && rest.badge ? <span className="sidebar-new">{rest.badge}</span> : null}
           </Link>
         ))}
       </nav>
+      <div className="mt-auto px-5 pt-6 text-[11px] leading-relaxed text-white/35">
+        Discover. Watch. Enjoy.
+      </div>
     </aside>
   );
 }
