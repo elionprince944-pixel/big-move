@@ -57,8 +57,10 @@ function AdminSiteSettings() {
     toast.success("Website settings saved. The public footer will use the updated details.");
   };
 
-  if (loading || !loaded) return <div className="min-h-screen bg-[#080808] p-10 text-center text-white/50">Loading settings…</div>;
+  if (loading) return <div className="min-h-screen bg-[#080808] p-10 text-center text-white/50">Loading settings…</div>;
+  if (!user) return null;
   if (!isAdmin) return <div className="min-h-screen bg-[#080808] p-10 text-center text-white">Administrator access required.</div>;
+  if (!loaded) return <div className="min-h-screen bg-[#080808] p-10 text-center text-white/50">Loading settings…</div>;
 
   return <main className="min-h-screen bg-[#080808] px-4 py-10 text-white sm:px-8">
     <div className="mx-auto max-w-4xl">
@@ -67,7 +69,7 @@ function AdminSiteSettings() {
 
       <section className="mb-6 rounded-2xl border border-white/10 bg-[#111] p-6">
         <h2 className="mb-1 text-xl font-bold">Social media URLs</h2><p className="mb-5 text-sm text-white/45">Only links you enter will appear in the public footer. Use full https:// URLs.</p>
-        <div className="grid gap-4 sm:grid-cols-2">{socialFields.map(([label, key]) => <label key={key} className="block text-sm font-medium">{label}<Input className="mt-2 border-white/10 bg-black/40" value={settings[key]} onChange={(e) => setField(key, e.target.value)} placeholder={`https://${label === "X" ? "x.com" : label.toLowerCase()}.com/your-page"}/></label>)}</div>
+        <div className="grid gap-4 sm:grid-cols-2">{socialFields.map(([label, key]) => <label key={key} className="block text-sm font-medium">{label}<Input className="mt-2 border-white/10 bg-black/40" value={settings[key]} onChange={(e) => setField(key, e.target.value)} placeholder={`https://${label === "X" ? "x.com" : label.toLowerCase()}.com/your-page`}/></label>)}</div>
       </section>
 
       <section className="mb-6 rounded-2xl border border-white/10 bg-[#111] p-6">
