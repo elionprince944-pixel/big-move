@@ -46,15 +46,15 @@ function AdminSubscriptions() {
     if (isAdmin) void load();
   }, [user, isAdmin, loading, navigate, load]);
 
-  const resetForm = () => { setEditingId(""); setName(""); setDescription(""); setPrice("5000"); setDuration("30"); setFeatures(""); setActive(true); };
-  const editPlan = (plan: Plan) => { setEditingId(plan.id); setName(plan.name); setDescription(plan.description ?? ""); setPrice(String(plan.price_rwf)); setDuration(String(plan.duration_days)); setFeatures((plan.features ?? []).join("\n")); setActive(plan.is_active); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  const resetForm = () => { setEditingId(""); setName(""); setDescription(""); setPrice(""); setDuration("30"); setFeatures(""); setActive(true); };
+  const editPlan = (plan: Plan) => { setEditingId(plan.id); setName(plan.name); setDescription(plan.description ?? ""); setPrice(String(plan.price_usd)); setDuration(String(plan.duration_days)); setFeatures((plan.features ?? []).join("\n")); setActive(plan.is_active); window.scrollTo({ top: 0, behavior: "smooth" }); };
 
   const savePlan = async (event: React.FormEvent) => {
     event.preventDefault();
     const amount = Number(price); const days = Number(duration);
-    if (!name.trim() || !Number.isInteger(amount) || amount < 0 || !Number.isInteger(days) || days < 1) return toast.error("Enter a plan name, valid USD price and duration.");
+    if (!name.trim() || !Number.isFinite(amount) || amount < 0 || !Number.isInteger(days) || days < 1) return toast.error("Enter a plan name, valid USD price and duration.");
     setBusy(true);
-    const payload = { name: name.trim(), description: description.trim(), price_rwf: amount, duration_days: days, features: features.split("\n").map((v) => v.trim()).filter(Boolean), is_active: active, updated_at: new Date().toISOString() };
+    const payload = { name: name.trim(), description: description.trim(), price_usd: amount, duration_days: days, features: features.split("\n").map((v) => v.trim()).filter(Boolean), is_active: active, updated_at: new Date().toISOString() };
     const result = editingId
       ? await (supabase as any).from("subscription_plans").update(payload).eq("id", editingId)
       : await (supabase as any).from("subscription_plans").insert(payload);
@@ -90,11 +90,11 @@ function AdminSubscriptions() {
       </form>
     </section>
 
-    <section className="mb-10"><h2 className="mb-4 text-xl font-bold">Published plans ({plans.length})</h2><div className="grid gap-3 md:grid-cols-2">{plans.map((plan) => <div key={plan.id} className="flex items-center justify-between gap-4 rounded-xl border border-white/10 bg-[#111] p-4"><div><div className="font-bold">{plan.name} <span className="ml-2 text-xs text-white/40">{plan.is_active ? "Published" : "Hidden"}</span></div><p className="mt-1 text-sm text-white/50">{plan.price_rwf.toLocaleString("en-US", { style: "currency", currency: "USD" }) · {plan.duration_days} days</p></div><Button variant="outline" size="sm" onClick={() => editPlan(plan)}>Edit</Button></div>)}</div></section>
+    <section className="mb-10"><h2 className="mb-4 text-xl font-bold">Published plans ({plans.length})</h2><div className="grid gap-3 md:grid-cols-2">{plans.map((plan) => <div key={plan.id} className="flex items-center justify-between gap-4 rounded-xl border border-white/10 bg-[#111] p-4"><div><div className="font-bold">{plan.name} <span className="ml-2 text-xs text-white/40">{plan.is_active ? "Published" : "Hidden"}</span></div><p className="mt-1 text-sm text-white/50">{new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(Number(plan.price_usd))} · {plan.duration_days} days</p></div><Button variant="outline" size="sm" onClick={() => editPlan(plan)}>Edit</Button></div>)}</div></section>
 
     <section><div className="mb-4 flex items-center gap-2"><CircleDollarSign className="size-5 text-orange-400"/><h2 className="text-xl font-bold">Manual payment review ({payments.filter((p) => p.status === "pending").length} pending)</h2></div>
       <div className="space-y-3">{payments.map((payment) => <article key={payment.id} className="rounded-xl border border-white/10 bg-[#111] p-4">
-        <div className="flex flex-wrap items-start justify-between gap-3"><div><p className="font-bold">{payment.user_subscriptions?.subscription_plans?.name ?? "Subscription"} · {payment.amount_rwf.toLocaleString("en-RW")} RWF</p><p className="mt-1 text-xs text-white/45">User: {payment.user_id}</p><p className="mt-1 text-xs text-white/60">Reference: {payment.transaction_reference}</p>{payment.payer_note && <p className="mt-2 text-sm text-white/50">{payment.payer_note}</p>}<p className="mt-2 text-[10px] text-white/35">{new Date(payment.created_at).toLocaleString()}</p></div>
+        <div className="flex flex-wrap items-start justify-between gap-3"><div><p className="font-bold">{payment.user_subscriptions?.subscription_plans?.name ?? "Subscription"} · {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(Number(payment.amount_usd))}</p><p className="mt-1 text-xs text-white/45">User: {payment.user_id}</p><p className="mt-1 text-xs text-white/60">Reference: {payment.transaction_reference}</p>{payment.notes && <p className="mt-2 text-sm text-white/50">{payment.payer_note}</p>}<p className="mt-2 text-[10px] text-white/35">{new Date(payment.created_at).toLocaleString()}</p></div>
           <div className="flex items-center gap-2"><span className={`rounded-full px-3 py-1 text-xs font-bold uppercase ${payment.status === "approved" ? "bg-emerald-500/10 text-emerald-300" : payment.status === "rejected" ? "bg-red-500/10 text-red-300" : "bg-orange-500/10 text-orange-300"}`}>{payment.status}</span>{payment.status === "pending" && <><Button size="sm" onClick={() => void reviewPayment(payment.id, "approved")} className="bg-emerald-600 text-white hover:bg-emerald-500"><BadgeCheck className="mr-1 size-4"/>Approve</Button><Button size="sm" variant="destructive" onClick={() => void reviewPayment(payment.id, "rejected")}><XCircle className="mr-1 size-4"/>Reject</Button></>}</div>
         </div>
       </article>)}</div>
