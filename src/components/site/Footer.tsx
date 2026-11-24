@@ -12,7 +12,7 @@ const defaults: FooterSettings = {
   ceo_bio: "Leading BIG MOV with a focus on making movie and television discovery simple, engaging, and accessible.",
 };
 
-const socialItems = [
+const safeExternalUrl = (value: string) => {\n  try { const url = new URL(value); return url.protocol === "https:" || url.protocol === "http:" ? url.href : ""; }\n  catch { return ""; }\n};\n\nconst socialItems = [
   { label: "Instagram", key: "social_instagram", Icon: Instagram },
   { label: "X", key: "social_x", Icon: Twitter },
   { label: "YouTube", key: "social_youtube", Icon: Youtube },
@@ -32,7 +32,7 @@ export function Footer() {
     return () => { active = false; };
   }, []);
 
-  const ceoImage = settings.ceo_image_url?.trim() || ceoPortrait;
+  const ceoImage = safeExternalUrl(settings.ceo_image_url || "") || ceoPortrait;
 
   return (
     <footer className="site-footer relative mt-20 overflow-hidden border-t border-orange-300/15 bg-[#08090b] text-white">
@@ -44,8 +44,8 @@ export function Footer() {
             <p className="mb-5 mt-4 max-w-xs text-sm leading-relaxed text-white/50">Your front-row seat to stories worth watching. Discover movies and series in one place.</p>
             <h3 className="mb-3 text-xs font-bold uppercase tracking-[.18em] text-white/75">Follow BIG MOV</h3>
             <div className="flex flex-wrap gap-2">
-              {socialItems.filter(({ key }) => settings[key]?.trim()).map(({ label, key, Icon }) => (
-                <a key={label} href={settings[key]} target="_blank" rel="noreferrer" aria-label={label} title={label}
+              {socialItems.filter(({ key }) => safeExternalUrl(settings[key] || "")).map(({ label, key, Icon }) => (
+                <a key={label} href={safeExternalUrl(settings[key] || "")} target="_blank" rel="noreferrer" aria-label={label} title={label}
                   className="grid size-10 place-items-center rounded-xl border border-white/10 bg-white/[.04] text-white/65 transition hover:-translate-y-1 hover:border-orange-400/50 hover:bg-orange-500/10 hover:text-orange-300">
                   <Icon className="size-4" />
                 </a>
