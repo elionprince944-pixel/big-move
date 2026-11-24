@@ -30,7 +30,7 @@ create index if not exists chat_conversations_user_updated_idx on public.chat_co
 alter table public.chat_conversations enable row level security;
 create policy "Users read own conversations" on public.chat_conversations for select using (auth.uid() = user_id);
 create policy "Users create own conversations" on public.chat_conversations for insert with check (auth.uid() = user_id);
-create policy "Users close own conversations" on public.chat_conversations for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+create policy "Users close own conversations" on public.chat_conversations for update using (auth.uid() = user_id) with check (auth.uid() = user_id and status = 'closed');
 create policy "Admins manage conversations" on public.chat_conversations for all using (public.has_role(auth.uid(), 'admin')) with check (public.has_role(auth.uid(), 'admin'));
 
 create table if not exists public.chat_messages (
