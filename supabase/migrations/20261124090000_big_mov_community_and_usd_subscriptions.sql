@@ -198,3 +198,32 @@ begin
 exception when duplicate_object then null;
 when undefined_object then null;
 end $$;
+
+create or replace function public.request_subscription(
+  _plan_id uuid,
+  _payment_method text,
+  _payer_name text,
+  _transaction_reference text,
+  _notes text default ''
+)
+returns uuid language plpgsql security definer set search_path = public as $$
+declare plan_row public.subscription_plans%rowtype;
+declare new_subscription uuid;
+begin
+  if auth.uid() is null then raise exception 'Sign in is required'; end if;
+  select * into plan_row from public.subscription_plans where id = _plan_id and is_active = true;
+  if not found then raise exception 'This subscription plan is unavailable'; end if;
+  if char_length(trim(coalesce(_payment_method,''))) < 2
+    or char_length(trim(coalesce(_payer_name,''))) < 2
+    or char_length(trim(coalesce(_transaction_reference,''))) < 3 then
+    raise exception 'Complete the payment details before submitting';
+  end if;
+  insert into public.user_subscriptions(user_id,plan_id,status)
+  values(auth.uid(),plan_row.id,'pending') returning id into new_subscription;
+  insert into public.subscription_payments(subscription_id,user_id,amount_usd,payment_method,payer_name,transaction_reference,notes)
+  values(new_subscription,auth.uid(),plan_row.price_usd,trim(_payment_method),trim(_payer_name),trim(_transaction_reference),coalesce(_notes,''));
+  return new_subscription;
+end;
+$$;
+revoke all on function public.request_subscription(uuid,text,text,text,text) from public;
+grant execute on function public.request_subscription(uuid,text,text,text,text) to authenticated;
