@@ -13,12 +13,14 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as BrowseRouteImport } from './routes/browse'
 import { Route as HelpRouteImport } from './routes/help'
+import { Route as HomeRouteImport } from './routes/home'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ShortsRouteImport } from './routes/shorts'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SubscriptionRouteImport } from './routes/subscription'
 import { Route as SupportRouteImport } from './routes/support'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as SignupRouteImport } from './routes/signup'
 import { Route as WatchlistRouteImport } from './routes/watchlist'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
@@ -47,6 +49,11 @@ const HelpRoute = HelpRouteImport.update({
   path: '/help',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HomeRoute = HomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -55,6 +62,21 @@ const LoginRoute = LoginRouteImport.update({
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShortsRoute = ShortsRouteImport.update({
+  id: '/shorts',
+  path: '/shorts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SubscriptionRoute = SubscriptionRouteImport.update({
@@ -67,16 +89,6 @@ const SupportRoute = SupportRouteImport.update({
   path: '/support',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SignupRoute = SignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const WatchlistRoute = WatchlistRouteImport.update({
   id: '/watchlist',
   path: '/watchlist',
@@ -87,6 +99,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/admin/settings',
   path: '/admin/settings',
@@ -95,11 +112,6 @@ const AdminSettingsRoute = AdminSettingsRouteImport.update({
 const AdminSubscriptionsRoute = AdminSubscriptionsRouteImport.update({
   id: '/admin/subscriptions',
   path: '/admin/subscriptions',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminLoginRoute = AdminLoginRouteImport.update({
-  id: '/admin/login',
-  path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GenreIdRoute = GenreIdRouteImport.update({
@@ -118,12 +130,14 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/browse': typeof BrowseRoute
   '/help': typeof HelpRoute
+  '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/search': typeof SearchRoute
+  '/settings': typeof SettingsRoute
+  '/shorts': typeof ShortsRoute
+  '/signup': typeof SignupRoute
   '/subscription': typeof SubscriptionRoute
   '/support': typeof SupportRoute
-  '/settings': typeof SettingsRoute
-  '/signup': typeof SignupRoute
   '/watchlist': typeof WatchlistRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -137,12 +151,14 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/browse': typeof BrowseRoute
   '/help': typeof HelpRoute
+  '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/search': typeof SearchRoute
+  '/settings': typeof SettingsRoute
+  '/shorts': typeof ShortsRoute
+  '/signup': typeof SignupRoute
   '/subscription': typeof SubscriptionRoute
   '/support': typeof SupportRoute
-  '/settings': typeof SettingsRoute
-  '/signup': typeof SignupRoute
   '/watchlist': typeof WatchlistRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -157,12 +173,14 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/browse': typeof BrowseRoute
   '/help': typeof HelpRoute
+  '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/search': typeof SearchRoute
+  '/settings': typeof SettingsRoute
+  '/shorts': typeof ShortsRoute
+  '/signup': typeof SignupRoute
   '/subscription': typeof SubscriptionRoute
   '/support': typeof SupportRoute
-  '/settings': typeof SettingsRoute
-  '/signup': typeof SignupRoute
   '/watchlist': typeof WatchlistRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -178,12 +196,14 @@ export interface FileRouteTypes {
     | '/about'
     | '/browse'
     | '/help'
+    | '/home'
     | '/login'
     | '/search'
+    | '/settings'
+    | '/shorts'
+    | '/signup'
     | '/subscription'
     | '/support'
-    | '/settings'
-    | '/signup'
     | '/watchlist'
     | '/admin/login'
     | '/admin/settings'
@@ -197,14 +217,18 @@ export interface FileRouteTypes {
     | '/about'
     | '/browse'
     | '/help'
+    | '/home'
     | '/login'
     | '/search'
+    | '/settings'
+    | '/shorts'
+    | '/signup'
     | '/subscription'
     | '/support'
-    | '/settings'
-    | '/signup'
     | '/watchlist'
     | '/admin/login'
+    | '/admin/settings'
+    | '/admin/subscriptions'
     | '/genre/$id'
     | '/movie/$id'
     | '/admin'
@@ -214,14 +238,18 @@ export interface FileRouteTypes {
     | '/about'
     | '/browse'
     | '/help'
+    | '/home'
     | '/login'
     | '/search'
+    | '/settings'
+    | '/shorts'
+    | '/signup'
     | '/subscription'
     | '/support'
-    | '/settings'
-    | '/signup'
     | '/watchlist'
     | '/admin/login'
+    | '/admin/settings'
+    | '/admin/subscriptions'
     | '/genre/$id'
     | '/movie/$id'
     | '/admin/'
@@ -232,16 +260,18 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   BrowseRoute: typeof BrowseRoute
   HelpRoute: typeof HelpRoute
+  HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
   SearchRoute: typeof SearchRoute
+  SettingsRoute: typeof SettingsRoute
+  ShortsRoute: typeof ShortsRoute
+  SignupRoute: typeof SignupRoute
   SubscriptionRoute: typeof SubscriptionRoute
   SupportRoute: typeof SupportRoute
-  SettingsRoute: typeof SettingsRoute
-  SignupRoute: typeof SignupRoute
   WatchlistRoute: typeof WatchlistRoute
+  AdminLoginRoute: typeof AdminLoginRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminSubscriptionsRoute: typeof AdminSubscriptionsRoute
-  AdminLoginRoute: typeof AdminLoginRoute
   GenreIdRoute: typeof GenreIdRoute
   MovieIdRoute: typeof MovieIdRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -277,6 +307,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HelpRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/home': {
+      id: '/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -291,6 +328,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shorts': {
+      id: '/shorts'
+      path: '/shorts'
+      fullPath: '/shorts'
+      preLoaderRoute: typeof ShortsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/subscription': {
       id: '/subscription'
       path: '/subscription'
@@ -303,20 +361,6 @@ declare module '@tanstack/react-router' {
       path: '/support'
       fullPath: '/support'
       preLoaderRoute: typeof SupportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/watchlist': {
@@ -376,16 +420,18 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   BrowseRoute: BrowseRoute,
   HelpRoute: HelpRoute,
+  HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
   SearchRoute: SearchRoute,
+  SettingsRoute: SettingsRoute,
+  ShortsRoute: ShortsRoute,
+  SignupRoute: SignupRoute,
   SubscriptionRoute: SubscriptionRoute,
   SupportRoute: SupportRoute,
-  SettingsRoute: SettingsRoute,
-  SignupRoute: SignupRoute,
   WatchlistRoute: WatchlistRoute,
+  AdminLoginRoute: AdminLoginRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminSubscriptionsRoute: AdminSubscriptionsRoute,
-  AdminLoginRoute: AdminLoginRoute,
   GenreIdRoute: GenreIdRoute,
   MovieIdRoute: MovieIdRoute,
   AdminIndexRoute: AdminIndexRoute,

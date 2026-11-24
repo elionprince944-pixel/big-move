@@ -48,7 +48,7 @@ export function BigAI() {
         <Button variant="ghost" size="icon" onClick={() => setOpen(false)}><X className="size-4" /></Button>
       </div>
       <div className="h-80 space-y-3 overflow-y-auto p-4">
-        {messages.map((m, i) => <div key={i} className={m.role === "user" ? "ml-8 rounded-xl bg-primary p-3 text-sm text-primary-foreground" : "mr-8 rounded-xl bg-surface p-3 text-sm"}>{m.text}</div>)}
+        {messages.map((m, i) => <div key={i} className={m.role === "user" ? "ml-8 rounded-xl bg-primary p-3 text-sm text-primary-foreground" : "mr-8 whitespace-pre-line rounded-xl bg-surface p-3 text-sm"}>{m.text}</div>)}
         {busy && <div className="mr-8 rounded-xl bg-surface p-3 text-sm text-muted-foreground">BIG AI is thinking…</div>}
       </div>
       <div className="flex gap-2 border-t border-border p-3">
