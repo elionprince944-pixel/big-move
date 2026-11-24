@@ -103,8 +103,6 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/search': typeof SearchRoute
   '/subscription': typeof SubscriptionRoute
-  '/subscription': typeof SubscriptionRoute
-  '/subscription': typeof SubscriptionRoute
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/watchlist': typeof WatchlistRoute
@@ -120,6 +118,7 @@ export interface FileRoutesByTo {
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/search': typeof SearchRoute
+  '/subscription': typeof SubscriptionRoute
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/watchlist': typeof WatchlistRoute
@@ -136,6 +135,7 @@ export interface FileRoutesById {
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/search': typeof SearchRoute
+  '/subscription': typeof SubscriptionRoute
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/watchlist': typeof WatchlistRoute
@@ -169,6 +169,7 @@ export interface FileRouteTypes {
     | '/help'
     | '/login'
     | '/search'
+    | '/subscription'
     | '/settings'
     | '/signup'
     | '/watchlist'
@@ -184,6 +185,7 @@ export interface FileRouteTypes {
     | '/help'
     | '/login'
     | '/search'
+    | '/subscription'
     | '/settings'
     | '/signup'
     | '/watchlist'
@@ -252,6 +254,13 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/subscription': {
+      id: '/subscription'
+      path: '/subscription'
+      fullPath: '/subscription'
+      preLoaderRoute: typeof SubscriptionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
