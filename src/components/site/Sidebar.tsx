@@ -12,7 +12,7 @@ const items = [
   { label: "18+", to: "/help", Icon: ShieldCheck, active: () => false },
   { label: "About", to: "/about", Icon: Info, active: (path: string) => path === "/about" },
   { label: "Help", to: "/help", Icon: LifeBuoy, active: (path: string) => path === "/help" },
-  { label: "Subscription", to: "/settings", Icon: Crown, active: (path: string) => path === "/settings" },
+  { label: "Subscription", to: "/subscription", Icon: Crown, active: (path: string) => path === "/subscription" },
 ] as const;
 
 export function Sidebar({ mobile = false }: { mobile?: boolean }) {
