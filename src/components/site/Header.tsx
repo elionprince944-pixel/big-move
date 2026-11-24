@@ -14,6 +14,7 @@ import {
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Sidebar } from "@/components/site/Sidebar";
 import { Brand } from "@/components/site/Brand";
+import { NotificationCenter } from "@/components/site/NotificationCenter";
 
 const QUICK_GENRES: { id: number; name: string }[] = [
   { id: 28, name: "Action" },
@@ -172,6 +173,8 @@ export function Header() {
         <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle theme">
           {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
         </Button>
+
+        <NotificationCenter />
 
         {user ? (
           <DropdownMenu>
