@@ -14,8 +14,8 @@ export const Route = createFileRoute("/admin/subscriptions")({
   component: AdminSubscriptions,
 });
 
-type Plan = { id: string; name: string; description: string; price_rwf: number; duration_days: number; features: string[]; is_active: boolean };
-type Payment = { id: string; subscription_id: string; user_id: string; amount_rwf: number; transaction_reference: string; payer_note: string; status: string; created_at: string; user_subscriptions?: { plan_id: string; subscription_plans?: { name: string; duration_days: number } } };
+type Plan = { id: string; name: string; description: string; price_usd: number; duration_days: number; features: string[]; is_active: boolean };
+type Payment = { id: string; subscription_id: string; user_id: string; amount_usd: number; transaction_reference: string; notes: string; status: string; created_at: string; user_subscriptions?: { plan_id: string; subscription_plans?: { name: string; duration_days: number } } };
 
 function AdminSubscriptions() {
   const { user, isAdmin, loading } = useAuth();
@@ -25,7 +25,7 @@ function AdminSubscriptions() {
   const [editingId, setEditingId] = useState("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [price, setPrice] = useState("5000");
+  const [price, setPrice] = useState("9.99");
   const [duration, setDuration] = useState("30");
   const [features, setFeatures] = useState("");
   const [active, setActive] = useState(true);
@@ -52,7 +52,7 @@ function AdminSubscriptions() {
   const savePlan = async (event: React.FormEvent) => {
     event.preventDefault();
     const amount = Number(price); const days = Number(duration);
-    if (!name.trim() || !Number.isInteger(amount) || amount < 0 || !Number.isInteger(days) || days < 1) return toast.error("Enter a plan name, valid RWF price and duration.");
+    if (!name.trim() || !Number.isInteger(amount) || amount < 0 || !Number.isInteger(days) || days < 1) return toast.error("Enter a plan name, valid USD price and duration.");
     setBusy(true);
     const payload = { name: name.trim(), description: description.trim(), price_rwf: amount, duration_days: days, features: features.split("\n").map((v) => v.trim()).filter(Boolean), is_active: active, updated_at: new Date().toISOString() };
     const result = editingId
@@ -65,7 +65,7 @@ function AdminSubscriptions() {
   };
 
   const reviewPayment = async (paymentId: string, decision: "approved" | "rejected") => {
-    const { error } = await (supabase as any).rpc("admin_review_subscription_payment", { _payment_id: paymentId, _decision: decision });
+    const { error } = await (supabase as any).rpc("review_subscription_payment", { _payment_id: paymentId, _approve: decision === "approved" });
     if (error) return toast.error(error.message);
     toast.success(decision === "approved" ? "Payment approved. Subscription activated." : "Payment rejected.");
     await load();
@@ -81,7 +81,7 @@ function AdminSubscriptions() {
       <h2 className="mb-5 text-xl font-bold">{editingId ? "Edit subscription plan" : "Create a subscription plan"}</h2>
       <form onSubmit={savePlan} className="grid gap-4 sm:grid-cols-2">
         <label className="text-sm font-medium">Plan name<Input className="mt-2 border-white/10 bg-black/40" value={name} onChange={(e) => setName(e.target.value)} required maxLength={60}/></label>
-        <label className="text-sm font-medium">Price (RWF)<Input className="mt-2 border-white/10 bg-black/40" type="number" min="0" step="1" value={price} onChange={(e) => setPrice(e.target.value)} required/></label>
+        <label className="text-sm font-medium">Price (USD)<Input className="mt-2 border-white/10 bg-black/40" type="number" min="0" step="1" value={price} onChange={(e) => setPrice(e.target.value)} required/></label>
         <label className="text-sm font-medium">Duration (days)<Input className="mt-2 border-white/10 bg-black/40" type="number" min="1" max="3660" step="1" value={duration} onChange={(e) => setDuration(e.target.value)} required/></label>
         <label className="flex items-center justify-between rounded-xl border border-white/10 bg-black/30 px-4 py-2 text-sm">Plan visible to users<Switch checked={active} onCheckedChange={setActive}/></label>
         <label className="text-sm font-medium sm:col-span-2">Description<Textarea className="mt-2 border-white/10 bg-black/40" rows={2} value={description} onChange={(e) => setDescription(e.target.value)}/></label>
@@ -90,7 +90,7 @@ function AdminSubscriptions() {
       </form>
     </section>
 
-    <section className="mb-10"><h2 className="mb-4 text-xl font-bold">Published plans ({plans.length})</h2><div className="grid gap-3 md:grid-cols-2">{plans.map((plan) => <div key={plan.id} className="flex items-center justify-between gap-4 rounded-xl border border-white/10 bg-[#111] p-4"><div><div className="font-bold">{plan.name} <span className="ml-2 text-xs text-white/40">{plan.is_active ? "Published" : "Hidden"}</span></div><p className="mt-1 text-sm text-white/50">{plan.price_rwf.toLocaleString("en-RW")} RWF · {plan.duration_days} days</p></div><Button variant="outline" size="sm" onClick={() => editPlan(plan)}>Edit</Button></div>)}</div></section>
+    <section className="mb-10"><h2 className="mb-4 text-xl font-bold">Published plans ({plans.length})</h2><div className="grid gap-3 md:grid-cols-2">{plans.map((plan) => <div key={plan.id} className="flex items-center justify-between gap-4 rounded-xl border border-white/10 bg-[#111] p-4"><div><div className="font-bold">{plan.name} <span className="ml-2 text-xs text-white/40">{plan.is_active ? "Published" : "Hidden"}</span></div><p className="mt-1 text-sm text-white/50">{plan.price_rwf.toLocaleString("en-US", { style: "currency", currency: "USD" }) · {plan.duration_days} days</p></div><Button variant="outline" size="sm" onClick={() => editPlan(plan)}>Edit</Button></div>)}</div></section>
 
     <section><div className="mb-4 flex items-center gap-2"><CircleDollarSign className="size-5 text-orange-400"/><h2 className="text-xl font-bold">Manual payment review ({payments.filter((p) => p.status === "pending").length} pending)</h2></div>
       <div className="space-y-3">{payments.map((payment) => <article key={payment.id} className="rounded-xl border border-white/10 bg-[#111] p-4">
