@@ -124,7 +124,7 @@ function SupportPage() {
         </aside>
         <section className="flex min-h-[580px] flex-col">
           {active ? <>
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4"><div><h2 className="font-bold">{active.subject}</h2><p className="text-xs text-muted-foreground">{isAdmin ? `Customer ID: ${active.user_id}` : "BIG MOV Support Team"}</p></div>{isAdmin && <Button size="sm" variant="outline" onClick={() => void setConversationStatus(active.status === "open" ? "closed" : "open")}>{active.status === "open" ? <Lock className="mr-2 size-3.5"/> : <RefreshCw className="mr-2 size-3.5"/ >}{active.status === "open" ? "Close chat" : "Reopen chat"}</Button>}</div>
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4"><div><h2 className="font-bold">{active.subject}</h2><p className="text-xs text-muted-foreground">{isAdmin ? `Customer ID: ${active.user_id}` : "BIG MOV Support Team"}</p></div>{isAdmin && <Button size="sm" variant="outline" onClick={() => void setConversationStatus(active.status === "open" ? "closed" : "open")}>{active.status === "open" ? <Lock className="mr-2 size-3.5"/> : <RefreshCw className="mr-2 size-3.5" />}{active.status === "open" ? "Close chat" : "Reopen chat"}</Button>}</div>
             <div className="flex-1 space-y-3 overflow-y-auto bg-muted/10 p-4">
               {messages.map((message) => {
                 const mine = message.sender_id === user.id;
