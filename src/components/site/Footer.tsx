@@ -12,7 +12,12 @@ const defaults: FooterSettings = {
   ceo_bio: "Leading BIG MOV with a focus on making movie and television discovery simple, engaging, and accessible.",
 };
 
-const safeExternalUrl = (value: string) => {\n  try { const url = new URL(value); return url.protocol === "https:" || url.protocol === "http:" ? url.href : ""; }\n  catch { return ""; }\n};\n\nconst socialItems = [
+const safeExternalUrl = (value: string) => {
+  try { const url = new URL(value); return url.protocol === "https:" || url.protocol === "http:" ? url.href : ""; }
+  catch { return ""; }
+};
+
+const socialItems = [
   { label: "Instagram", key: "social_instagram", Icon: Instagram },
   { label: "X", key: "social_x", Icon: Twitter },
   { label: "YouTube", key: "social_youtube", Icon: Youtube },
