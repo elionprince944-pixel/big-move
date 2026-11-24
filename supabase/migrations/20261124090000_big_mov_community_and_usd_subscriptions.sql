@@ -6,7 +6,7 @@ create table if not exists public.notifications (
   user_id uuid not null references auth.users(id) on delete cascade,
   title text not null,
   message text not null,
-  kind text not null default 'system' check (kind in ('system','chat','subscription','content')),
+  kind text not null default 'system' check (kind in ('system','chat','subscription','content','announcement')),
   target_url text,
   is_read boolean not null default false,
   created_at timestamptz not null default now()
