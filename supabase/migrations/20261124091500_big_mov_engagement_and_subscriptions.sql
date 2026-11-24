@@ -166,7 +166,7 @@ create trigger chat_message_after_insert after insert on public.chat_messages
 for each row execute function public.bump_chat_conversation_updated_at();
 
 create or replace function public.notify_subscription_status_change()
-returns trigger language plpgsql security definer set search_path = public as $$
+returns trigger language plpgsql security invoker set search_path = public as $
 begin
   if new.status is distinct from old.status then
     insert into public.notifications(user_id, title, message, kind, target_url)
@@ -194,7 +194,7 @@ create or replace function public.request_subscription(
 )
 returns uuid
 language plpgsql
-security definer
+security invoker
 set search_path = public
 as $$
 declare
@@ -223,7 +223,7 @@ create or replace function public.admin_review_subscription_payment(
 )
 returns void
 language plpgsql
-security definer
+security invoker
 set search_path = public
 as $$
 declare
@@ -262,7 +262,7 @@ create or replace function public.request_subscription(
 )
 returns uuid
 language plpgsql
-security definer
+security invoker
 set search_path = public
 as $$
 declare
@@ -291,3 +291,25 @@ begin
   return v_subscription_id;
 end;
 $$;
+
+-- Users may self-activate only a genuinely free plan; paid access remains admin-controlled.
+create policy "Users activate free plans" on public.user_subscriptions
+for insert to authenticated with check (
+  user_id = auth.uid() and status = 'active' and starts_at is not null and expires_at > starts_at and
+  exists (select 1 from public.subscription_plans p where p.id = plan_id and p.is_active = true and p.price_rwf = 0)
+);
+
+-- Explicit Data API grants; RLS above remains the row-level security boundary.
+grant select, update on public.notifications to authenticated;
+grant insert on public.notifications to authenticated;
+grant select, insert, update on public.chat_conversations to authenticated;
+grant select, insert on public.chat_messages to authenticated;
+grant select on public.site_settings to anon, authenticated;
+grant insert, update on public.site_settings to authenticated;
+grant select on public.subscription_plans to anon, authenticated;
+grant insert, update, delete on public.subscription_plans to authenticated;
+grant select, insert, update on public.user_subscriptions to authenticated;
+grant select, insert, update on public.subscription_payments to authenticated;
+
+revoke all on function public.bump_chat_conversation_updated_at() from public;
+revoke all on function public.notify_subscription_status_change() from public;
