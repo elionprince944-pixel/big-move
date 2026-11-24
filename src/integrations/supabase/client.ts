@@ -9,11 +9,11 @@ function createSupabaseClient() {
   const SUPABASE_URL =
     import.meta.env.VITE_SUPABASE_URL ||
     process.env.SUPABASE_URL ||
-    'https://cviistuszdnoesnrebqv.supabase.co';
+    'https://kiwrosdpfkvelxvhzlxr.supabase.co';
   const SUPABASE_PUBLISHABLE_KEY =
     import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
     process.env.SUPABASE_PUBLISHABLE_KEY ||
-    'sb_publishable_vjJ0_GIXGEN2h9mcw2wwpw_FKIvsy6q';
+    'sb_publishable_Ytg_93xzkmeC14LtoMHGRg_Hgnv59Ud';
 
   if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
     const missing = [
