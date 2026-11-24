@@ -40,10 +40,10 @@ function AdminSiteSettings() {
     if (loading) return;
     if (!user) { navigate({ to: "/admin/login" }); return; }
     if (!isAdmin) return;
-    (supabase as any).from("site_settings").select("settings").eq("id", true).maybeSingle()
+    (supabase as any).from("site_settings").select("setting_value").eq("setting_key", "footer").maybeSingle()
       .then(({ data, error }: any) => {
         if (error) toast.error(error.message);
-        if (data?.settings) setSettings({ ...defaults, ...data.settings });
+        if (data?.setting_value) setSettings({ ...defaults, ...data.setting_value });
         setLoaded(true);
       });
   }, [user, isAdmin, loading, navigate]);
@@ -51,7 +51,7 @@ function AdminSiteSettings() {
   const setField = (key: keyof Settings, value: string) => setSettings((current) => ({ ...current, [key]: value }));
   const save = async () => {
     setBusy(true);
-    const { error } = await (supabase as any).from("site_settings").upsert({ id: true, settings, updated_at: new Date().toISOString() });
+    const { error } = await (supabase as any).from("site_settings").upsert({ setting_key: "footer", setting_value: settings, updated_at: new Date().toISOString(), updated_by: user?.id });
     setBusy(false);
     if (error) return toast.error(error.message);
     toast.success("Website settings saved. The public footer will use the updated details.");
