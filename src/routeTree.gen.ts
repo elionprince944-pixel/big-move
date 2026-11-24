@@ -16,6 +16,7 @@ import { Route as HelpRouteImport } from './routes/help'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as SubscriptionRouteImport } from './routes/subscription'
+import { Route as SupportRouteImport } from './routes/support'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as WatchlistRouteImport } from './routes/watchlist'
@@ -57,6 +58,11 @@ const SearchRoute = SearchRouteImport.update({
 const SubscriptionRoute = SubscriptionRouteImport.update({
   id: '/subscription',
   path: '/subscription',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -103,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/search': typeof SearchRoute
   '/subscription': typeof SubscriptionRoute
+  '/support': typeof SupportRoute
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/watchlist': typeof WatchlistRoute
@@ -119,6 +126,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/search': typeof SearchRoute
   '/subscription': typeof SubscriptionRoute
+  '/support': typeof SupportRoute
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/watchlist': typeof WatchlistRoute
@@ -136,6 +144,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/search': typeof SearchRoute
   '/subscription': typeof SubscriptionRoute
+  '/support': typeof SupportRoute
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/watchlist': typeof WatchlistRoute
@@ -154,6 +163,9 @@ export interface FileRouteTypes {
     | '/login'
     | '/search'
     | '/subscription'
+    | '/support'
+    | '/support'
+    | '/support'
     | '/settings'
     | '/signup'
     | '/watchlist'
@@ -203,6 +215,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   SearchRoute: typeof SearchRoute
   SubscriptionRoute: typeof SubscriptionRoute
+  SupportRoute: typeof SupportRoute
   SettingsRoute: typeof SettingsRoute
   SignupRoute: typeof SignupRoute
   WatchlistRoute: typeof WatchlistRoute
@@ -323,6 +336,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   SearchRoute: SearchRoute,
   SubscriptionRoute: SubscriptionRoute,
+  SupportRoute: SupportRoute,
   SettingsRoute: SettingsRoute,
   SignupRoute: SignupRoute,
   WatchlistRoute: WatchlistRoute,
