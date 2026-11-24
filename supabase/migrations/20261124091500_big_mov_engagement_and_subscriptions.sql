@@ -253,3 +253,41 @@ end;
 $$;
 revoke all on function public.admin_review_subscription_payment(uuid,text) from public;
 grant execute on function public.admin_review_subscription_payment(uuid,text) to authenticated;
+
+-- Free plans activate immediately; paid plans remain pending until an admin verifies payment.
+create or replace function public.request_subscription(
+  _plan_id uuid,
+  _transaction_reference text,
+  _payer_note text default ''
+)
+returns uuid
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_user_id uuid := auth.uid();
+  v_plan public.subscription_plans%rowtype;
+  v_subscription_id uuid;
+begin
+  if v_user_id is null then raise exception 'Sign in before requesting a subscription'; end if;
+  select * into v_plan from public.subscription_plans where id = _plan_id and is_active = true;
+  if not found then raise exception 'This subscription plan is not available'; end if;
+
+  if v_plan.price_rwf = 0 then
+    insert into public.user_subscriptions(user_id, plan_id, status, starts_at, expires_at)
+    values (v_user_id, v_plan.id, 'active', now(), now() + make_interval(days => v_plan.duration_days))
+    returning id into v_subscription_id;
+    return v_subscription_id;
+  end if;
+
+  if coalesce(length(trim(_transaction_reference)), 0) < 3 then
+    raise exception 'Enter a valid payment transaction reference';
+  end if;
+  insert into public.user_subscriptions(user_id, plan_id, status)
+  values (v_user_id, v_plan.id, 'pending') returning id into v_subscription_id;
+  insert into public.subscription_payments(subscription_id, user_id, amount_rwf, transaction_reference, payer_note)
+  values (v_subscription_id, v_user_id, v_plan.price_rwf, trim(_transaction_reference), coalesce(_payer_note, ''));
+  return v_subscription_id;
+end;
+$$;
