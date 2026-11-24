@@ -86,16 +86,15 @@ create policy "Public can read footer settings" on public.site_settings for sele
 create policy "Admins manage site settings" on public.site_settings for all using (public.has_role(auth.uid(), 'admin')) with check (public.has_role(auth.uid(), 'admin'));
 insert into public.site_settings(setting_key,setting_value) values
 ('footer', jsonb_build_object(
-  'socials', jsonb_build_object(
-    'instagram','https://www.instagram.com/','x','https://x.com/',
-    'youtube','https://www.youtube.com/','whatsapp','https://www.whatsapp.com/',
-    'facebook','https://www.facebook.com/'
-  ),
-  'ceo', jsonb_build_object(
-    'name','BIG MOV Founder','title','Chief Executive Officer',
-    'bio','Leading BIG MOV with a focus on making movie and television discovery simple, engaging, and accessible.',
-    'portrait_url',''
-  )
+  'social_instagram','https://www.instagram.com/',
+  'social_x','https://x.com/',
+  'social_youtube','https://www.youtube.com/',
+  'social_whatsapp','https://www.whatsapp.com/',
+  'social_facebook','https://www.facebook.com/',
+  'ceo_name','BIG MOV Founder',
+  'ceo_title','Chief Executive Officer',
+  'ceo_bio','Leading BIG MOV with a focus on making movie and television discovery simple, engaging, and accessible.',
+  'ceo_image_url',''
 )) on conflict (setting_key) do nothing;
 
 create table if not exists public.subscription_plans (
