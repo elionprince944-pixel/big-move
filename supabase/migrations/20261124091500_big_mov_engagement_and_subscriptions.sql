@@ -186,3 +186,70 @@ begin
   begin alter publication supabase_realtime add table public.chat_conversations; exception when duplicate_object then null; when undefined_object then null; end;
   begin alter publication supabase_realtime add table public.chat_messages; exception when duplicate_object then null; when undefined_object then null; end;
 end $$;
+
+create or replace function public.request_subscription(
+  _plan_id uuid,
+  _transaction_reference text,
+  _payer_note text default ''
+)
+returns uuid
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_user_id uuid := auth.uid();
+  v_plan public.subscription_plans%rowtype;
+  v_subscription_id uuid;
+begin
+  if v_user_id is null then raise exception 'Sign in before requesting a subscription'; end if;
+  if coalesce(length(trim(_transaction_reference)), 0) < 3 then raise exception 'Enter a valid payment transaction reference'; end if;
+  select * into v_plan from public.subscription_plans where id = _plan_id and is_active = true;
+  if not found then raise exception 'This subscription plan is not available'; end if;
+  if v_plan.price_rwf <= 0 then raise exception 'Free plans do not require a payment request'; end if;
+  insert into public.user_subscriptions(user_id, plan_id, status)
+  values (v_user_id, v_plan.id, 'pending') returning id into v_subscription_id;
+  insert into public.subscription_payments(subscription_id, user_id, amount_rwf, transaction_reference, payer_note)
+  values (v_subscription_id, v_user_id, v_plan.price_rwf, trim(_transaction_reference), coalesce(_payer_note, ''));
+  return v_subscription_id;
+end;
+$$;
+revoke all on function public.request_subscription(uuid,text,text) from public;
+grant execute on function public.request_subscription(uuid,text,text) to authenticated;
+
+create or replace function public.admin_review_subscription_payment(
+  _payment_id uuid,
+  _decision text
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_payment public.subscription_payments%rowtype;
+  v_plan public.subscription_plans%rowtype;
+begin
+  if not public.has_role('admin', auth.uid()) then raise exception 'Administrator access required'; end if;
+  if _decision not in ('approved','rejected') then raise exception 'Invalid review decision'; end if;
+  select * into v_payment from public.subscription_payments where id = _payment_id for update;
+  if not found then raise exception 'Payment request not found'; end if;
+  if v_payment.status <> 'pending' then raise exception 'This payment has already been reviewed'; end if;
+  update public.subscription_payments
+  set status = _decision, verified_by = auth.uid(), verified_at = now()
+  where id = _payment_id;
+  if _decision = 'approved' then
+    select p.* into v_plan from public.subscription_plans p
+    join public.user_subscriptions s on s.plan_id = p.id
+    where s.id = v_payment.subscription_id;
+    update public.user_subscriptions
+    set status = 'active', starts_at = now(), expires_at = now() + make_interval(days => v_plan.duration_days), updated_at = now()
+    where id = v_payment.subscription_id;
+  else
+    update public.user_subscriptions set status = 'rejected', updated_at = now()
+    where id = v_payment.subscription_id;
+  end if;
+end;
+$$;
+revoke all on function public.admin_review_subscription_payment(uuid,text) from public;
+grant execute on function public.admin_review_subscription_payment(uuid,text) to authenticated;
