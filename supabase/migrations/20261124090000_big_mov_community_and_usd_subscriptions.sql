@@ -7,8 +7,8 @@ create table if not exists public.notifications (
   title text not null,
   message text not null,
   kind text not null default 'system' check (kind in ('system','chat','subscription','content')),
-  href text,
-  read_at timestamptz,
+  target_url text,
+  is_read boolean not null default false,
   created_at timestamptz not null default now()
 );
 create index if not exists notifications_user_created_idx on public.notifications(user_id, created_at desc);
@@ -64,7 +64,7 @@ begin
   if new.sender_role = 'admin' then
     select user_id into recipient from public.chat_conversations where id = new.conversation_id;
     if recipient is not null then
-      insert into public.notifications(user_id,title,message,kind,href)
+      insert into public.notifications(user_id,title,message,kind,target_url)
       values (recipient,'New BIG MOV support reply',left(new.body,180),'chat','/help');
     end if;
   end if;
