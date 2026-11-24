@@ -15,6 +15,7 @@ import { Route as BrowseRouteImport } from './routes/browse'
 import { Route as HelpRouteImport } from './routes/help'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as SubscriptionRouteImport } from './routes/subscription'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as WatchlistRouteImport } from './routes/watchlist'
@@ -51,6 +52,11 @@ const LoginRoute = LoginRouteImport.update({
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SubscriptionRoute = SubscriptionRouteImport.update({
+  id: '/subscription',
+  path: '/subscription',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -96,6 +102,9 @@ export interface FileRoutesByFullPath {
   '/help': typeof HelpRoute
   '/login': typeof LoginRoute
   '/search': typeof SearchRoute
+  '/subscription': typeof SubscriptionRoute
+  '/subscription': typeof SubscriptionRoute
+  '/subscription': typeof SubscriptionRoute
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/watchlist': typeof WatchlistRoute
@@ -144,6 +153,7 @@ export interface FileRouteTypes {
     | '/help'
     | '/login'
     | '/search'
+    | '/subscription'
     | '/settings'
     | '/signup'
     | '/watchlist'
@@ -190,6 +200,7 @@ export interface RootRouteChildren {
   HelpRoute: typeof HelpRoute
   LoginRoute: typeof LoginRoute
   SearchRoute: typeof SearchRoute
+  SubscriptionRoute: typeof SubscriptionRoute
   SettingsRoute: typeof SettingsRoute
   SignupRoute: typeof SignupRoute
   WatchlistRoute: typeof WatchlistRoute
@@ -302,6 +313,7 @@ const rootRouteChildren: RootRouteChildren = {
   HelpRoute: HelpRoute,
   LoginRoute: LoginRoute,
   SearchRoute: SearchRoute,
+  SubscriptionRoute: SubscriptionRoute,
   SettingsRoute: SettingsRoute,
   SignupRoute: SignupRoute,
   WatchlistRoute: WatchlistRoute,
