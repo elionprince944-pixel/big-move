@@ -25,9 +25,9 @@ export function Footer() {
 
   useEffect(() => {
     let active = true;
-    (supabase as any).from("site_settings").select("settings").eq("id", true).maybeSingle()
-      .then(({ data }: { data: { settings?: FooterSettings } | null }) => {
-        if (active && data?.settings) setSettings({ ...defaults, ...data.settings });
+    (supabase as any).from("site_settings").select("setting_value").eq("setting_key", "footer").maybeSingle()
+      .then(({ data }: { data: { setting_value?: FooterSettings } | null }) => {
+        if (active && data?.setting_value) setSettings({ ...defaults, ...data.setting_value });
       });
     return () => { active = false; };
   }, []);
