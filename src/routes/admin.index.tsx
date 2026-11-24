@@ -48,6 +48,16 @@ function AdminPage() {
     system_prompt: "You are BIG AI, the friendly assistant for BIG MOV. Help users discover movies and TV shows using the context provided. Keep answers concise and useful.",
   });
   const [saving, setSaving] = useState(false);
+  const [plans, setPlans] = useState<any[]>([]);
+  const [payments, setPayments] = useState<any[]>([]);
+  const [footer, setFooter] = useState<Record<string, string>>({
+    social_instagram: "https://www.instagram.com/", social_x: "https://x.com/",
+    social_youtube: "https://www.youtube.com/", social_whatsapp: "https://www.whatsapp.com/",
+    social_facebook: "https://www.facebook.com/", ceo_name: "BIG MOV Founder",
+    ceo_title: "Chief Executive Officer", ceo_bio: "", ceo_image_url: "",
+  });
+  const [planDraft, setPlanDraft] = useState({ name: "", description: "", price_usd: "", duration_days: "30", features: "" });
+  const [savingPlan, setSavingPlan] = useState(false);
 
   useEffect(() => {
     if (loading) return;
@@ -62,6 +72,54 @@ function AdminPage() {
       if (settings.data) setAi(settings.data);
     });
   }, [user, isAdmin, loading, navigate]);
+
+  useEffect(() => {
+    if (!isAdmin) return;
+    const loadAdminExtras = async () => {
+      const [p, pay, site] = await Promise.all([
+        (supabase as any).from("subscription_plans").select("*").order("sort_order"),
+        (supabase as any).from("subscription_payments").select("id,user_id,subscription_id,amount_usd,payment_method,payer_name,transaction_reference,notes,status,created_at").eq("status", "pending").order("created_at", { ascending: true }),
+        (supabase as any).from("site_settings").select("setting_value").eq("setting_key", "footer").maybeSingle(),
+      ]);
+      if (!p.error) setPlans(p.data ?? []);
+      if (!pay.error) setPayments(pay.data ?? []);
+      if (site.data?.setting_value) setFooter((current) => ({ ...current, ...site.data.setting_value }));
+    };
+    void loadAdminExtras();
+  }, [isAdmin]);
+
+  const saveFooter = async () => {
+    const { error } = await (supabase as any).from("site_settings").upsert({
+      setting_key: "footer", setting_value: footer, updated_at: new Date().toISOString(), updated_by: user?.id,
+    });
+    if (error) return toast.error(error.message);
+    toast.success("Footer details saved");
+  };
+
+  const createPlan = async () => {
+    if (!planDraft.name.trim() || !planDraft.price_usd || Number(planDraft.price_usd) < 0 || Number(planDraft.duration_days) < 1) {
+      return toast.error("Enter a plan name, valid USD price and duration.");
+    }
+    setSavingPlan(true);
+    const { data, error } = await (supabase as any).from("subscription_plans").insert({
+      name: planDraft.name.trim(), description: planDraft.description.trim(),
+      price_usd: Number(planDraft.price_usd), duration_days: Number(planDraft.duration_days),
+      features: planDraft.features.split("\\n").map((x: string) => x.trim()).filter(Boolean),
+      sort_order: plans.length,
+    }).select("*").single();
+    setSavingPlan(false);
+    if (error) return toast.error(error.message);
+    setPlans((current) => [...current, data]);
+    setPlanDraft({ name: "", description: "", price_usd: "", duration_days: "30", features: "" });
+    toast.success("Subscription plan created");
+  };
+
+  const reviewPayment = async (paymentId: string, approve: boolean) => {
+    const { error } = await (supabase as any).rpc("review_subscription_payment", { _payment_id: paymentId, _approve: approve });
+    if (error) return toast.error(error.message);
+    setPayments((current) => current.filter((payment) => payment.id !== paymentId));
+    toast.success(approve ? "Payment approved and subscription activated" : "Payment rejected");
+  };
 
   const saveAi = async () => {
     setSaving(true);
@@ -206,6 +264,35 @@ function AdminPage() {
                 <div><label className="text-sm font-medium text-white/70">System instructions</label><Textarea className="mt-2 min-h-32 bg-black/30 border-white/10" value={ai.system_prompt} onChange={(e) => setAi((v) => ({ ...v, system_prompt: e.target.value }))} /></div>
                 <div className="flex items-center justify-between border-t border-white/[0.07] pt-5"><p className="text-xs text-white/30">The Gemini API key stays server-side.</p><Button onClick={saveAi} disabled={saving} className="bg-orange-400 text-black hover:bg-orange-300"><Save className="size-4 mr-2" />{saving ? "Saving…" : "Save BIG AI"}</Button></div>
               </div>
+            </section>
+
+            <section className="mt-7 grid gap-5 xl:grid-cols-2">
+              <div className="rounded-2xl border border-white/[0.08] bg-[#111] p-6">
+                <div className="mb-5 flex items-center justify-between"><div><h2 className="text-lg font-bold">USD Subscription Plans</h2><p className="text-xs text-white/40">Create plans users can request by manual payment.</p></div><Crown className="size-5 text-orange-400"/></div>
+                <div className="mb-5 space-y-2">
+                  <Input placeholder="Plan name" value={planDraft.name} onChange={(e) => setPlanDraft((v) => ({ ...v, name: e.target.value }))} className="border-white/10 bg-black/30"/>
+                  <Input placeholder="Short description" value={planDraft.description} onChange={(e) => setPlanDraft((v) => ({ ...v, description: e.target.value }))} className="border-white/10 bg-black/30"/>
+                  <div className="grid grid-cols-2 gap-2"><Input type="number" min="0" step="0.01" placeholder="Price (USD)" value={planDraft.price_usd} onChange={(e) => setPlanDraft((v) => ({ ...v, price_usd: e.target.value }))} className="border-white/10 bg-black/30"/><Input type="number" min="1" placeholder="Duration (days)" value={planDraft.duration_days} onChange={(e) => setPlanDraft((v) => ({ ...v, duration_days: e.target.value }))} className="border-white/10 bg-black/30"/></div>
+                  <Textarea placeholder="Features, one per line" value={planDraft.features} onChange={(e) => setPlanDraft((v) => ({ ...v, features: e.target.value }))} className="border-white/10 bg-black/30"/>
+                  <Button onClick={createPlan} disabled={savingPlan} className="w-full bg-orange-400 text-black hover:bg-orange-300">{savingPlan ? "Creating…" : "Create plan"}</Button>
+                </div>
+                <div className="space-y-2">{plans.map((plan) => <div key={plan.id} className="flex items-center justify-between rounded-xl border border-white/10 p-3"><div><p className="font-semibold">{plan.name}</p><p className="text-xs text-white/40">{plan.duration_days} days · {plan.is_active ? "Active" : "Hidden"}</p></div><span className="font-bold text-orange-300">${Number(plan.price_usd).toFixed(2)} USD</span></div>)}{!plans.length && <p className="text-sm text-white/35">No plans created yet.</p>}</div>
+              </div>
+              <div className="rounded-2xl border border-white/[0.08] bg-[#111] p-6">
+                <div className="mb-5 flex items-center justify-between"><div><h2 className="text-lg font-bold">Payment Verification</h2><p className="text-xs text-white/40">Approve only after checking the real payment record.</p></div><Shield className="size-5 text-orange-400"/></div>
+                <div className="space-y-3">{payments.map((payment) => <div key={payment.id} className="rounded-xl border border-white/10 bg-black/20 p-4"><div className="flex items-center justify-between"><span className="font-bold">${Number(payment.amount_usd).toFixed(2)} USD</span><span className="text-[10px] uppercase text-amber-300">Pending</span></div><p className="mt-2 text-sm">{payment.payment_method} · {payment.payer_name}</p><p className="mt-1 break-all text-xs text-white/40">Reference: {payment.transaction_reference}</p>{payment.notes && <p className="mt-2 text-xs text-white/45">{payment.notes}</p>}<div className="mt-3 flex gap-2"><Button size="sm" onClick={() => reviewPayment(payment.id, true)} className="bg-emerald-600 text-white hover:bg-emerald-500">Approve</Button><Button size="sm" variant="outline" onClick={() => reviewPayment(payment.id, false)} className="border-red-400/30 text-red-300 hover:bg-red-400/10">Reject</Button></div></div>)}{!payments.length && <p className="py-8 text-center text-sm text-white/35">No pending payment requests.</p>}</div>
+              </div>
+            </section>
+
+            <section className="mt-7 rounded-2xl border border-white/[0.08] bg-[#111] p-6">
+              <div className="mb-5"><h2 className="text-lg font-bold">Footer & Social Settings</h2><p className="text-xs text-white/40">These details appear on the public website footer.</p></div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {[
+                  ["Instagram URL","social_instagram"],["X URL","social_x"],["YouTube URL","social_youtube"],["WhatsApp URL","social_whatsapp"],["Facebook URL","social_facebook"],["CEO image URL","ceo_image_url"],["CEO name","ceo_name"],["CEO title","ceo_title"],
+                ].map(([label,key]) => <label key={key} className="text-xs font-semibold text-white/60">{label}<Input value={footer[key] ?? ""} onChange={(e) => setFooter((v) => ({ ...v, [key]: e.target.value }))} className="mt-2 border-white/10 bg-black/30"/></label>)}
+                <label className="text-xs font-semibold text-white/60 sm:col-span-2">CEO biography<Textarea value={footer.ceo_bio ?? ""} onChange={(e) => setFooter((v) => ({ ...v, ceo_bio: e.target.value }))} className="mt-2 border-white/10 bg-black/30"/></label>
+              </div>
+              <div className="mt-4 flex justify-end"><Button onClick={saveFooter} className="bg-orange-400 text-black hover:bg-orange-300"><Save className="mr-2 size-4"/>Save footer settings</Button></div>
             </section>
 
             <div className="mt-6 rounded-xl border border-white/[0.07] bg-[#0d0d0d] p-4 text-xs text-white/30 flex items-center gap-2"><Search className="size-4" />Admin design upgraded to the black and cinematic-orange control-room style from your reference.<Settings className="size-4 ml-auto" /></div>
