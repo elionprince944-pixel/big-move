@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import {
   Activity, Bell, Bot, Film, Flag, HelpCircle, LayoutDashboard, MessageSquare,
   Radio, Save, Search, Settings, Shield, Sparkles, Tags, Tv, Users, ExternalLink,
-  Download, Eye,
+  Download, Eye, CreditCard,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/integrations/supabase/client";
@@ -176,6 +176,12 @@ function AdminPage() {
                   <span className="font-bold text-sm">{String(label)}</span>
                 </button>
               ))}
+            </div>
+
+            <div className="mt-5 grid gap-3 sm:grid-cols-3">
+              <Link to="/admin/settings" className="flex items-center gap-3 rounded-xl border border-white/[0.08] bg-[#141414] p-4 transition hover:border-orange-400/30"><Settings className="size-5 text-orange-400"/><span className="text-sm font-bold">Footer & Site Settings</span></Link>
+              <Link to="/admin/subscriptions" className="flex items-center gap-3 rounded-xl border border-white/[0.08] bg-[#141414] p-4 transition hover:border-orange-400/30"><CreditCard className="size-5 text-orange-400"/><span className="text-sm font-bold">Subscription Management</span></Link>
+              <Link to="/support" className="flex items-center gap-3 rounded-xl border border-white/[0.08] bg-[#141414] p-4 transition hover:border-orange-400/30"><MessageSquare className="size-5 text-orange-400"/><span className="text-sm font-bold">Open Live Chat Inbox</span></Link>
             </div>
 
             <div className="grid xl:grid-cols-2 gap-5 mt-7">
