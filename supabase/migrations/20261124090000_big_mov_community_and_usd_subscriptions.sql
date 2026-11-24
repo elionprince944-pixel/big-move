@@ -111,7 +111,8 @@ insert into public.site_settings(setting_key,setting_value) values
   'ceo_name','BIG MOV Founder',
   'ceo_title','Chief Executive Officer',
   'ceo_bio','Leading BIG MOV with a focus on making movie and television discovery simple, engaging, and accessible.',
-  'ceo_image_url',''
+  'ceo_image_url','',
+  'payment_instructions',''
 )) on conflict (setting_key) do nothing;
 
 create table if not exists public.subscription_plans (
@@ -229,6 +230,14 @@ begin
   if auth.uid() is null then raise exception 'Sign in is required'; end if;
   select * into plan_row from public.subscription_plans where id = _plan_id and is_active = true;
   if not found then raise exception 'This subscription plan is unavailable'; end if;
+  if plan_row.price_usd = 0 then
+    insert into public.user_subscriptions(user_id,plan_id,status,starts_at,ends_at)
+    values(auth.uid(),plan_row.id,'active',now(),now() + make_interval(days => plan_row.duration_days))
+    returning id into new_subscription;
+    insert into public.notifications(user_id,title,message,kind,target_url)
+    values(auth.uid(),'Free plan activated','Your BIG MOV plan is now active.','subscription','/subscription');
+    return new_subscription;
+  end if;
   if char_length(trim(coalesce(_payment_method,''))) < 2
     or char_length(trim(coalesce(_payer_name,''))) < 2
     or char_length(trim(coalesce(_transaction_reference,''))) < 3 then
