@@ -92,7 +92,7 @@ begin
     select 1 from information_schema.columns
     where table_schema='public' and table_name='site_settings' and column_name='settings'
   ) then
-    execute 'update public.site_settings set setting_value = coalesce(setting_value, settings, ''{}''::jsonb)';
+    execute 'update public.site_settings set setting_value = settings where setting_value = ''{}''::jsonb and settings is not null';
   end if;
 end $;
 update public.site_settings set setting_key='footer' where setting_key is null;
