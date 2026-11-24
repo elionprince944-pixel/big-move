@@ -93,7 +93,15 @@ export const askBigAi = createServerFn({ method: "POST" })
     if (!settings.enabled) throw new Error("BIG AI is currently disabled.");
 
     const catalog = await siteCatalog(message);
-    const system = `${settings.system_prompt || DEFAULT_SYSTEM_PROMPT}\n\nBIG MOV context: ${data.context || "none"}\n\nYou DO have live access to what is on the BIG MOV website right now — the lists below are the site's current live catalog. When users ask what is on the site, trending, or for recommendations, answer from these lists by title. Never say you cannot see the site. Write plain text only: no markdown, no asterisks, no bold, no headings. Use simple lines starting with "• " for lists.\n\nBIG MOV company facts (shown on the site footer CEO card and About page): The Founder and CEO (Chief Executive Officer) of BIG MOV is ISHIMWE ELION PRINCE. He leads BIG MOV with a focus on making movie and television discovery simple, engaging, and accessible. Answer questions about the CEO, founder, owner or leadership with this information confidently.\n\n${catalog}`;
+    const ceo = { name: "ISHIMWE ELION PRINCE", title: "Chief Executive Officer", bio: "Leading BIG MOV with a focus on making movie and television discovery simple, engaging, and accessible." };
+    try {
+      const { data: row } = await (supabase as any).from("site_settings").select("setting_value").eq("setting_key", "footer").maybeSingle();
+      const v = row?.setting_value ?? {};
+      if (v.ceo_name) ceo.name = String(v.ceo_name);
+      if (v.ceo_title) ceo.title = String(v.ceo_title);
+      if (v.ceo_bio) ceo.bio = String(v.ceo_bio);
+    } catch {}
+    const system = `${settings.system_prompt || DEFAULT_SYSTEM_PROMPT}\n\nBIG MOV context: ${data.context || "none"}\n\nYou DO have live access to what is on the BIG MOV website right now — the lists below are the site's current live catalog. When users ask what is on the site, trending, or for recommendations, answer from these lists by title. Never say you cannot see the site. Write plain text only: no markdown, no asterisks, no bold, no headings. Use simple lines starting with "• " for lists.\n\nBIG MOV company facts (shown on the site footer CEO card and About page): The Founder and CEO of BIG MOV is ${ceo.name} (${ceo.title}). ${ceo.bio} Answer questions about the CEO, founder, owner or leadership with this information confidently.\n\n${catalog}`;
     const history: Msg[] = [...(data.history ?? []).slice(-10).filter(m => m.text), { role: "user", text: message }];
     while (history.length && history[0].role !== "user") history.shift();
 
