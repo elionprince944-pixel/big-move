@@ -81,6 +81,23 @@ create table if not exists public.site_settings (
   updated_at timestamptz not null default now(),
   updated_by uuid references auth.users(id)
 );
+-- Upgrade the earlier BIG MOV footer settings shape (id/settings) safely if it exists.
+alter table public.site_settings add column if not exists setting_key text;
+alter table public.site_settings add column if not exists setting_value jsonb not null default '{}'::jsonb;
+alter table public.site_settings add column if not exists updated_at timestamptz not null default now();
+alter table public.site_settings add column if not exists updated_by uuid references auth.users(id);
+do $
+begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_schema='public' and table_name='site_settings' and column_name='settings'
+  ) then
+    execute 'update public.site_settings set setting_value = coalesce(setting_value, settings, ''{}''::jsonb)';
+  end if;
+end $;
+update public.site_settings set setting_key='footer' where setting_key is null;
+alter table public.site_settings alter column setting_key set not null;
+create unique index if not exists site_settings_setting_key_uidx on public.site_settings(setting_key);
 alter table public.site_settings enable row level security;
 create policy "Public can read footer settings" on public.site_settings for select using (setting_key = 'footer');
 create policy "Admins manage site settings" on public.site_settings for all using (public.has_role(auth.uid(), 'admin')) with check (public.has_role(auth.uid(), 'admin'));
